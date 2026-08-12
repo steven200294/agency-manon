@@ -1,0 +1,311 @@
+/* ==========================================================================
+   theme.css — jetons de design
+   ==========================================================================
+
+   Deux sources, et elles ne se mélangent pas :
+
+   1. Les VALEURS DE STRUCTURE (tailles, espacements, rayons, géométrie des
+      ombres) viennent des relevés de https://www.myroragency.com/. Elles sont
+      reprises telles quelles, sans arrondi ni moyenne.
+
+   2. Les COULEURS et les FAMILLES DE POLICES viennent du brandboard
+      The Trace Agency. Elles remplacent celles du relevé.
+
+   ---------------------------------------------------------------------------
+   LA PAGE EST CLAIRE. Le site relevé est sombre : fond noir, texte blanc.
+   Ce projet inverse cette polarité — Dentelle au fond, Nuit sur le texte.
+   C'est une décision de design, pas une mesure, et elle a une conséquence
+   heureuse : sur fond clair, Châtaigne passe enfin le contraste. Les deux
+   accents du site relevé retrouvent donc deux rôles distincts, ce qui était
+   impossible sur fond Nuit (voir MISSING.md, § 1.1).
+   ---------------------------------------------------------------------------
+
+   Chaque couleur porte en commentaire la valeur MYROR qu'elle remplace, pour
+   que la transposition reste vérifiable. Une transposition est un choix, pas
+   une mesure : les choix non triviaux sont listés dans MISSING.md.
+
+   `@theme` (Tailwind v4) fait deux choses d'un coup : il émet chaque jeton en
+   custom property sur `:root` — utilisable en CSS pur dans les autres
+   feuilles — et il génère l'utilitaire Tailwind correspondant (`bg-canvas`,
+   `text-accent`, `rounded-card`…).
+   ========================================================================== */
+
+@theme {
+  /* ------------------------------------------------------------------------
+     PALETTE DE MARQUE — les quatre couleurs du brandboard, brutes.
+     Aucun rôle ne leur est attaché ici : ce sont les pigments disponibles.
+     ------------------------------------------------------------------------ */
+
+  --color-nuit: #141414; /* C78 M69 J61 N87 */
+  --color-chataigne: #77402a; /* C35 M71 J78 N45 */
+  --color-terre-ombre: #a87655; /* C27 M61 J54 N20 */
+  --color-dentelle: #f7edde; /* C04 M07 J15 N0  */
+
+  /* ------------------------------------------------------------------------
+     SURFACES
+
+     Le relevé décrit trois couches de canevas : `body`, un wrapper pleine
+     largeur par-dessus, puis le header translucide. Les trois sont opaques
+     ou semi-opaques — aucun dégradé, aucune lueur floutée n'a été mesurée
+     sur le canevas. Les seuls dégradés de la page sont ceux de blocs isolés
+     (--gradient-panel, --gradient-frame plus bas), pas celui du fond.
+     ------------------------------------------------------------------------ */
+
+  --color-canvas: #f7edde; /* MYROR rgb(0,0,0) — body + wrapper pleine largeur */
+  --color-surface-header: rgba(247, 237, 222, 0.8); /* MYROR rgba(0,0,0,.8) */
+  --color-surface-pill: rgba(247, 237, 222, 0.86); /* MYROR rgba(10,10,12,.86) */
+  --color-surface-deep: #f7edde; /* MYROR rgb(0,0,0) — médaillon rond */
+  --color-surface-card: #f1e4d2; /* MYROR rgb(25,25,25) — carte 28px */
+  --color-surface-raised: #e5d5bf; /* MYROR rgb(64,64,64) — tuile 20px */
+  --color-surface-inverse: #141414; /* MYROR rgb(245,245,246) — puce contrastée */
+
+  /* Les deux valeurs intermédiaires (#F1E4D2 et #E5D5BF) sont des
+     transpositions : le brandboard ne fournit pas d'échelle entre Dentelle et
+     Terre d'Ombre. Voir MISSING.md. */
+
+  /* ------------------------------------------------------------------------
+     TEXTE
+     ------------------------------------------------------------------------ */
+
+  --color-text-primary: #141414; /* MYROR rgb(255,255,255) */
+  --color-text-secondary: rgba(20, 20, 20, 0.72); /* MYROR rgb(203,204,205) */
+  --color-text-muted: rgba(20, 20, 20, 0.65); /* MYROR rgba(255,255,255,.65) */
+  --color-text-inverse: #f7edde; /* MYROR rgb(14,14,14) et rgb(26,26,26) */
+
+  /* ------------------------------------------------------------------------
+     ACCENTS
+
+     MYROR joue sur deux accents : un bleu clair (#86B1D5) et un rose
+     (#BA7C79). Sur fond clair, les deux tons chauds du brandboard peuvent
+     enfin les porter tous les deux :
+
+       — Châtaigne  sur Dentelle : 8,3:1  → tout texte, même petit
+       — Terre d'Ombre sur Dentelle : 3,3:1 → grands corps uniquement (≥24px)
+
+     D'où la répartition :
+       --color-accent      Châtaigne  — chiffres, liens, titres accentués,
+                                        remplissage du bouton de navigation
+       --color-accent-soft Terre d'Ombre — emphase de très grand titre,
+                                        remplissage de l'appel à l'action,
+                                        départ des dégradés
+     ------------------------------------------------------------------------ */
+
+  --color-accent: #77402a; /* MYROR rgb(134,177,213) */
+  --color-accent-soft: #a87655; /* MYROR rgb(186,124,121) */
+  --color-accent-contrast: #f7edde; /* texte posé sur --color-accent */
+  --color-accent-on: #141414; /* texte posé sur --color-accent-soft */
+
+  /* ------------------------------------------------------------------------
+     BORDURES
+     ------------------------------------------------------------------------ */
+
+  --color-border-hairline: rgba(20, 20, 20, 0.16); /* MYROR rgba(255,255,255,.16) */
+
+  /* ------------------------------------------------------------------------
+     DÉGRADÉS — deux, tous les deux sur des blocs isolés.
+     Le canevas, lui, reste plat.
+     ------------------------------------------------------------------------ */
+
+  /* Bloc `div.framer-rfpz8s` de la page longue. */
+  --gradient-panel: linear-gradient(
+    var(--color-accent-soft) 0%,
+    var(--color-accent) 100%
+  ); /* MYROR linear-gradient(rgb(134,177,213) 0%, rgb(186,124,121) 100%) */
+
+  /* Liseré des cadres photo de la hero. Les positions d'arrêt — 0 %,
+     38,7265 %, 100 % — sont mesurées et reprises au centième près ; seules
+     les trois teintes grises sont remplacées par les tons chauds. */
+  --gradient-frame: linear-gradient(
+    rgba(168, 118, 85, 0.4) 0%,
+    rgb(168, 118, 85) 38.7265%,
+    rgb(119, 64, 42) 100%
+  ); /* MYROR rgba(143,146,147,.4) / rgb(114,116,117) / rgb(69,70,71) */
+
+  /* ------------------------------------------------------------------------
+     TYPOGRAPHIE — familles
+
+     UNE SEULE FAMILLE POUR TOUT LE PROJET : Satoshi.
+
+     C'est la fonte des relevés, pas un substitut — voir fonts.css. Tous les
+     corps, interlignes et approches de ce fichier ont été mesurés sur elle,
+     donc ils rendent exactement ce qui a été mesuré.
+
+     Les deux jetons restent distincts — `--font-display` pour les rôles de
+     titre, `--font-text` pour le texte — parce que ce sont deux rôles, même
+     s'ils pointent aujourd'hui sur la même famille. Passer les titres sur
+     Tenez, comme le prévoit le brandboard, ne demande que de changer la
+     première des deux lignes ci-dessous.
+
+     Le relevé écrit la pile `Satoshi, "Satoshi Placeholder", sans-serif` ;
+     « Satoshi Placeholder » est une fonte de mesure interne à Framer, elle
+     n'existe pas hors de ce site et n'est donc pas reprise.
+     ------------------------------------------------------------------------ */
+
+  --font-display: "Satoshi", system-ui, -apple-system, sans-serif;
+  --font-text: "Satoshi", system-ui, -apple-system, sans-serif;
+  /* ------------------------------------------------------------------------
+     TYPOGRAPHIE — corps, interlignes, approches
+     Toutes ces valeurs sont mesurées. Elles ne sont pas dérivées d'une gamme.
+     ------------------------------------------------------------------------ */
+
+  --text-hero: 72px;
+  --text-hero--line-height: 79.2px;
+  --text-display: 64px;
+  --text-display--line-height: 70.4px;
+  --text-title: 52px;
+  --text-title--line-height: 57.2px;
+  --text-title-caps: 50px;
+  --text-title-caps--line-height: 39px;
+  --text-stat: 40px;
+  --text-stat--line-height: 52px;
+  --text-subtitle: 32px;
+  --text-subtitle--line-height: 41.6px;
+  --text-eyebrow: 30px;
+  --text-eyebrow--line-height: 70px;
+  --text-lede: 24px;
+  --text-lede--line-height: 31.2px;
+  --text-lede-loose: 24px;
+  --text-lede-loose--line-height: 40px;
+  --text-kicker: 24px;
+  --text-kicker--line-height: 34px;
+  --text-label: 20px;
+  --text-label--line-height: 24px;
+  --text-intro: 18px; /* hero — le chapô */
+  --text-intro--line-height: 28.8px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+
+  /* ------------------------------------------------------------------------
+     LA GRAISSE DES TITRES — NON MESURÉE, décision explicite
+
+     Le relevé donne 700 sur tous les grands titres. La page est passée en
+     300 : c'est le traitement retenu sur le bandeau clients de la bande
+     noire (« Ils nous ont confié leur trace. »), et il vaut désormais pour
+     toute la page. À ces corps — 72, 64, 52px — une graisse 700 fait un mur ;
+     une graisse 300 laisse voir le dessin des lettres, et c'est l'italique
+     de l'emphase qui porte l'accent, plus le gras.
+
+     Un seul jeton pour que la décision se règle d'un endroit, et pour que
+     l'écart avec le relevé reste visible partout où il s'applique.
+
+     DEUX EXCEPTIONS, toutes deux voulues :
+
+     — le BLOC D'ACCROCHE (`hero.css`) garde ses 700 mesurés. C'est le
+       premier écran ; il ouvre la page, il ne s'aligne pas sur elle ;
+     — les rôles de PLUS PETIT corps (h3, h4, h5, chiffres, surtitres, le mot
+       géant du pied de page) gardent leur graisse mesurée : sous 40px, une
+       graisse 300 ne fait plus de la légèreté, elle fait de la pâleur.
+     ------------------------------------------------------------------------ */
+
+  --weight-title: 300;
+
+  --tracking-title: -2px;
+  --tracking-title-caps: -1.6px;
+  --tracking-lede: -1.2px;
+  --tracking-body: -1px;
+  --tracking-label: -0.4px;
+  --tracking-chip: 0.52px;
+
+  /* ------------------------------------------------------------------------
+     RAYONS — chaque valeur distincte des relevés, sans regroupement.
+     999px et 9999px sont deux écritures du même rendu, mais deux décisions
+     différentes du site : elles restent séparées.
+     ------------------------------------------------------------------------ */
+
+  --radius-frame-inner-sm: 4px; /* hero — image dans un cadre à 8px  */
+  --radius-media-sm: 4px;
+  --radius-frame-sm: 8px; /* hero — cadre photo, variante serrée */
+  --radius-frame-inner: 12px; /* hero — image dans un cadre à 16px */
+  --radius-media: 14px;
+  --radius-frame: 16px; /* hero — cadre photo, variante large   */
+  --radius-tile: 20px;
+  --radius-card: 28px;
+  --radius-panel: 32px;
+  --radius-button: 40px;
+  --radius-cta: 42px;
+  --radius-round: 100px;
+  --radius-pill: 999px;
+  --radius-full: 9999px;
+
+  /* ------------------------------------------------------------------------
+     OMBRES — géométrie mesurée, couleurs transposées.
+
+     Les deux ombres internes CLAIRES des relevés (un liseré blanc sur fond
+     noir) deviennent des ombres internes SOMBRES : sur une page claire, un
+     liseré clair ne dessine plus rien. La géométrie — décalage, flou,
+     étalement — est reprise au pixel près.
+
+     L'ombre de la carte 28px est verte chez MYROR (rgba(56,112,67,.1)) :
+     une couleur qui n'appartient à aucune de ses variantes visibles. Elle
+     passe sur Châtaigne à la même opacité.
+     ------------------------------------------------------------------------ */
+
+  --shadow-pill: 0 8px 30px 0 rgba(20, 20, 20, 0.18); /* MYROR rgba(0,0,0,.45) */
+  --shadow-medallion: inset 0 0 4px 0 rgba(20, 20, 20, 0.35),
+    0 12px 24px 0 rgba(20, 20, 20, 0.1); /* MYROR inset blanc pur */
+  --shadow-tile: inset 0 14px 7px 0 rgba(20, 20, 20, 0.06),
+    inset 1px 2px 4px 0 rgba(20, 20, 20, 0.04); /* MYROR inset rgba(255,255,255,.12) */
+  --shadow-card: 0 3px 6px 0 rgba(119, 64, 42, 0.1); /* MYROR rgba(56,112,67,.1) */
+  --shadow-cta-nav: inset 0 0 6px 4px rgba(168, 118, 85, 0.64),
+    inset 0 -4px 9px 0 rgba(168, 118, 85, 0.25); /* MYROR insets bleus */
+  --shadow-cta-primary: inset 0 -4px 4px 0 rgba(0, 0, 0, 0.25),
+    inset 0 4px 4px 0 rgba(0, 0, 0, 0.25); /* MYROR : noir, conservé tel quel */
+
+  /* ------------------------------------------------------------------------
+     FLOU — la pastille flottante est la seule surface floutée mesurée.
+     ------------------------------------------------------------------------ */
+
+  --blur-pill: 10px;
+
+  /* ------------------------------------------------------------------------
+     GÉOMÉTRIE DES BANDES
+     ------------------------------------------------------------------------ */
+
+  --width-band-narrow: 1120px; /* bande 2 */
+  --width-band: 1240px; /* bandes 3 à 6, 11 à 13 */
+  --width-band-wide: 1400px; /* max-width de la bande 8 */
+
+  --band-padding-top: 120px;
+  --band-padding-inline: 40px;
+  --band-gap: 56px;
+  --band-gap-loose: 72px;
+  --band-gap-tight: 30px;
+  --band-gap-faq: 48px;
+  --band-gap-footer: 36px;
+
+  /* ------------------------------------------------------------------------
+     POINTS DE RUPTURE — mesurés, pas choisis
+
+     Le relevé de la variante étroite du bloc d'accroche expose les requêtes
+     média de la feuille de style du site :
+
+         (min-width: 1200px)                        → large
+         (max-width: 1199px) and (min-width: 810px) → moyen
+         (max-width: 809px)  and (min-width: 0)     → étroit
+
+     Ce sont les SEULS points de rupture du projet, et ils viennent du site,
+     pas d'une convention.
+
+     Ces deux jetons remplacent les paliers par défaut de Tailwind : `medium:`
+     et `large:` correspondent désormais aux vrais seuils. Attention, une
+     règle `@media` ne peut PAS lire une custom property — les valeurs sont
+     donc réécrites en toutes lettres partout où une requête média les
+     emploie. Les changer ici ne suffit pas.
+     ------------------------------------------------------------------------ */
+
+  --breakpoint-medium: 810px;
+  --breakpoint-large: 1200px;
+
+  /* ------------------------------------------------------------------------
+     PROFONDEUR — un seul z-index mesuré, celui de la pastille flottante.
+
+     `--z-header` n'est pas mesuré : le relevé donne la barre en
+     `position: fixed` mais aucun empilement. 50 est une valeur CHOISIE, assez
+     haute pour passer devant les treize bandes (qui vivent toutes à 1) et
+     assez basse pour rester sous une éventuelle surcouche modale.
+     ------------------------------------------------------------------------ */
+
+  --z-pill: 2147483000;
+  --z-header: 50;
+  --z-tile: 1;
+}

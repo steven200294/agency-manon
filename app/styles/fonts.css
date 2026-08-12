@@ -1,0 +1,68 @@
+/* ==========================================================================
+   fonts.css — la fonte du projet
+   ==========================================================================
+
+   SATOSHI, et elle seule. Titres, texte, libellés, tout.
+
+   Ce n'est pas un substitut : c'est exactement la fonte avec laquelle les
+   relevés ont été mesurés. Le relevé du titre `h1` donne
+   `font-family: Satoshi, "Satoshi Placeholder", sans-serif` et fournit
+   l'URL de son fichier ; l'URL en question est celle du poids 700 de
+   Satoshi sur Fontshare, vérifiée identique.
+
+   Conséquence importante : chaque corps, chaque interligne et chaque
+   approche de ce projet a été mesuré SUR CETTE FONTE. Les longueurs de
+   lignes et les retours à la ligne sont donc ceux du site d'origine, à la
+   traduction du texte près. Aucun recomposition à prévoir.
+
+   Un seul fichier, variable de 300 à 900 : les quatre graisses employées
+   dans le projet (400 sur le body, 500 sur les capitales et le texte
+   courant, 600 sur les libellés de boutons, 700 sur les titres) sortent
+   toutes de ces 42 Ko. Une fonte statique par graisse en aurait coûté
+   quatre fois plus.
+
+   Auto-hébergée dans `public/fonts/`, pas chargée depuis un CDN tiers :
+   pas de requête vers un domaine externe, pas de dépendance à la
+   disponibilité de Fontshare, et le rendu ne dépend pas du réseau d'un
+   tiers.
+
+   Licence : ITF Free Font License — usage personnel et commercial autorisé.
+   Source : https://www.fontshare.com/fonts/satoshi
+
+   ---------------------------------------------------------------------------
+   REVENIR AUX FONTES DU BRANDBOARD
+
+   Le brandboard The Trace Agency prévoit Tenez (titres) et Range Sans
+   (texte). Pour les remettre : dépose leurs `.woff2` dans `public/fonts/`,
+   ajoute leurs `@font-face` ici, et repointe `--font-display` /
+   `--font-text` dans theme.css. Rien d'autre ne bouge — c'est tout l'intérêt
+   d'avoir gardé deux jetons distincts.
+
+   Attends-toi alors à ce que le texte se recompose : les mesures viennent
+   de Satoshi, pas d'elles.
+   ---------------------------------------------------------------------------
+   ========================================================================== */
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* L'italique, chargée pour la seule bande des cas clients : son relevé
+   compose les noms et les chiffres en serif italique, et l'italique y porte
+   tout le caractère du bloc. Un faux italique — l'oblique que le navigateur
+   fabrique en penchant le romain — casse les liaisons et les formes de
+   lettres qui font justement l'effet.
+
+   Elle n'est téléchargée que si une règle la demande : le navigateur ignore
+   un `@font-face` dont aucun texte n'a besoin. */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Variable-Italic.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}

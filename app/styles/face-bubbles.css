@@ -1,0 +1,202 @@
+/* ==========================================================================
+   face-bubbles.css — les visages qui entourent la bande des repères
+   ==========================================================================
+
+   AUCUNE VALEUR DE CE FICHIER N'EST MESURÉE. Positions, tailles, courbes,
+   durées : tout est décidé. Le relevé ne contient rien de tel.
+
+   Le mécanisme des trois couches emboîtées — parallaxe, respiration,
+   apparition — est expliqué en tête de `FaceBubbles.tsx`. Ce fichier ne fait
+   que l'habiller.
+   ========================================================================== */
+
+.face-bubbles {
+  /* La progression de la bande dans l'écran, écrite par le composant à
+     chaque image. 0 au repos : sans JavaScript, les bulles restent en place
+     au lieu de sauter. */
+  --p: 0;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  /* La composition ne prend aucun clic : tout ce qui est cliquable dans la
+     bande est au-dessus, et doit le rester. */
+  pointer-events: none;
+}
+
+/* COUCHE 1 — la position et la parallaxe.
+
+   `--p` va de -1 à 1 ; multiplié par la profondeur propre à la bulle, il
+   donne un déplacement de quelques dizaines de pixels sur toute la traversée
+   de l'écran. Les profondeurs négatives font remonter la bulle quand les
+   autres descendent : c'est ce croisement qui donne la sensation de plans
+   différents. */
+.face-bubble {
+  position: absolute;
+  top: var(--top);
+  left: var(--left, auto);
+  right: var(--right, auto);
+  width: var(--size);
+  height: var(--size);
+  transform: translate3d(0, calc(var(--p) * var(--depth)), 0);
+  will-change: transform;
+}
+
+/* COUCHE 2 — la respiration. Une oscillation lente, jamais synchronisée
+   d'une bulle à l'autre : chacune a sa durée, et `alternate` évite le
+   ressaut d'un cycle qui se rembobine. */
+.face-bubble__float {
+  width: 100%;
+  height: 100%;
+  animation: face-bubble-float var(--float) ease-in-out infinite alternate;
+}
+
+/* COUCHE 3 — l'apparition. La bulle arrive en montant et en grandissant, et
+   la courbe dépasse légèrement sa taille finale avant de s'y poser : c'est
+   ce léger rebond qui la fait exister comme un objet, pas comme un calque
+   qu'on allume. */
+.face-bubble__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-hairline);
+  /* La tuile du projet, celle des surfaces posées sur le canevas. Elle sert
+     de fond au visage dessiné, et de bord au portrait quand il arrivera. */
+  background-color: var(--color-surface-raised);
+  color: var(--color-accent);
+  box-shadow: 0 18px 40px -24px rgba(20, 20, 20, 0.5);
+
+  opacity: 0;
+  transform: translateY(18px) scale(0.72);
+  transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 720ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: var(--delay);
+}
+
+.face-bubbles.is-in .face-bubble__inner {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* La photo remplit le cercle et se coupe : les portraits fournis ne feront
+   jamais tous le même format. */
+.face-bubble__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Le visage dessiné, quand aucune photo n'est fournie. Il occupe un peu plus
+   de la moitié du cercle — un sourire collé au bord perdrait sa lisibilité à
+   56px de diamètre. */
+.face-bubble__inner svg {
+  width: 58%;
+  height: 58%;
+  opacity: 0.75;
+}
+
+@keyframes face-bubble-float {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(6px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ÉTROIT
+
+   Les quatre bulles LATÉRALES vivent dans la marge qui borde la colonne de
+   contenu. Cette marge n'existe qu'au-delà de 1440px : en dessous, elles
+   sont retirées plutôt que rapetissées. Une bulle posée sur les chiffres
+   n'est plus une composition, c'est une gêne.
+
+   Les quatre bulles d'ANGLE restent à toutes les largeurs — le titre et la
+   note sont courts et centrés, les angles leur restent étrangers. Elles
+   rétrécissent en deux temps pour ne pas serrer le texte.
+   -------------------------------------------------------------------------- */
+
+/* 1520px : c'est la largeur en dessous de laquelle la plus grosse bulle
+   latérale (116px) ne tient plus entre le bord de l'écran et la colonne de
+   contenu — 620px de demi-colonne, 12px de jeu, 116px de bulle, soit 748px
+   de part et d'autre du centre. */
+@media (max-width: 1519px) {
+  .face-bubble--side {
+    display: none;
+  }
+}
+
+@media (max-width: 1199px) {
+  .face-bubble--corner {
+    width: calc(var(--size) * 0.78);
+    height: calc(var(--size) * 0.78);
+  }
+}
+
+/* Sous 810px, le texte occupe toute la largeur : il n'y a plus d'angle libre
+   à hauteur de contenu. Les quatre bulles se replient dans les deux seules
+   zones vides qui restent — le dégagement au-dessus du titre et celui sous
+   la note. Leurs positions sont donc réécrites, et non pas seulement leur
+   taille.
+
+   Les bulles sont les quatre premiers enfants de la couche, dans l'ordre du
+   composant : deux en haut, deux en bas. */
+@media (max-width: 809px) {
+  .face-bubble--corner {
+    width: calc(var(--size) * 0.52);
+    height: calc(var(--size) * 0.52);
+  }
+
+  .face-bubble:nth-child(1) {
+    top: 1%;
+    left: 2%;
+  }
+
+  .face-bubble:nth-child(2) {
+    top: 3%;
+    right: 3%;
+  }
+
+  .face-bubble:nth-child(3) {
+    top: 90%;
+    left: 3%;
+  }
+
+  .face-bubble:nth-child(4) {
+    top: 91%;
+    right: 2%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOUVEMENT RÉDUIT
+
+   La règle globale de `motion.css` ramène déjà toutes les durées à 0,01ms —
+   mais une transition instantanée depuis `opacity: 0` laisserait les bulles
+   invisibles tant que l'observateur n'a pas déclenché. Elles sont donc
+   posées directement dans leur état final, et le composant n'installe même
+   pas l'écouteur de défilement.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .face-bubble {
+    transform: none;
+    will-change: auto;
+  }
+
+  .face-bubble__float {
+    animation: none;
+  }
+
+  .face-bubble__inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

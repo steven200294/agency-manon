@@ -1,0 +1,243 @@
+/* ==========================================================================
+   fullscreen.css — une section par écran
+   ==========================================================================
+
+   ⚠ RIEN ICI N'EST MESURÉ.
+
+   Le relevé donne aux douze bandes des hauteurs très différentes — 754px,
+   768px, 685px, 1616px — toutes dictées par leur contenu au moment de la
+   capture. Aucune n'est un écran plein. Seul le bloc d'accroche l'était, et
+   pour lui c'est une mesure : `height: 977px` à un viewport de 977px.
+
+   Ce fichier étend cette hauteur à toutes les sections qui suivent. C'est une
+   demande explicite, et c'est assumé.
+
+   ---------------------------------------------------------------------------
+   `min-height`, JAMAIS `height`
+
+   C'est la décision qui compte dans ce fichier. Une section plus courte que
+   l'écran s'étire pour le remplir ; une section plus longue le dépasse et
+   défile normalement.
+
+   Écrire `height` aurait donné l'inverse : le contenu qui dépasse serait
+   sorti de sa boîte, se serait superposé à la section suivante, et aurait
+   disparu sous elle. Trois sections sont dans ce cas et le resteront tant
+   que leur texte ne sera pas raccourci — elles sont listées plus bas.
+
+   L'autre moitié de la règle est `justify-content: center` : sans elle, une
+   section courte étirée à un écran plein collerait son contenu en haut et
+   laisserait un grand vide en bas. Le relevé mesure `flex-start` sur la
+   plupart des bandes ; c'est donc aussi un écart.
+
+   Les 32px retirés sont le dégagement que le canevas pose au-dessus pour la
+   barre fixe. Sans cette soustraction, chaque section dépasserait l'écran
+   d'exactement cette hauteur, et le cumul ferait dériver toute la page.
+   ---------------------------------------------------------------------------
+
+   SECTIONS QUI DÉPASSENT ENCORE, et pourquoi
+
+   — Le focus UGC : deux colonnes de définition, quatre chiffres, un bloc de
+     valeur ajoutée, un bandeau de logos et un bouton. C'est la plus longue
+     section du document.
+   — Les cas clients : deux cartes qui portent chacune trois chiffres, un
+     paragraphe et une citation.
+   — Les repères et l'émission : deux blocs distincts dans une seule bande.
+
+   Les raccourcir est une décision éditoriale, pas technique. Voir MISSING.md.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   LE SÉLECTEUR VISE DEUX PARENTS, ET IL LE FAUT
+
+   Les sections sont normalement enfants DIRECTS de `.page-content`. Deux
+   d'entre elles ne le sont plus : l'empilement au défilement des bandes 3 et
+   4 les a placées dans une enveloppe `.stack-cases`, qui borne la portée du
+   `position: sticky` (voir cases.css).
+
+   Un sélecteur en `>` sur `.page-content` seul cessait donc de les atteindre.
+   Elles perdaient leur écran plein, leur centrage et leur padding — la bande
+   noire remontait de deux cents pixels et empiétait sur la bande d'en dessous
+   bien avant de la rejoindre. C'était le symptôme.
+
+   `:is()` liste les deux parents possibles sans toucher à la spécificité :
+   ses arguments sont deux classes simples, exactement comme avant.
+   -------------------------------------------------------------------------- */
+
+/* Toutes les bandes sauf l'en-tête, qui est en `position: fixed` et n'a rien
+   à voir avec le flux, et sauf le bloc d'accroche, qui porte déjà sa propre
+   hauteur mesurée dans `hero.css`. */
+:is(.page-content, .stack-cases) > section:not(.hero) {
+  min-height: calc(100svh - 32px);
+  justify-content: center;
+}
+
+/* Les bandes mesurées portent 120px de padding haut. Sur une section qui
+   fait désormais un écran plein ET qui centre son contenu, ce padding ne
+   sert plus à séparer de la bande précédente : il ne fait que réduire la
+   place disponible au centre. Il tombe à 64px — assez pour que rien ne
+   touche le bord, pas assez pour manger l'écran.
+
+   Le padding LATÉRAL, lui, ne bouge pas : c'est lui qui tient la largeur de
+   lecture, et il reste mesuré. */
+:is(.page-content, .stack-cases) > section:not(.hero) {
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+/* Le pied de page n'est plus concerné : il est sorti de `.page-content` et
+   porte sa propre hauteur d'un écran, en rideau. Voir footer.css. */
+
+/* La section noire porte son propre padding de 40px, mesuré sur son relevé.
+   Il est conservé : c'est la seule bande dont l'espacement vertical vient
+   d'une mesure qui lui est propre. */
+:is(.page-content, .stack-cases) > section.cases {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   CE QUE LA CONTRAINTE A COÛTÉ
+
+   Mesuré sur un viewport de 813px de haut : neuf sections sur treize
+   tenaient déjà pile-poil. Quatre dépassaient, et il a fallu les resserrer.
+   Ces valeurs ne sont donc pas des choix esthétiques — ce sont les seules
+   qui font entrer chaque section dans un écran.
+
+     focus UGC             1199px → le bloc « valeur ajoutée » est passé en
+                                    troisième colonne au lieu d'être empilé,
+                                    et les écarts internes ont fondu
+     méthode Trace          904px → padding des tuiles et écarts réduits
+     repères + émission     982px → écarts réduits
+     cas clients            895px → padding du panneau réduit
+
+   Si le texte s'allonge, ces sections redéborderont. Le raccourcir est une
+   décision éditoriale, pas technique. Voir MISSING.md.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 810px) {
+  /* Focus UGC — la section la plus longue du document. */
+  .band-team {
+    gap: 36px;
+  }
+
+  .band-team .ugc {
+    gap: 32px;
+  }
+
+  .band-team .ugc__figures {
+    gap: 16px;
+  }
+
+  .band-team .ugc__figure-value {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  /* Méthode Trace — quatre tuiles empilées. */
+  .band-fit {
+    gap: 32px;
+  }
+
+  .band-fit .method-step {
+    padding: 18px 22px;
+  }
+
+  .band-fit .method-step__number {
+    font-size: 32px;
+    line-height: 35.2px;
+  }
+
+  /* Le bloc de l'émission. Les repères chiffrés en sont sortis : ils ont
+     désormais leur propre section, ce qui a réglé le dépassement de cette
+     bande sans rien resserrer. */
+
+  /* Cas clients — le panneau de chiffres porte 32px de padding mesuré ; il
+     descend à 24px, et son écart interne de 24 à 18. C'est le seul endroit du
+     fichier qui touche à une valeur mesurée du relevé PRSNL. */
+  .cases .case__panel {
+    padding: 24px;
+    gap: 18px;
+  }
+
+  .cases {
+    gap: 28px;
+  }
+
+  .cases .case__summary p {
+    font-size: 16px;
+    line-height: 22.4px;
+  }
+
+  .cases .case__quote p {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  /* ------------------------------------------------------------------------
+     SECOND TOUR — les trois sections qui dépassaient encore
+
+     Après le premier resserrement, le focus UGC était encore à 953px et les
+     repères à 918px, pour un écran utile de 781px. Ce qui suit va chercher
+     les pixels là où ils sont : dans les très grands corps et les très
+     grands interlignes.
+     ------------------------------------------------------------------------ */
+
+  /* Le sous-titre du focus UGC est un h2 (52px) posé sous un autre h2 : deux
+     titres pleins l'un sur l'autre coûtent 120px à eux seuls. Le second
+     descend à 34px — il reste un sous-titre, il cesse d'être un second
+     titre. */
+  .band-team .t-h2-accent {
+    font-size: 34px;
+    line-height: 37.4px;
+  }
+
+  .band-team .medallion {
+    padding: 0;
+  }
+
+  /* Le surtitre de la bande 10 est mesuré à 30px de corps pour 70px
+     d'interligne — 40px de vide pour une seule ligne. C'est une décision du
+     site relevé, très aérée, et c'est exactement le genre de valeur qu'une
+     contrainte de hauteur ne pardonne pas. Ramené à 44px, soit le rapport
+     de 110 % qu'emploient tous les autres titres du projet. */
+  .band-learn-more .t-h3-eyebrow {
+    line-height: 44px;
+  }
+
+  .band-learn-more .t-h2-caps {
+    font-size: 42px;
+    line-height: 34px;
+  }
+
+}
+
+/* --------------------------------------------------------------------------
+   Sous 810px
+
+   Un écran de téléphone fait 700 à 900px de haut. Y tenir une section
+   entière laisse beaucoup moins de place qu'un écran de bureau, et le texte,
+   lui, ne raccourcit pas. La contrainte de hauteur est donc levée : les
+   sections reprennent la hauteur de leur contenu.
+
+   C'est volontaire. Forcer un écran plein sur mobile produit soit du texte
+   illisible, soit de grands vides — jamais le rythme qu'on cherchait au
+   large.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 809px) {
+  /* Le sélecteur vise `.page-content`, pas `.page-canvas` : depuis le pied
+     de page en rideau, les sections sont dans la couche opaque et non plus
+     enfants directs du canevas. Resté sur l'ancien sélecteur, il ne
+     s'appliquait plus — et les sections gardaient un écran plein sur
+     téléphone, ce qui est exactement ce que ce bloc doit empêcher. */
+  .page-content > section:not(.hero),
+  .stack-cases > section:not(.hero) {
+    min-height: 0;
+  }
+
+  .page-content > section:not(.hero),
+  .stack-cases > section:not(.hero) {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+}

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   canvas.css — le fond de page beige, animé
+   ==========================================================================
+
+   ⚠ RIEN ICI N'EST MESURÉ.
+
+   Le relevé est formel sur ce point, et il le dit deux fois : le canevas est
+   PLAT. `body` et le wrapper pleine largeur portent tous les deux un simple
+   `background-color`, sans dégradé, sans image, sans lueur floutée. Le seul
+   dégradé de la page relevée est celui d'un bloc isolé, pas du fond.
+
+   Ce fichier ajoute donc quelque chose que le site mesuré n'a pas. C'est une
+   demande explicite, et c'est assumé.
+
+   ---------------------------------------------------------------------------
+   COMMENT C'EST FAIT, ET POURQUOI COMME ÇA
+
+   Trois lueurs radiales très diffuses, dans les tons du brandboard, qui
+   dérivent lentement sur le fond Dentelle. Aucune image, aucun canvas,
+   aucun JavaScript : trois dégradés CSS sur un pseudo-élément fixe.
+
+   Quatre contraintes ont dicté la forme :
+
+   1. LISIBILITÉ. Les lueurs plafonnent à 22 % d'opacité et restent dans la
+      même famille chaude que le fond. Un fond animé qui fait varier le
+      contraste sous le texte rend la lecture pénible ; celui-ci reste dans
+      une plage où le texte Nuit garde 12:1 partout.
+
+   2. COÛT. `transform` et `opacity` uniquement — les deux seules propriétés
+      qu'un navigateur anime sans recalculer la mise en page. Le fond est sur
+      sa propre couche (`will-change: transform`) et ne repeint jamais le
+      contenu au-dessus.
+
+   3. LENTEUR. Des cycles de 28 à 44 secondes, volontairement décalés et
+      premiers entre eux pour que le motif ne se répète pas visiblement. Un
+      fond qu'on remarque est un fond raté.
+
+   4. RESPECT DES PRÉFÉRENCES. `prefers-reduced-motion` arrête tout. La règle
+      globale de `motion.css` s'en charge déjà, mais elle est répétée ici pour
+      que le fichier reste correct si on le déplace.
+
+   Les durées, les opacités et les positions sont des CHOIX. Elles sont
+   toutes regroupées en jetons pour être réglées d'un endroit.
+   ========================================================================== */
+
+:root {
+  --canvas-glow-duration-a: 44s;
+  --canvas-glow-duration-b: 36s;
+  --canvas-glow-duration-c: 28s;
+  --canvas-glow-opacity: 0.22;
+}
+
+/* Le fond vit sur un pseudo-élément fixe, derrière tout le contenu.
+
+   `position: fixed` plutôt qu'un fond sur le canevas : les lueurs restent en
+   place pendant le défilement au lieu de filer avec la page. Une lueur qui
+   défile se lit comme un objet ; une lueur fixe se lit comme de la lumière.
+
+   `z-index: 0` avec un contenu à `z-index: 1` — pas de valeur négative, qui
+   ferait passer le fond derrière la couleur de fond du canevas et le rendrait
+   invisible. */
+/* Les lueurs vivent sur `.page-content`, pas sur `.page-canvas`.
+
+   Raison : `.page-content` est la couche OPAQUE qui passe devant le pied de
+   page fixe (voir footer.css). Si les lueurs restaient sur le canevas, elles
+   seraient recouvertes par cette couche et on ne verrait plus rien. */
+.page-content {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  background-color: var(--color-canvas);
+}
+
+.page-content::before {
+  content: "";
+  position: fixed;
+  inset: -20vmax; /* les lueurs débordent : aucun bord ne doit apparaître */
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    radial-gradient(
+      38vmax 38vmax at 18% 22%,
+      rgba(168, 118, 85, var(--canvas-glow-opacity)) 0%,
+      rgba(168, 118, 85, 0) 62%
+    ),
+    radial-gradient(
+      44vmax 44vmax at 82% 34%,
+      rgba(119, 64, 42, calc(var(--canvas-glow-opacity) * 0.7)) 0%,
+      rgba(119, 64, 42, 0) 60%
+    ),
+    radial-gradient(
+      52vmax 52vmax at 50% 88%,
+      rgba(168, 118, 85, calc(var(--canvas-glow-opacity) * 0.55)) 0%,
+      rgba(168, 118, 85, 0) 58%
+    );
+
+  animation: canvas-drift var(--canvas-glow-duration-a) ease-in-out infinite
+    alternate;
+  will-change: transform;
+}
+
+/* Une seconde couche, plus lente et décalée, qui croise la première. Deux
+   couches qui dérivent à des vitesses différentes suffisent à ce que l'œil
+   ne trouve plus de motif — avec une seule, le va-et-vient se voit. */
+.page-content::after {
+  content: "";
+  position: fixed;
+  inset: -20vmax;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image:
+    radial-gradient(
+      34vmax 34vmax at 72% 12%,
+      rgba(168, 118, 85, calc(var(--canvas-glow-opacity) * 0.8)) 0%,
+      rgba(168, 118, 85, 0) 60%
+    ),
+    radial-gradient(
+      40vmax 40vmax at 12% 72%,
+      rgba(119, 64, 42, calc(var(--canvas-glow-opacity) * 0.5)) 0%,
+      rgba(119, 64, 42, 0) 58%
+    );
+
+  animation: canvas-drift-slow var(--canvas-glow-duration-b) ease-in-out
+    infinite alternate;
+  will-change: transform;
+}
+
+/* Le contenu passe devant les deux couches de lueur.
+
+   Deux pièges, tous les deux rencontrés :
+
+   1. `z-index` SEULEMENT — surtout pas `position: relative`. Toutes les
+      bandes sont déjà positionnées par `sections.css`, et l'en-tête est en
+      `position: fixed` : lui imposer `relative` le décrocherait du haut de
+      l'écran et le ferait défiler avec la page.
+
+   2. L'EN-TÊTE N'EST PAS CONCERNÉ. Il est enfant direct de `.page-canvas`,
+      pas de `.page-content` : son `z-index: 50` reste intact. C'était le
+      piège de la première version, où `.page-canvas > *` le ramenait à 1 et
+      laissait la bande noire lui passer devant au défilement. */
+.page-content > * {
+  z-index: 1;
+}
+
+/* Deux dérives distinctes. L'amplitude est en pourcentage de la couche, qui
+   débordant déjà de 20vmax, ne découvre jamais de bord. */
+@keyframes canvas-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes canvas-drift-slow {
+  from {
+    transform: translate3d(2%, 3%, 0) scale(1.06);
+  }
+  to {
+    transform: translate3d(-2%, -3%, 0) scale(1);
+  }
+}
+
+/* Une préférence système d'abord : le fond se fige, les lueurs restent.
+   Répété ici volontairement — `motion.css` porte déjà la règle globale, mais
+   ce fichier doit rester juste s'il est déplacé. */
+@media (prefers-reduced-motion: reduce) {
+  .page-canvas::before,
+  .page-content::after {
+    animation: none;
+  }
+}

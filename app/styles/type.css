@@ -1,0 +1,366 @@
+/* ==========================================================================
+   type.css — un rôle typographique par classe
+   ==========================================================================
+
+   Chaque classe reproduit un rôle mesuré : corps, graisse, interligne,
+   approche, casse et alignement viennent du relevé sans modification.
+
+   Deux substitutions par rapport au relevé, et deux seulement :
+     — la famille (Satoshi → Tenez, Inter → Range Sans),
+     — la couleur (voir theme.css).
+
+   Les rôles ne sont PAS dérivés d'une gamme de tailles : le relevé dit
+   lui-même quel corps porte quel rôle. Deux titres de même niveau qui
+   rendent différemment sont deux classes, pas une moyenne.
+
+   `-webkit-text-fill-color` / `-webkit-text-stroke-color` sont repris parce
+   que le relevé les liste comme décoration portée par l'élément. Ils
+   répètent la couleur : leur effet est nul tant que rien ne les surcharge,
+   mais les retirer serait retirer une décision.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TITRES — famille Tenez
+   -------------------------------------------------------------------------- */
+
+/* h1, variante 1 sur 2 — le titre le plus grand de la page (2 occurrences). */
+.t-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-hero); /* 72px */
+  font-weight: var(--weight-title);
+  line-height: var(--text-hero--line-height); /* 79.2px */
+  letter-spacing: var(--tracking-title); /* -2px */
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h1, variante 2 sur 2 — un cran en dessous (1 occurrence).
+   Même corps que l'emphase dans les titres : c'est le corps sur lequel les
+   deux se raccordent quand une emphase est enchâssée dans ce titre. */
+.t-h1-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display); /* 64px */
+  font-weight: var(--weight-title);
+  line-height: var(--text-display--line-height); /* 70.4px */
+  letter-spacing: var(--tracking-title); /* -2px */
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h2, variante 2 sur 4 — le titre de section courant, centré (4 occurrences). */
+.t-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-title); /* 52px */
+  font-weight: var(--weight-title);
+  line-height: var(--text-title--line-height); /* 57.2px */
+  letter-spacing: var(--tracking-title); /* -2px */
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h2, variante 3 sur 4 — même type, aligné à gauche (2 occurrences).
+   L'alignement est la seule différence : c'est quand même une décision. */
+.t-h2-left {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--tracking-title);
+  text-align: left;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h2, variante 4 sur 4 — le seul titre coloré de la page (1 occurrence).
+   MYROR : rgb(186,124,121). Ici Terre d'Ombre, seul ton chaud du brandboard
+   qui tienne le contraste sur Nuit. */
+.t-h2-accent {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--tracking-title);
+  text-align: left;
+  color: var(--color-accent);
+  -webkit-text-fill-color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+}
+
+/* h2, variante 1 sur 4 — capitales, interligne plus serré que le corps
+   (50px de corps pour 39px d'interligne : les lignes se chevauchent
+   volontairement). Graisse 500, pas 700. 1 occurrence, dans la bande 10. */
+.t-h2-caps {
+  font-family: var(--font-display);
+  font-size: var(--text-title-caps); /* 50px */
+  font-weight: var(--weight-title);
+  line-height: var(--text-title-caps--line-height); /* 39px */
+  letter-spacing: var(--tracking-title-caps); /* -1.6px */
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h3, variante 1 sur 2 — les chiffres clés (4 occurrences). Le seul rôle de
+   titre que MYROR colore en accent. */
+.t-h3-stat {
+  font-family: var(--font-display);
+  font-size: var(--text-stat); /* 40px */
+  font-weight: 700;
+  line-height: var(--text-stat--line-height); /* 52px */
+  letter-spacing: var(--tracking-title); /* -2px */
+  text-align: left;
+  color: var(--color-accent);
+  -webkit-text-fill-color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+}
+
+/* h3, variante 2 sur 2 — le surtitre en capitales de la bande 10
+   (1 occurrence). Interligne 70px pour 30px de corps : très aéré. */
+.t-h3-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--text-eyebrow); /* 30px */
+  font-weight: 700;
+  line-height: var(--text-eyebrow--line-height); /* 70px */
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h4, variante 1 sur 3 — intitulé de carte, à gauche (5 occurrences). */
+.t-h4 {
+  font-family: var(--font-display);
+  font-size: var(--text-subtitle); /* 32px */
+  font-weight: 700;
+  line-height: var(--text-subtitle--line-height); /* 41.6px */
+  text-align: left;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* h4, variante 2 sur 3 — centré et atténué (4 occurrences). */
+.t-h4-center {
+  font-family: var(--font-display);
+  font-size: var(--text-subtitle);
+  font-weight: 700;
+  line-height: var(--text-subtitle--line-height);
+  text-align: center;
+  color: var(--color-text-secondary);
+  -webkit-text-fill-color: var(--color-text-secondary);
+  -webkit-text-stroke-color: var(--color-text-secondary);
+}
+
+/* h4, variante 3 sur 3 — posé sur une surface claire (1 occurrence). */
+.t-h4-inverse {
+  font-family: var(--font-display);
+  font-size: var(--text-subtitle);
+  font-weight: 700;
+  line-height: var(--text-subtitle--line-height);
+  text-align: left;
+  color: var(--color-text-inverse);
+  -webkit-text-fill-color: var(--color-text-inverse);
+  -webkit-text-stroke-color: var(--color-text-inverse);
+}
+
+/* h5 — capitales, graisse 500, sans approche négative (1 occurrence). */
+.t-h5 {
+  font-family: var(--font-display);
+  font-size: var(--text-kicker); /* 24px */
+  font-weight: 500;
+  line-height: var(--text-kicker--line-height); /* 34px */
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-text-stroke-color: var(--color-text-primary);
+}
+
+/* Emphase dans un titre — le `span` coloré à l'intérieur d'un h1/h2
+   (11 occurrences). Corps 64px : il ne suit pas celui de son parent, c'est
+   une valeur propre.
+
+   C'est le rôle qui portait le rose `rgb(186,124,121)` chez MYROR — une
+   seconde couleur d'accent, distincte du bleu des chiffres.
+
+   Ici il prend Châtaigne, comme tout le reste des accents du projet : une
+   seule couleur chaude, pas deux. Terre d'Ombre était plus proche du rose
+   d'origine mais ne tenait que 3,3:1 sur Dentelle ; Châtaigne monte à 8,3:1
+   et s'accorde aux boutons. */
+.t-em-heading {
+  font-family: var(--font-display);
+  /* Le relevé fixe ce rôle à 64px, quel que soit le titre qui l'accueille.
+     Il suit désormais le corps de son parent : c'est ce que fait l'emphase
+     du bandeau clients, et une emphase plus GROSSE que le titre qui la
+     contient — cas d'un `span` de 64px dans un h2 de 52 — casse la ligne au
+     lieu de l'accentuer. ÉCART ASSUMÉ avec le relevé. */
+  font-size: 1em;
+  /* L'italique remplace le gras : c'est lui qui distingue maintenant
+     l'emphase, la graisse étant la même que celle du titre. L'italique réelle
+     de Satoshi est chargée (voir fonts.css) — ce n'est pas une pente
+     fabriquée par le navigateur. */
+  font-style: italic;
+  font-weight: var(--weight-title);
+  line-height: var(--text-display--line-height); /* 70.4px */
+  letter-spacing: var(--tracking-title); /* -2px */
+  color: var(--color-accent);
+  -webkit-text-fill-color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   TEXTE — famille Range Sans
+   -------------------------------------------------------------------------- */
+
+/* Paragraphe — le rôle le plus fréquent de la page (77 occurrences). */
+.t-body {
+  font-family: var(--font-text);
+  font-size: var(--text-body); /* 16px */
+  font-weight: 500;
+  line-height: var(--text-body--line-height); /* 24px */
+  letter-spacing: var(--tracking-body); /* -1px */
+  color: var(--color-text-secondary);
+  -webkit-text-fill-color: var(--color-text-secondary);
+  -webkit-text-stroke-color: var(--color-text-secondary);
+}
+
+/* Texte, variante 1 sur 4 — chapô serré (6 occurrences).
+   Approche -1.2px : c'est la seule du document, elle ne se confond pas avec
+   les -1px du corps. */
+.t-lede {
+  font-family: var(--font-text);
+  font-size: var(--text-lede); /* 24px */
+  font-weight: 500;
+  line-height: var(--text-lede--line-height); /* 31.2px */
+  letter-spacing: var(--tracking-lede); /* -1.2px */
+  color: var(--color-text-primary);
+}
+
+/* Chapô de la hero — mesuré sur le composant d'accroche, pas sur la page
+   longue : 18px, interligne 28,8px, approche -1px, centré, atténué.
+   MYROR : rgba(255,255,255,.65) → ici rgba(20,20,20,.65), même opacité. */
+.t-intro {
+  font-family: var(--font-text);
+  font-size: var(--text-intro); /* 18px */
+  line-height: var(--text-intro--line-height); /* 28.8px */
+  letter-spacing: var(--tracking-body); /* -1px */
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* Texte, variante 2 sur 4 — chapô aéré, aligné à gauche (5 occurrences). */
+.t-lede-loose {
+  font-family: var(--font-text);
+  font-size: var(--text-lede-loose); /* 24px */
+  font-weight: 500;
+  line-height: var(--text-lede-loose--line-height); /* 40px */
+  letter-spacing: var(--tracking-body); /* -1px */
+  text-align: left;
+  color: var(--color-text-secondary);
+}
+
+/* Texte, variante 3 sur 4 — libellé court et dense (2 occurrences). */
+.t-label {
+  font-family: var(--font-text);
+  font-size: var(--text-label); /* 20px */
+  font-weight: 600;
+  line-height: var(--text-label--line-height); /* 24px */
+  letter-spacing: var(--tracking-label); /* -0.4px */
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+/* Texte, variante 4 sur 4 — le texte à l'intérieur des boutons et des
+   cartes de témoignage (2 occurrences mesurées, mais c'est ce rôle que le
+   squelette place dans chaque `a` cliquable). */
+.t-action {
+  font-family: var(--font-text);
+  font-size: var(--text-lede-loose); /* 24px */
+  font-weight: 600;
+  line-height: var(--text-lede-loose--line-height); /* 40px */
+  letter-spacing: var(--tracking-body); /* -1px */
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+/* Emphase dans du texte — le `span` clair à l'intérieur d'un paragraphe
+   (140 occurrences). */
+.t-em-text {
+  font-family: var(--font-text);
+  font-size: var(--text-lede); /* 24px */
+  font-weight: 500;
+  line-height: var(--text-lede--line-height); /* 31.2px */
+  letter-spacing: var(--tracking-body); /* -1px */
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE — le seul rôle mesuré aux trois paliers
+
+   Le relevé de la variante étroite expose le préréglage `1x8i0c5`, celui du
+   titre de section, à ses trois définitions :
+
+       ≥ 1200px         52px
+       810px – 1199px   40px
+       < 810px          32px
+
+   L'interligne vaut 110 % partout — 57,2 / 44 / 35,2 — et l'approche reste
+   à -2px. Les quatre variantes de h2 partagent le même préréglage, donc la
+   bascule s'applique aux quatre.
+
+   AUCUN AUTRE RÔLE n'est mesuré à ces paliers. Les corps de 72px, 64px, 40px
+   et 32px des autres titres restent fixes à toutes les largeurs, faute de
+   mesure. Voir MISSING.md.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1199px) and (min-width: 810px) {
+  .t-h2,
+  .t-h2-left,
+  .t-h2-accent {
+    font-size: 40px;
+    line-height: 44px;
+  }
+}
+
+@media (max-width: 809px) {
+  .t-h2,
+  .t-h2-left,
+  .t-h2-accent {
+    font-size: 32px;
+    line-height: 35.2px;
+  }
+}
+
+/* Lien en ligne — rôle « link » variante 2 sur 10, le seul des dix qui porte
+   une vraie typographie propre plutôt que celle héritée du body
+   (7 occurrences). Interligne 40px pour 12px de corps : mesuré tel quel. */
+.t-link {
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: var(--tracking-body); /* -1px */
+  color: var(--color-accent);
+  -webkit-text-fill-color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Puce de navigation — approche +0.52px, la seule positive du document.
+   Portée par les liens « chip » (voir primitives.css). */
+.t-chip {
+  font-family: var(--font-text);
+  letter-spacing: var(--tracking-chip); /* 0.52px */
+}

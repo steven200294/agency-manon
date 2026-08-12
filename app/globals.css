@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "./styles/fonts.css";
+@import "./styles/theme.css";
+@import "./styles/type.css";
+@import "./styles/sections.css";
+@import "./styles/primitives.css";
+@import "./styles/header.css";
+@import "./styles/hero.css";
+@import "./styles/canvas.css";
+@import "./styles/content.css";
+@import "./styles/carousel.css";
+/* Avant `cases.css` : la bande noire règle la piste de logos par-dessus ses
+   valeurs par défaut, elle doit donc être lue après. */
+@import "./styles/logo-ticker.css";
+@import "./styles/face-bubbles.css";
+@import "./styles/cases.css";
+@import "./styles/footer.css";
+@import "./styles/fullscreen.css";
+@import "./styles/motion.css";
+
+/* Le seul fichier du projet dont aucune valeur n'est mesurée. Il empêche la
+   page de déborder en dessous de 1200px, faute de règles relevées. À lire —
+   et à supprimer — dès que les vraies règles responsive seront décidées. */
+@import "./styles/responsive-stopgap.css";
+
+/* ==========================================================================
+   Styles de base — `body`
+   ==========================================================================
+
+   Le relevé donne, sur le body :
+
+     color: rgb(0, 0, 0);
+     background-color: rgb(0, 0, 0);
+     font-family: sans-serif;
+     font-size: 12px;
+     font-weight: 400;
+     box-sizing: border-box;
+
+   Trois écarts assumés, tous les trois listés dans MISSING.md :
+
+   1. `color` — noir sur noir chez MYROR, c'est-à-dire invisible. Le site
+      s'en sort parce que chaque élément de texte pose sa propre couleur ;
+      tout texte non stylé y serait illisible. Reproduire ce piège n'a aucun
+      intérêt : la couleur de base passe sur le texte principal.
+
+   2. `font-family` — `sans-serif` chez MYROR signifie que le site ne pose
+      rien sur le body. Le brandboard, lui, désigne Range Sans comme fonte de
+      texte : c'est elle qui hérite.
+
+   3. `background-color` — Nuit remplace le noir pur, conformément au
+      brandboard.
+
+   Les valeurs `font-size: 12px` et `font-weight: 400` sont reprises telles
+   quelles. Elles ne sont jamais visibles : tous les rôles typographiques
+   posent leur propre corps.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--color-canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Le relevé mesure `display: list-item` sur 50 `li`, mais aucune puce ni
+   aucun retrait n'y figure : les listes de la page servent de conteneurs de
+   mise en page (carrousels, rubans). Les marges par défaut du navigateur ont
+   été soustraites du relevé, donc elles sont remises à zéro ici. */
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }

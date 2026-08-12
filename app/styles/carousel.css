@@ -1,0 +1,174 @@
+/* ==========================================================================
+   carousel.css — la piste horizontale claire, et le cadre d'image
+   ==========================================================================
+
+   ⚠ RIEN ICI N'EST MESURÉ.
+
+   Ce sont les mécaniques d'un composant apporté séparément, adaptées à la
+   charte. Les seules valeurs qui viennent d'ailleurs sont les jetons du
+   projet : rayons et approches mesurés, couleurs du brandboard.
+
+   La bande des cas clients garde sa propre piste, dans `cases.css` : sa
+   structure vient d'un relevé précis où l'en-tête, les contrôles et la piste
+   sont mesurés ensemble. Les deux ne sont pas interchangeables.
+   ========================================================================== */
+
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* La piste défile horizontalement, avec l'accroche du système. `proximity`
+   plutôt que `mandatory` : une accroche obligatoire empêche de s'arrêter
+   entre deux diapositives, ce qui rend le glissement au doigt rigide. */
+.carousel__viewport {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+/* La piste reçoit le focus au clavier pour être défilable aux flèches. Le
+   contour doit donc être visible — sinon on ne sait pas où on est. */
+.carousel__viewport:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-media); /* 14px, mesuré */
+}
+
+.carousel__track {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.carousel__item {
+  flex: 0 0 auto;
+  /* Une diapositive occupe l'essentiel de la piste, et la suivante dépasse.
+     C'est ce débordement qui dit au lecteur qu'il peut faire défiler. */
+  width: min(100%, 520px);
+  scroll-snap-align: start;
+}
+
+/* --------------------------------------------------------------------------
+   Les contrôles
+
+   Même principe que ceux de la section noire : deux états, et le bouton
+   s'éteint vraiment quand il n'y a plus rien à faire défiler de ce côté.
+   Ici sur fond clair, donc les couleurs s'inversent.
+   -------------------------------------------------------------------------- */
+
+.carousel__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carousel__control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border-hairline); /* mesuré */
+  border-radius: var(--radius-pill); /* 999px, mesuré */
+  background-color: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carousel__control:not(:disabled):hover {
+  color: var(--color-accent-contrast);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: scale(1.06);
+}
+
+.carousel__control:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.carousel__control:disabled {
+  color: var(--color-text-secondary);
+  opacity: 0.35;
+  cursor: default;
+}
+
+.carousel__control:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Le cadre d'image en attente
+
+   Rapport 16/9 — le format du composant de référence, et celui d'une capture
+   d'écran ou d'un extrait vidéo. Ce n'est PAS le rapport carré mesuré sur les
+   images du relevé : les deux coexistent, chacun là où il a un sens.
+
+   Le cadre tient sa hauteur tout seul grâce à `aspect-ratio` : quand les
+   visuels arriveront, la mise en page ne bougera pas d'un pixel.
+   -------------------------------------------------------------------------- */
+
+.media-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 24px;
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-tile); /* 20px, mesuré */
+  overflow: hidden;
+}
+
+.media-frame__label {
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: var(--tracking-chip); /* 0.52px, mesuré */
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   L'étiquette de section
+
+   Reprend le rayon et l'approche mesurés des puces du relevé. C'est le même
+   objet que l'étiquette des expertises, sorti en primitive parce que deux
+   sections l'emploient maintenant.
+   -------------------------------------------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: var(--tracking-chip);
+  text-transform: uppercase;
+  color: var(--color-accent-contrast);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-pill); /* 999px, mesuré */
+}

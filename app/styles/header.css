@@ -1,0 +1,370 @@
+/* ==========================================================================
+   header.css — la barre de navigation
+   ==========================================================================
+
+   Relevé sur `div.framer-y3542b`, 28 nœuds mesurés.
+
+   ---------------------------------------------------------------------------
+   CE QUE LES LARGEURS MESURÉES DISENT VRAIMENT
+
+   Le relevé donne 494,82px pour le bloc de marque et 621,18px pour le bloc de
+   droite. Aucune des deux n'est écrite ici, et le calcul explique pourquoi :
+
+       1180 (largeur accordée) − 32 (padding 2 × 16) = 1148
+       1148 − 32 (l'écart entre les deux blocs)      = 1116
+       nav 394,57 + 16 + bouton 210,609              =  621,18  ← contenu
+       1116 − 621,18                                 =  494,82  ← le reste
+
+   Le bloc de droite est donc dimensionné par son contenu, et le bloc de
+   marque prend tout ce qui reste : `flex: 1`. C'est aussi ce qui pousse la
+   navigation contre le bord droit alors que la racine est en
+   `justify-content: flex-start`.
+
+   Les seules vraies décisions de largeur sont `max-width: 1680px` sur la
+   racine et `width: 120px` sur l'emplacement du logo — cette dernière étant
+   remplacée, voir plus bas.
+   ---------------------------------------------------------------------------
+
+   Les noms de classes sont les miens.
+   ========================================================================== */
+
+/* Remise à zéro, portée au seul composant, spécificité nulle. Les mesures ont
+   été prises après soustraction des styles par défaut du navigateur : les
+   réappliquer ajouterait la marge que le navigateur pose sur un `p`. */
+:where(.header) :where(p) {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   #1 — la racine
+   -------------------------------------------------------------------------- */
+
+.header {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 32px;
+  width: 100%;
+  height: 100%;
+
+  /* Le relevé donne deux largeurs : `max-width: 1680px` (la décision) et
+     `width: 1180px` (ce que la barre occupait réellement à la capture).
+     C'est la seconde qui est reprise comme plafond : à 1680px, le logo et le
+     menu se retrouvent aux deux extrémités de l'écran, très loin l'un de
+     l'autre. 1180px les rapproche sans les coller — et reste une valeur
+     mesurée. */
+  max-width: 1180px;
+  padding-right: 16px;
+  padding-left: 16px;
+  font-family: var(--font-text);
+  box-sizing: border-box;
+}
+
+/* ÉCART : la hauteur mesurée est 56px, dans une bande de 64px. Les deux ont
+   grandi — 88px dans une bande de 96px — pour loger le logo The Trace Agency,
+   dont le rapport 313/171 est bien plus haut que celui du logotype relevé
+   (408/133). Le reste de la géométrie est intact : padding 16px, écarts de
+   32 / 16 / 8px, et tous les paddings des liens. */
+
+/* --------------------------------------------------------------------------
+   #2 — le bloc de marque
+
+   `flex: 1` remplace la largeur mesurée de 494,82px : c'est ce que le calcul
+   ci-dessus montre être la vraie règle. C'est lui qui repousse la navigation
+   à droite — l'écart entre le logo et le menu est donc ce qui reste de la
+   largeur de la barre, d'où le plafond à 1180px posé plus haut.
+   -------------------------------------------------------------------------- */
+
+.header__brand {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+/* #3 — le lien du logo.
+
+   Le relevé donne `width: 120px; aspect-ratio: 3.07692 / 1`, soit un
+   logotype horizontal de 120 × 39. Le logo fourni est au rapport 313/171 :
+   ni la largeur ni le rapport mesurés ne lui vont. Le composant `Logo` pose
+   sa propre largeur et déduit sa hauteur du fichier. */
+.header__logo {
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   #6 — le bloc de droite : navigation + bouton
+   -------------------------------------------------------------------------- */
+
+.header__right {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+}
+
+/* #7 — la navigation. Écart de 8px entre les entrées, contre 16px entre la
+   navigation et le bouton : le bouton est tenu à distance. */
+.header__nav {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+}
+
+/* #8, #12, #16, #20 — le conteneur d'une entrée. Aucun style propre au-delà
+   de sa position et de sa hauteur : sa largeur est celle de son libellé. */
+.header__nav-item {
+  position: relative;
+  align-self: stretch;
+}
+
+/* #9, #13, #17, #21 — le lien.
+
+   Deux détails qui vont ensemble : le lien occupe TOUTE la hauteur de la
+   barre alors que son libellé n'en fait que 24, et il porte
+   `overflow: hidden`. Une zone cliquable pleine hauteur qui masque ce qui
+   déborde, c'est la forme d'un remplissage animé au survol — mais aucun état
+   de survol n'a été mesuré, donc rien n'est écrit ici. Voir MISSING.md. */
+.header__nav-link {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  height: 100%;
+  padding: 6px 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* #10, #14, #18, #22 — le conteneur du libellé.
+
+   `white-space: pre` : une entrée de menu ne se coupe jamais en deux lignes.
+   `z-index: 1` : le libellé passe au-dessus de ce que le lien pourrait
+   contenir d'autre — encore un indice du remplissage au survol. */
+.header__nav-label {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: flex-start;
+  white-space: pre;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   #24, #25 — l'appel à l'action
+
+   Le lien lui-même est la variante 1 sur 4 déjà mesurée sur la page longue :
+   mêmes padding 12/14, même écart 10px, même rayon 42px, mêmes ombres
+   internes. Il réutilise donc `.btn-nav` sans rien redéfinir — d'où
+   l'absence de règle de fond ou de rayon ici.
+
+   Sa hauteur de 45px mesurée n'est pas écrite : elle tombe toute seule de
+   12 + 21 + 12.
+   -------------------------------------------------------------------------- */
+
+.header__cta-slot {
+  position: relative;
+}
+
+/* #26 — l'icône WhatsApp, RETIRÉE sur demande. C'était le seul élément de la
+   page à porter une couleur de service tiers (le vert `rgb(37, 211, 102)`),
+   donc la seule à ne relever ni du brandboard ni de sa transposition.
+   Le bouton n'a plus qu'un enfant, le libellé ; la règle qui dimensionnait
+   l'icône à 18 × 18 est partie avec le SVG. Voir SiteHeader.tsx et
+   MISSING.md. */
+
+/* #27 — le conteneur du libellé. `white-space: pre` : le libellé du bouton ne
+   se coupe jamais non plus. */
+.header__cta-label {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: flex-start;
+  white-space: pre;
+}
+
+/* #28 — le libellé. 14px pour 21px d'interligne, sans approche : c'est un
+   rôle propre à ce bouton, plus petit que les 16px des entrées de menu à
+   côté. Aucun autre élément du projet ne le porte. */
+.header__cta-text {
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  color: var(--color-accent-contrast);
+}
+
+/* ==========================================================================
+   VARIANTE ÉTROITE — RIEN DE CE QUI SUIT N'EST MESURÉ
+
+   ⚠ Aucun relevé ne contient de variante étroite de la barre. Le composant
+   mesuré n'existe qu'à une seule largeur, avec ses quatre entrées et son
+   bouton alignés. Tout ce bloc est une DÉCISION.
+
+   Deux paliers, tous les deux calés sur les seuils mesurés du site :
+
+     810px – 1199px  la barre mesurée tient encore, mais tout juste. Le logo
+                     descend à 110px pour lui laisser la place :
+                     110 + 32 + 394 + 16 + 210 = 762px, contre 778px
+                     disponibles à 810px de viewport. Ça passe.
+
+     < 810px         elle ne tient plus. Le menu et le bouton disparaissent
+                     de la barre et repassent dans un panneau plein écran.
+
+   Voir MISSING.md § 9.
+   ========================================================================== */
+
+/* Le bouton hamburger et le panneau n'existent qu'à l'étroit. */
+.header__burger,
+.header__panel {
+  display: none;
+}
+
+@media (max-width: 1199px) and (min-width: 810px) {
+  .header__logo img {
+    width: 110px !important;
+  }
+}
+
+@media (max-width: 809px) {
+  /* La barre se réduit au logo à gauche et au hamburger à droite. */
+  .header__right {
+    display: none;
+  }
+
+  .header {
+    justify-content: space-between;
+  }
+
+  .header__logo img {
+    width: 104px !important;
+  }
+
+  /* --------------------------------------------------------------------
+     Le bouton hamburger
+
+     44 × 44 : c'est la cible tactile minimale recommandée, pas une mesure.
+     Les trois traits reprennent la couleur de texte principale.
+     -------------------------------------------------------------------- */
+
+  .header__burger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .header__burger-line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--color-text-primary);
+    transition: transform 200ms ease, opacity 120ms ease;
+  }
+
+  /* Ouvert : les traits extérieurs pivotent en croix, celui du milieu
+     s'efface. Les 7px de translation valent la moitié de l'espace entre
+     deux traits (5px d'écart + 2px d'épaisseur), pour que les deux barres
+     se croisent exactement au centre. */
+  .header__burger[aria-expanded="true"] .header__burger-line:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .header__burger[aria-expanded="true"] .header__burger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .header__burger[aria-expanded="true"] .header__burger-line:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* --------------------------------------------------------------------
+     Le panneau
+
+     Plein écran, fond opaque — le contenu de la page ne doit pas
+     transparaître derrière un menu. `z-index: 1` le place au-dessus de la
+     barre sans approcher la pastille flottante.
+     -------------------------------------------------------------------- */
+
+  .header__panel {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    flex-direction: column;
+    gap: 40px;
+    padding: 24px 24px 48px;
+    background-color: var(--color-canvas);
+    z-index: 1;
+
+    /* Fermé : invisible, hors du parcours au clavier, et légèrement décalé
+       vers le haut pour que l'ouverture ait une direction. */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 200ms ease, transform 200ms ease,
+      visibility 0s linear 200ms;
+  }
+
+  .header__panel--open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 200ms ease, transform 200ms ease,
+      visibility 0s linear 0s;
+  }
+
+  /* Le logo est repris dans le panneau : sans lui, le menu ouvert ne dit
+     plus sur quel site on se trouve. Il occupe la place de celui de la
+     barre, qui passe dessous. */
+  .header__panel-top {
+    display: flex;
+    align-items: center;
+    height: 48px;
+  }
+
+  .header__panel-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .header__panel-link {
+    display: block;
+    padding: 10px 0;
+    cursor: pointer;
+  }
+
+  /* Le bouton d'action ferme le panneau, en bas, pleine largeur. */
+  .header__panel-cta {
+    display: flex;
+  }
+
+  .header__panel-cta .btn-nav {
+    flex: 1;
+    justify-content: center;
+  }
+}

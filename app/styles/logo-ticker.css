@@ -1,0 +1,228 @@
+/* ==========================================================================
+   logo-ticker.css — la piste de logos qui défile sans fin
+   ==========================================================================
+
+   AUCUNE VALEUR DE CE FICHIER N'EST MESURÉE. Le relevé ne capture aucun
+   mouvement sur les logos clients : il en donne une rangée figée de
+   médaillons. Le défilement est une demande explicite, et tout ce qui suit
+   — durée, écart, hauteur, fondus des bords — est décidé.
+
+   Les valeurs ne sortent pourtant pas de nulle part : la durée et la
+   mécanique de boucle reprennent celles du ruban du pied de page
+   (`.footer-marquee`, 42s, `translateX(-50%)`), pour que les deux
+   mouvements du site aient la même vitesse de lecture.
+
+   Les noms de classes sont les miens.
+   ========================================================================== */
+
+.logo-ticker {
+  /* Réglables par le composant. Les défauts valent pour la bande noire.
+
+     Les logos ne défilent pas nus : chacun est posé dans une BOÎTE de
+     dimensions fixes. C'est ce qui les met à égalité — un logo large et un
+     logo carré occupent le même cadre, et la piste garde un rythme régulier
+     au lieu de se contracter et s'étirer au gré des formats. La boîte est
+     aussi ce qui donne son échelle à la bande : elle est volontairement
+     grande, la rangée doit se lire de loin. */
+  --ticker-duration: 48s;
+  --ticker-gap: 24px;
+  --ticker-box-width: 260px;
+  --ticker-box-height: 140px;
+  --ticker-box-padding: 28px;
+  --ticker-box-radius: 14px; /* le rayon mesuré des cadres d'image */
+
+  /* Largeur du fondu à chaque extrémité. C'est lui qui fait croire à
+     l'infini : sans fondu, on voit les logos apparaître et disparaître d'un
+     coup sur une arête franche, et la boucle se donne à voir. */
+  --ticker-fade: 120px;
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  /* Le masque efface progressivement les deux bords. `mask-image` ne colore
+     rien — il ne dépend donc pas du fond, et la même règle tient sur la
+     bande noire comme ailleurs. Le préfixe WebKit reste nécessaire pour
+     Safari. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--ticker-fade),
+    #000 calc(100% - var(--ticker-fade)),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--ticker-fade),
+    #000 calc(100% - var(--ticker-fade)),
+    transparent
+  );
+}
+
+/* La piste : deux séries identiques bout à bout, d'où `width: max-content`
+   — elle doit pouvoir dépasser son cadre, c'est tout l'objet. */
+.logo-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: logo-ticker-scroll var(--ticker-duration) linear infinite;
+  /* Le déplacement est confié au compositeur : la piste ne provoque aucun
+     recalcul de mise en page à chaque image. */
+  will-change: transform;
+}
+
+/* Au survol, la piste s'arrête. Ce n'est pas un ornement : sans pause, un
+   logo qu'on veut lire s'échappe sous le curseur. */
+.logo-ticker:hover .logo-ticker__track,
+.logo-ticker:focus-within .logo-ticker__track {
+  animation-play-state: paused;
+}
+
+/* Une série. Le `padding-right` vaut l'écart : sans lui, la jointure entre
+   la fin d'une série et le début de la suivante serait plus serrée que les
+   écarts internes, et le raccord se verrait à chaque tour. */
+.logo-ticker__run {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--ticker-gap);
+  margin: 0;
+  padding: 0 var(--ticker-gap) 0 0;
+  list-style: none;
+}
+
+/* LA BOÎTE. Dimensions fixes, jamais de `flex-shrink` : la piste sort du
+   cadre, ses éléments ne doivent donc pas se comprimer pour y tenir.
+
+   Le voile à 6 % et le filet à 12 % sont ceux qu'emploie déjà la bande noire
+   pour ses emplacements d'image (`.case__image-slot`) : la boîte de logo est
+   du même matériau que le reste de la section, pas un objet rapporté. */
+.logo-ticker__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: var(--ticker-box-width);
+  height: var(--ticker-box-height);
+  padding: var(--ticker-box-padding);
+  border: 1px solid rgba(247, 237, 222, 0.12);
+  border-radius: var(--ticker-box-radius);
+  background-color: rgba(247, 237, 222, 0.06);
+  transition: background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Au survol, la boîte s'éclaircit — et rien ne bouge. Un décalage vertical
+   sur un élément qui défile déjà horizontalement donne un mouvement en
+   diagonale, illisible. */
+.logo-ticker__item:hover {
+  border-color: rgba(247, 237, 222, 0.28);
+  background-color: rgba(247, 237, 222, 0.1);
+}
+
+/* Le logo tient dans la boîte et garde ses proportions : `object-fit:
+   contain`, jamais de déformation. Les logos clients n'ont ni le même format
+   ni la même densité — les désaturer et les poser à opacité constante est ce
+   qui les fait tenir ensemble sur une même ligne. */
+.logo-ticker__logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.72;
+  filter: grayscale(1);
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.logo-ticker__item:hover .logo-ticker__logo {
+  opacity: 1;
+  filter: none;
+}
+
+/* L'emplacement en attendant les images : le nom du client, traité comme une
+   étiquette et non comme un titre. Il se coupe en plusieurs lignes — la
+   boîte a une hauteur fixe, un nom long comme « Le Petit Chaperon Rouge » n'y
+   tiendrait pas sur une seule. */
+.logo-ticker__name {
+  font-family: var(--font-text);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: var(--tracking-chip);
+  text-transform: uppercase;
+  text-align: center;
+  text-wrap: balance;
+  color: currentColor;
+  opacity: 0.6;
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.logo-ticker__item:hover .logo-ticker__name {
+  opacity: 1;
+}
+
+/* Un cycle vaut la largeur d'une série, soit la moitié de la piste — les
+   deux séries étant identiques. En pourcentage, la règle tient quel que soit
+   le nombre de logos. */
+@keyframes logo-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Les boîtes rapetissent en gardant leur rapport (260/140 ≈ 1,86), et le
+   fondu des bords suit : à 48px sur un petit écran, il mangerait un tiers
+   d'une boîte. */
+@media (max-width: 1199px) {
+  .logo-ticker {
+    --ticker-box-width: 220px;
+    --ticker-box-height: 120px;
+    --ticker-box-padding: 24px;
+    --ticker-fade: 80px;
+  }
+}
+
+@media (max-width: 809px) {
+  .logo-ticker {
+    --ticker-gap: 16px;
+    --ticker-box-width: 172px;
+    --ticker-box-height: 96px;
+    --ticker-box-padding: 18px;
+    --ticker-fade: 40px;
+  }
+
+  .logo-ticker__name {
+    font-size: 13px;
+  }
+}
+
+/* Si le système demande moins de mouvement, la piste ne défile plus du tout —
+   elle devient une rangée que l'on fait glisser au doigt ou à la molette. La
+   règle globale de `motion.css` réduit déjà toutes les durées ; celle-ci va
+   plus loin en rendant la piste utilisable une fois immobile. */
+@media (prefers-reduced-motion: reduce) {
+  .logo-ticker {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .logo-ticker::-webkit-scrollbar {
+    display: none;
+  }
+
+  .logo-ticker__track {
+    animation: none;
+    will-change: auto;
+  }
+
+  .logo-ticker__logo,
+  .logo-ticker__name {
+    transition: none;
+  }
+}

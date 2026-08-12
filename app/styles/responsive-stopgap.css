@@ -1,0 +1,256 @@
+/* ==========================================================================
+   responsive-stopgap.css — RIEN ICI N'EST MESURÉ
+   ==========================================================================
+
+   ⚠ LIS CE BLOC AVANT DE TOUCHER À CE FICHIER.
+
+   Tout le reste du projet est bâti sur des relevés : chaque valeur y est une
+   décision du site mesuré. CE FICHIER EST L'EXCEPTION. Pas une seule de ses
+   règles ne vient d'une mesure.
+
+   POURQUOI IL EXISTE
+
+   Les relevés ne couvrent le responsive que sur deux points :
+     — les points de rupture du site : 810px et 1200px ;
+     — deux rôles mesurés aux trois paliers : le titre de section
+       (52 / 40 / 32px) et le bloc d'accroche, relevé en entier à 1324px et
+       à 390px.
+
+   Les onze autres bandes de la page n'ont été mesurées qu'à 1324px. Leurs
+   rangées de 3 ou 4 colonnes, leurs cartes à largeur fixe et leurs blocs à
+   deux colonnes n'ont donc AUCUNE règle en dessous de cette largeur — et
+   sans rien, elles débordent : la page entière se décale vers la droite, et
+   même le bloc d'accroche, lui correctement mesuré, devient inutilisable.
+
+   CE FICHIER NE FAIT QU'UNE CHOSE : empêcher le débordement, pour que ce qui
+   EST mesuré reste consultable. Il ne dessine rien. Ses règles sont les plus
+   plates possibles — les rangées se replient, les largeurs fixes deviennent
+   des maximums — précisément pour ne ressembler à aucune décision de design.
+
+   CE QU'IL FAUT EN FAIRE
+
+   Le supprimer. Dès que les vraies règles responsive seront décidées — ou
+   relevées, si le site mesuré peut l'être aux autres largeurs — ce fichier
+   n'a plus lieu d'être. Retire son import dans `globals.css` et écris les
+   vraies règles à leur place, dans `sections.css` et dans les composants.
+
+   La liste de ce qui reste à décider est au § 6 de MISSING.md.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Le garde-fou principal.
+
+   Sans lui, une seule bande trop large élargit tout le canevas, et comme
+   celui-ci centre ses enfants, TOUTES les bandes se décalent — y compris
+   celles qui tenaient parfaitement.
+   -------------------------------------------------------------------------- */
+
+.page-canvas {
+  overflow-x: clip;
+}
+
+/* L'en-tête n'est plus traité ici : sa variante étroite — hamburger et
+   panneau plein écran — est écrite dans `header.css`, à côté de la barre
+   qu'elle remplace. Elle n'est pas plus mesurée pour autant, et son bloc le
+   dit en toutes lettres. */
+
+@media (max-width: 809px) {
+  /* ------------------------------------------------------------------------
+     Dégagement sous la barre fixe
+
+     Le bloc d'accroche passe de 100px à 50px de padding haut sous 810px —
+     c'est mesuré. Mais la barre fixe fait 96px de haut chez nous (le logo),
+     et 32 + 50 = 82px ne suffisent plus : le logo recouvrait le titre.
+
+     À l'étroit le logo tombe à 104px de large, soit 57px de haut : la bande
+     n'a plus besoin de ses 96px. 72px suffisent, et 32 + 50 = 82px de
+     dégagement passent alors devant. Ces deux valeurs vont ensemble.
+     ------------------------------------------------------------------------ */
+
+  .band-header {
+    height: 72px;
+  }
+}
+
+@media (max-width: 809px) {
+  /* ------------------------------------------------------------------------
+     Les bandes — paddings
+
+     Les 40px latéraux et 120px hauts sont mesurés à 1324px et nulle part
+     ailleurs. Réduits ici pour que le contenu ne touche pas les bords.
+     ------------------------------------------------------------------------ */
+
+  .band-stats,
+  .band-solutions,
+  .band-fit,
+  .band-team,
+  .band-founder,
+  .band-faq,
+  .band-cta {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  /* ⚠ `.band-client-words` A ÉTÉ RETIRÉE DE CE FICHIER, PARTOUT.
+
+     C'est la classe de gabarit de la bande des cas clients — et elle n'est
+     portée que par elle. Or cette bande a maintenant ses VRAIES règles
+     responsive, écrites dans `cases.css` : trois paliers de padding, de
+     largeur de carte et de corps de titre. Les règles à l'aveugle de ce
+     fichier les écrasaient, puisqu'il est importé en dernier.
+
+     Une en particulier cassait tout : `.band-client-words ul { max-width:
+     100% }` visait les listes de cartes des autres bandes, mais atteignait
+     ici DEUX pistes qui doivent déborder pour fonctionner — le rail des cas
+     clients et la piste de logos, dont les deux séries sont bornées à la
+     largeur de l'écran. La piste ne pouvait plus défiler.
+
+     C'est exactement ce que dit l'avertissement plus haut : dès qu'une bande
+     reçoit de vraies règles, il faut la sortir d'ici. */
+  .band-stats,
+  .band-solutions,
+  .band-fit,
+  .band-team,
+  .band-founder,
+  .band-creators,
+  .band-cta,
+  .band-footer {
+    padding-top: 72px;
+  }
+
+  /* ------------------------------------------------------------------------
+     Les rangées deviennent des colonnes
+
+     Quatre chiffres, trois offres, deux colonnes de FAQ, un portrait à côté
+     de son texte : toutes ces rangées sont mesurées, mais seulement à
+     1324px. Elles s'empilent ici.
+     ------------------------------------------------------------------------ */
+
+  /* ⚠ `.band-testimonials-intro > div` A ÉTÉ RETIRÉ DE CETTE LISTE.
+
+     Cette règle a une spécificité de (0,2,0) et écrasait le
+     `align-items: flex-start` de `.constat`, qui n'en a que (0,1,0). Résultat
+     sur mobile : l'étiquette « Le constat » s'étirait sur toute la largeur de
+     l'écran au lieu de faire la taille de son texte.
+
+     C'est le risque de ce fichier en général : il vise des bandes par leur
+     classe de gabarit, sans rien savoir de ce qu'elles contiennent. Chaque
+     fois qu'une bande reçoit de vraies règles responsive, il faut la sortir
+     d'ici. */
+  .band-stats > div,
+  .band-solutions > div,
+  .band-founder > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .band-faq {
+    flex-direction: column;
+  }
+
+  /* ------------------------------------------------------------------------
+     Les largeurs fixes deviennent des maximums
+
+     Cartes de témoignage (360px), portrait de la fondatrice (320px), logo de
+     pied de page (320px), vignettes de l'équipe (220px) : autant de valeurs
+     qui ne rétrécissent pas d'elles-mêmes.
+     ------------------------------------------------------------------------ */
+
+  .band-founder .medallion,
+  .band-team .framer--carousel > li > div > div,
+  .band-footer img {
+    max-width: 100%;
+  }
+
+  /* ------------------------------------------------------------------------
+     Les grands corps de titre
+
+     Le titre de section est mesuré à 32px sous 810px (voir type.css) : il
+     est déjà traité. Les autres — 72px, 64px, 50px, 40px — ne le sont nulle
+     part. Ils sont ramenés ici à des valeurs simplement lisibles.
+
+     CE SONT LES VALEURS LES PLUS ARBITRAIRES DU FICHIER. À remplacer en
+     priorité.
+     ------------------------------------------------------------------------ */
+
+  /* `.t-em-heading` n'est plus de la liste : son corps suit celui du titre
+     qui l'accueille (`font-size: 1em`, voir type.css). Le forcer à 36px le
+     ferait dépasser un h2 ramené à 32px. */
+  .t-h1,
+  .t-h1-display {
+    font-size: 36px;
+    line-height: 39.6px;
+  }
+
+  .t-h2-caps {
+    font-size: 32px;
+    line-height: 30px;
+  }
+
+  .t-h3-stat {
+    font-size: 30px;
+    line-height: 39px;
+  }
+
+  .t-h4,
+  .t-h4-center,
+  .t-h4-inverse {
+    font-size: 24px;
+    line-height: 31.2px;
+  }
+
+  .t-lede,
+  .t-lede-loose,
+  .t-action {
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  /* ------------------------------------------------------------------------
+     Les blocs qui poussent depuis l'intérieur
+
+     Certaines valeurs mesurées imposent une largeur minimale à leur
+     conteneur, et c'est ce qui élargissait toute la page : le bloc dégradé
+     porte 80px de padding de chaque côté, la pastille du carrousel une
+     vignette de 220px, les listes des rubans des cartes à largeur fixe.
+
+     Tant qu'un seul enfant dépasse, le canevas s'élargit et TOUTES les
+     bandes se décalent — même celles qui tenaient.
+     ------------------------------------------------------------------------ */
+
+  .panel-gradient {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .band-team .framer--carousel,
+  .band-creators ul {
+    max-width: 100%;
+  }
+
+  /* `min-width: 0` lève la taille minimale automatique d'un enfant flex :
+     sans elle, un enfant refuse de rétrécir sous la largeur de son contenu,
+     et c'est lui qui dicte la largeur du parent. */
+  .page-canvas > *,
+  .hero > *,
+  .hero__center,
+  .hero__stack,
+  .hero__text,
+  .hero__headings,
+  .band-faq > *,
+  .band-founder > div > * {
+    min-width: 0;
+  }
+
+  /* Les mots longs cassent plutôt que de pousser leur boîte. */
+  .hero__title,
+  .hero__title--secondary,
+  .t-h1,
+  .t-h1-display,
+  .t-h2,
+  .t-h2-left,
+  .t-h2-accent,
+  .t-h2-caps {
+    overflow-wrap: break-word;
+  }
+}

@@ -1,0 +1,334 @@
+/* ==========================================================================
+   sections.css — une classe par bande, dans l'ordre mesuré
+   ==========================================================================
+
+   Les 13 bandes de la page, du haut vers le bas, avec le fond, l'espacement
+   et le cadrage que chacune porte réellement.
+
+   Deux règles suivies partout :
+
+   1. UNE SEULE bande peint un fond : le header. Les douze autres sont
+      transparentes et laissent voir le canevas. Elles restent des bandes —
+      leur place dans la séquence est mesurée — mais elles ne reçoivent
+      aucune couleur, parce qu'aucune ne leur a été mesurée.
+
+   2. Les HAUTEURS mesurées ne sont pas reprises. Une hauteur relevée est le
+      résultat du contenu au moment de la capture, pas une décision. Les
+      largeurs maximales, elles, en sont : elles sont reprises.
+
+   `width: 1324px` dans le relevé correspond à la largeur du viewport de
+   capture. Partout où une bande porte cette valeur sans max-width, elle est
+   écrite `width: 100%` : la figer en pixels casserait la mise en page à
+   toute autre largeur.
+
+   Toutes les bandes sont centrées par leur parent (`.page-canvas`), qui est
+   lui-même mesuré comme `flex column, align-items: center`.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Le canevas — `div.framer-U6Cb5.framer-pHLhK`
+   Un wrapper pleine largeur qui repeint le fond par-dessus le body, puis
+   empile toutes les bandes et les centre.
+   -------------------------------------------------------------------------- */
+.page-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: var(--color-canvas);
+}
+
+/* La couche de contenu : c'est elle qui empile et centre les bandes, pas le
+   canevas. Elle existe parce que le pied de page est en `position: fixed`
+   derrière la page et qu'il faut une surface OPAQUE pour le masquer jusqu'à
+   sa révélation. Voir footer.css. */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  /* Compensation de la barre fixe. Chez MYROR, une barre de 64px surmonte un
+     bloc d'accroche à 100px de padding haut : le titre commence donc 36px
+     sous la barre. La barre fait ici 96px (le logo), donc il faut 32px de
+     plus pour retrouver ces mêmes 36px. Valeur dérivée des mesures, pas
+     choisie. */
+  padding-top: 32px;
+}
+
+/* --------------------------------------------------------------------------
+   1. En-tête — `header.framer-r2wtb.framer-hvutpv`
+   La seule bande qui peint un fond : Nuit à 80 % d'opacité.
+   -------------------------------------------------------------------------- */
+/* `position: fixed` est mesuré — non pas sur la bande elle-même, mais sur son
+   conteneur ancêtre `div.framer-1w90rdk-container` dans le relevé de la
+   barre de navigation. La barre suit donc le défilement.
+
+   Deux autres mesures s'expliquent par là : le fond à 80 % d'opacité, qui n'a
+   de sens que si du contenu passe dessous, et les 100px de padding haut du
+   bloc d'accroche, qui compensent la barre.
+
+   Le `z-index`, lui, n'est PAS mesuré. `--z-header` vaut 50, une valeur
+   choisie : bien au-dessus de toutes les bandes, qui vivent à 1, et des deux
+   couches de lueur du canevas, qui vivent à 0, mais assez basse pour laisser
+   de la place à une surcouche modale au-dessus.
+
+   Attention si tu ajoutes une règle sur `.page-canvas > *` : elle a la même
+   spécificité que celle-ci, et le dernier fichier importé gagne. `canvas.css`
+   exclut l'en-tête explicitement pour cette raison. Voir MISSING.md. */
+.band-header {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 96px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  background-color: var(--color-surface-header);
+  z-index: var(--z-header); /* 50 — non mesuré, voir theme.css */
+
+  /* L'escamotage au défilement. AUCUNE `transform` n'est écrite dans l'état
+     visible, et ce n'est pas un oubli : même identité, un `translateY(0)`
+     ferait de la barre le BLOC CONTENEUR de tous ses descendants en
+     `position: fixed` — dont le panneau plein écran du menu étroit, qui se
+     retrouverait enfermé dans les 96px de la barre au lieu de couvrir l'écran.
+
+     Une transition depuis `none` vers une `transform` s'interpole correctement,
+     donc rien n'est perdu. */
+  transition: transform 320ms var(--ease-link);
+}
+
+/* Escamotée : elle sort par le haut, sur toute sa hauteur. NON MESURÉ.
+   Voir SiteHeader.tsx pour les deux seuils qui décident du moment. */
+.band-header--hidden {
+  transform: translateY(-100%);
+}
+
+/* GARDE-FOU — une barre qui porte un panneau ouvert ne s'escamote jamais.
+
+   Le cas est difficile à atteindre (le panneau bloque le défilement du corps
+   dès son ouverture, donc plus aucun événement `scroll` ne part), mais s'il
+   l'était, la barre emporterait le panneau avec elle : `position: fixed` se
+   cale sur l'ancêtre transformé, pas sur la fenêtre. `:has()` le dit en une
+   règle, sans remonter l'état d'ouverture du menu jusqu'ici. */
+.band-header:has(.header__panel--open) {
+  transform: none;
+}
+
+/* ÉCART ASSUMÉ : la hauteur mesurée est 64px. Elle est portée à 96px pour
+   laisser respirer le logo The Trace Agency, dont le rapport 313/171 est
+   beaucoup plus haut que celui du logotype relevé (408/133) — à 150px de
+   large il fait déjà 82px de haut, ce qui ne tenait pas dans les 56px utiles
+   d'une bande de 64px.
+   Le padding vertical de 4px, lui, reste celui du relevé. */
+
+/* --------------------------------------------------------------------------
+   2. Retours clients — `div.framer-2jno83`
+   La bande la plus étroite de la page (1120px), et la seule à ne porter
+   aucun padding vertical.
+   -------------------------------------------------------------------------- */
+.band-testimonials-intro {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--band-gap); /* 56px */
+  width: 100%;
+  max-width: var(--width-band-narrow); /* 1120px */
+  overflow: clip;
+}
+
+/* --------------------------------------------------------------------------
+   3. Chiffres clés — `div.framer-1ra32b7`
+   -------------------------------------------------------------------------- */
+.band-stats {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap); /* 56px */
+  width: 100%;
+  max-width: var(--width-band); /* 1240px */
+  padding-top: var(--band-padding-top); /* 120px */
+  padding-right: var(--band-padding-inline); /* 40px */
+  padding-left: var(--band-padding-inline); /* 40px */
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   4. Solutions — `div.framer-35fqpn`
+   Même gabarit que la bande 3, sans `overflow: hidden`.
+   -------------------------------------------------------------------------- */
+.band-solutions {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap);
+  width: 100%;
+  max-width: var(--width-band);
+  padding-top: var(--band-padding-top);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+}
+
+/* --------------------------------------------------------------------------
+   5. « L'agence est faite pour vous si… » — `div.framer-mmoxxx`
+   -------------------------------------------------------------------------- */
+.band-fit {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap);
+  width: 100%;
+  max-width: var(--width-band);
+  padding-top: var(--band-padding-top);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+}
+
+/* --------------------------------------------------------------------------
+   6. Équipe — `div.framer-16jxr11`
+   -------------------------------------------------------------------------- */
+.band-team {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap);
+  width: 100%;
+  max-width: var(--width-band);
+  padding-top: var(--band-padding-top);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+}
+
+/* --------------------------------------------------------------------------
+   7. Avis clients — `div.framer-1qap9qf`
+   Pleine largeur, sans padding latéral : le contenu déborde volontairement
+   (`overflow: clip`), c'est ce qui permet à un carrousel de sortir du cadre.
+   L'écart passe à 72px ici et le reste jusqu'à la bande 9.
+   -------------------------------------------------------------------------- */
+.band-client-words {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--band-gap-loose); /* 72px */
+  width: 100%;
+  padding-top: var(--band-padding-top);
+  overflow: clip;
+}
+
+/* --------------------------------------------------------------------------
+   8. Mot de la fondatrice — `div.framer-c45up6`
+   La seule bande dont la largeur maximale est 1400px et non 1240px.
+   -------------------------------------------------------------------------- */
+.band-founder {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap-loose);
+  width: 100%;
+  max-width: var(--width-band-wide); /* 1400px */
+  padding-top: var(--band-padding-top);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+}
+
+/* --------------------------------------------------------------------------
+   9. Créateurs reconnus — `div.framer-1m2b514`
+   Pleine largeur, sans padding latéral, sans max-width.
+   -------------------------------------------------------------------------- */
+.band-creators {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap-loose);
+  width: 100%;
+  padding-top: var(--band-padding-top);
+}
+
+/* --------------------------------------------------------------------------
+   10. « En savoir plus sur » — `section.framer-4whkl4`
+   La plus haute bande de la page (1616px mesurés), et la seule dont l'écart
+   descend à 30px. Aucun padding.
+   -------------------------------------------------------------------------- */
+.band-learn-more {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--band-gap-tight); /* 30px */
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   11. « Clarifier un détail ? » — `div.framer-1skweis`
+   La seule bande en RANGÉE, alignée en haut. Pas de padding vertical.
+   -------------------------------------------------------------------------- */
+.band-faq {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--band-gap-faq); /* 48px */
+  width: 100%;
+  max-width: var(--width-band);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+}
+
+/* --------------------------------------------------------------------------
+   12. Appel à l'action — `div.framer-3w4l57`
+   Rangée centrée, écart 10px — le plus serré de la page.
+   -------------------------------------------------------------------------- */
+.band-cta {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: var(--width-band);
+  padding-top: var(--band-padding-top);
+  padding-right: var(--band-padding-inline);
+  padding-left: var(--band-padding-inline);
+  overflow: clip;
+}
+
+/* --------------------------------------------------------------------------
+   13. Pied de page — `div.framer-1h2x2xg`
+   Bande étroite (495px), la seule à porter un padding bas.
+   Aucun texte n'a été relevé dans son ouverture.
+   -------------------------------------------------------------------------- */
+.band-footer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--band-gap-footer); /* 36px */
+  width: 100%;
+  max-width: 495px;
+  padding-top: var(--band-padding-top);
+  padding-bottom: 63px;
+}

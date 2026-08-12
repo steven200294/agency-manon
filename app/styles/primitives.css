@@ -1,0 +1,333 @@
+/* ==========================================================================
+   primitives.css — une classe par variante visuelle mesurée
+   ==========================================================================
+
+   Le relevé recense chaque décision visuellement distincte de la page :
+   4 variantes de boîte, 4 de lien, 2 de bouton, 2 de média, 1 de bloc
+   dégradé. Chacune reçoit ici sa classe, avec ses valeurs propres. Deux
+   boutons qui diffèrent sont deux classes — les fondre en une seule
+   supprimerait une décision, et c'est en général l'accentuée qui saute.
+
+   Les noms sont réattribués pour un rôle générique (`.card`, `.pill`,
+   `.btn-primary`) plutôt que pour le contenu de la page mesurée. Le
+   commentaire rappelle où chaque variante était employée.
+
+   AUCUN ÉTAT :hover N'A ÉTÉ MESURÉ. Le relevé n'expose que l'état de repos
+   du DOM. Les seules propriétés d'interaction relevées sont
+   `transition-property: all` et `transition-timing-function: ease` sur les
+   liens et les boutons : elles sont reprises, mais sans durée — aucune n'a
+   été mesurée. Voir motion.css et MISSING.md.
+   ========================================================================== */
+
+/* ==========================================================================
+   BOÎTES
+   ========================================================================== */
+
+/* Boîte, variante 1 sur 4 — pastille flottante, position fixe, floutée.
+   Une seule sur la page. C'est le seul élément qui porte un backdrop-filter,
+   une bordure, et le z-index le plus haut du document. */
+.pill {
+  display: flex;
+  position: fixed;
+  align-items: center;
+  gap: 1px;
+  padding: 4px;
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--color-surface-pill);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-pill); /* 999px */
+  box-shadow: var(--shadow-pill);
+  backdrop-filter: blur(var(--blur-pill)); /* 10px */
+  -webkit-backdrop-filter: blur(var(--blur-pill));
+  z-index: var(--z-pill);
+}
+
+/* Boîte, variante 2 sur 4 — médaillon rond (6 sur la page).
+   Son ombre interne claire dessine un liseré : chez MYROR c'est du blanc
+   pur, ici Dentelle. Aucun padding mesuré : le contenu touche le bord,
+   c'est la taille de l'enfant qui donne la taille du médaillon. */
+.medallion {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface-deep);
+  border-radius: var(--radius-round); /* 100px */
+  box-shadow: var(--shadow-medallion);
+}
+
+/* Boîte, variante 3 sur 4 — tuile en rangée (5 sur la page).
+   Ses deux enfants sont poussés aux extrémités (`space-between`) : c'est le
+   gabarit « libellé à gauche, icône à droite ». */
+.tile {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: var(--color-surface-raised);
+  border-radius: var(--radius-tile); /* 20px */
+  box-shadow: var(--shadow-tile);
+  z-index: var(--z-tile);
+}
+
+/* Boîte, variante 4 sur 4 — carte (3 sur la page).
+   Colonne, contenu centré verticalement, coins très arrondis. */
+.card {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  padding: 32px;
+  background-color: var(--color-surface-card);
+  border-radius: var(--radius-card); /* 28px */
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   LIENS ET BOUTONS
+
+   Note sur les couleurs de texte : le relevé donne `color: rgb(0, 0, 238)`
+   sur trois des quatre variantes de lien. C'est le bleu par défaut du
+   navigateur pour un `<a>` — l'ancre elle-même n'est pas colorée par le
+   site. Le squelette montre pourquoi : le libellé n'est pas dans l'ancre,
+   il est dans un `p` enfant qui porte le rôle « texte 4/4 ». Cette couleur
+   ne peint donc jamais rien. Elle est remplacée ici par la couleur de
+   contraste du remplissage, et le libellé reste porté par `.t-action`.
+   ========================================================================== */
+
+/* Lien, variante 1 sur 4 — le bouton le plus employé (11 sur la page :
+   en-tête, corps, bande 10). Remplissage plein + double ombre interne qui
+   l'éclaire par le haut.
+   ÉCART ASSUMÉ, SUR LA COULEUR ET SUR L'OMBRE. MYROR donne à ce bouton un
+   fond bleu nuit rgb(30,55,102) et deux ombres internes bleu clair qui
+   l'ÉCLAIRENT par le haut. L'autre bouton, lui, a un fond rose et des ombres
+   internes noires qui le CREUSENT.
+
+   Ici les deux prennent Châtaigne ET l'ombre creusée : à fond identique, une
+   ombre qui éclaire et une ombre qui creuse se lisent encore comme deux
+   couleurs différentes. Les boutons du projet doivent être indiscernables en
+   couleur, c'est donc `--shadow-cta-primary` partout.
+
+   `--shadow-cta-nav` reste défini dans theme.css — la mesure n'est pas
+   perdue, elle n'est simplement plus employée. */
+.btn-nav {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  color: var(--color-accent-contrast);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-cta); /* 42px */
+  box-shadow: var(--shadow-cta-primary);
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Lien, variante 2 sur 4 — l'appel à l'action principal (2 sur la page).
+   Plus généreux que `.btn-nav` (16/24 contre 12/14), entièrement arrondi,
+   et ses ombres internes le creusent au lieu de l'éclairer.
+   ÉCART ASSUMÉ SUR LA COULEUR. MYROR emploie deux remplissages distincts —
+   un bleu nuit rgb(30,55,102) pour le bouton de navigation, un rose
+   rgb(186,124,121) pour celui-ci. Ici les deux prennent Châtaigne : les
+   boutons du projet n'ont qu'UNE couleur.
+
+   Ce qui les distingue reste mesuré, et suffit à les lire comme deux
+   objets : 16/24 de padding contre 12/14, rayon entièrement arrondi contre
+   42px, et surtout des ombres internes opposées — celles-ci creusent le
+   bouton par le haut et par le bas, celles de `.btn-nav` l'éclairent. */
+.btn-primary {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 24px;
+  color: var(--color-accent-contrast);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full); /* 9999px */
+  box-shadow: var(--shadow-cta-primary);
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Le libellé est posé sur Châtaigne : il prend la couleur qui contraste avec
+   elle — 8,3:1 — pas la couleur de texte de son rôle. */
+.btn-primary .t-action,
+.btn-primary .t-label {
+  color: var(--color-accent-contrast);
+}
+
+/* Lien, variante 3 sur 4 — puce pleine sur fond clair (1 sur la page).
+   Seule occurrence d'une surface claire portant du texte sombre. */
+.chip-solid {
+  display: block;
+  padding: 6px 11px;
+  font-family: var(--font-text);
+  letter-spacing: var(--tracking-chip); /* 0.52px */
+  color: var(--color-text-inverse);
+  background-color: var(--color-surface-inverse);
+  border-radius: var(--radius-pill); /* 999px */
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Lien, variante 4 sur 4 — la même puce, sans remplissage (1 sur la page).
+   Mêmes padding et rayon que `.chip-solid` : c'est bien son pendant. */
+.chip-ghost {
+  display: block;
+  padding: 6px 11px;
+  font-family: var(--font-text);
+  letter-spacing: var(--tracking-chip);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Lien de navigation — `a.framer-VmzXy.framer-POJK0`, 4 sur la page.
+   Décrit dans les rôles typographiques : rangée, écart 6px, contenu aligné
+   au début, padding 6/12. Aucun remplissage, aucun rayon, aucune ombre. */
+.link-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 6px 12px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Bouton, variante 1 sur 2 — `cursor: default`.
+   Deux boutons partagent toutes les valeurs visuelles et ne se distinguent
+   que par le curseur : celui-ci n'invite pas au clic (contrôle inactif),
+   l'autre si. C'est une décision, elle est conservée.
+   MYROR : fond rgb(134,177,213). Ici Terre d'Ombre. */
+.btn-control {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-button); /* 40px */
+  overflow: hidden;
+  cursor: default;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* Bouton, variante 2 sur 2 — identique, mais cliquable. */
+.btn-control-active {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-button);
+  overflow: hidden;
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: var(--ease-link);
+}
+
+/* ==========================================================================
+   BLOC DÉGRADÉ
+   ========================================================================== */
+
+/* Le seul dégradé de la page, et il n'est PAS sur le fond : c'est un bloc
+   isolé. Padding latéral 80px — le plus large du document. */
+.panel-gradient {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-right: 80px;
+  padding-left: 80px;
+  background-image: var(--gradient-panel);
+  border-radius: var(--radius-panel); /* 32px */
+  overflow: hidden;
+}
+
+/* Le bloc dégradé est la seule surface sombre d'une page claire : le texte
+   qu'il porte s'inverse. Ce n'est pas une mesure — le relevé décrit une page
+   sombre, où la question ne se posait pas. */
+.panel-gradient .t-h1,
+.panel-gradient .t-h1-display,
+.panel-gradient .t-h2 {
+  color: var(--color-accent-contrast);
+  -webkit-text-fill-color: var(--color-accent-contrast);
+  -webkit-text-stroke-color: var(--color-accent-contrast);
+}
+
+/* ==========================================================================
+   MÉDIAS
+   ========================================================================== */
+
+/* Média, variante 1 sur 2 — le cadrage le plus courant (28 sur la page).
+   Rapport 1254/1254, soit un carré strict. */
+.media {
+  display: block;
+  aspect-ratio: 1254 / 1254;
+  border-radius: var(--radius-media); /* 14px */
+  object-fit: cover;
+}
+
+/* Média, variante 2 sur 2 — même rapport, rayon presque nul (2 sur la page).
+   C'est la variante que le squelette place dans les médaillons, les tuiles
+   du carrousel et la pastille flottante : de petites images où un rayon de
+   14px arrondirait trop. */
+.media-sm {
+  display: block;
+  aspect-ratio: 1254 / 1254;
+  border-radius: var(--radius-media-sm); /* 4px */
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Emplacement d'image en attente.
+
+   Reprend exactement le cadrage mesuré (rapport et rayon) et occupe la même
+   place dans la mise en page. Un emplacement vide affaisserait tout ce qui
+   l'entoure ; celui-ci tient sa hauteur. Il disparaît dès qu'une vraie
+   image lui est passée.
+   -------------------------------------------------------------------------- */
+.media-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1254 / 1254;
+  border-radius: var(--radius-media);
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-hairline);
+  overflow: hidden;
+}
+
+.media-slot--sm {
+  border-radius: var(--radius-media-sm);
+}
+
+.media-slot__label {
+  padding: 8px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: var(--tracking-chip);
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}

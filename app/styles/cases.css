@@ -1,0 +1,993 @@
+/* ==========================================================================
+   cases.css — la bande des cas clients, sur fond noir
+   ==========================================================================
+
+   Relevé sur `section.framer-njK1w.framer-398s3c`, 293 nœuds mesurés
+   (source : prsnl.io). C'est le seul bloc du projet qui ne vient pas de
+   myroragency.com — il a été apporté spécifiquement pour cette bande.
+
+   ---------------------------------------------------------------------------
+   C'EST LA SEULE BANDE QUI PEINT UN FOND, AVEC L'EN-TÊTE.
+
+   Les onze autres bandes de la page sont transparentes : le canevas Dentelle
+   les traverse. Celle-ci est noire, et c'est une demande explicite — le
+   relevé la donne d'ailleurs en `background-color: rgb(0, 0, 0)`.
+
+   Elle inverse donc toute la polarité du projet le temps d'une bande :
+   fond Nuit, texte Dentelle. Les rôles typographiques du projet supposent
+   l'inverse, d'où les couleurs réécrites ici plutôt que réutilisées.
+   ---------------------------------------------------------------------------
+
+   TRANSPOSITIONS
+
+   Le relevé compose en « Instrument Serif » italique (noms, chiffres) et
+   « Alliance No.2 Light » (texte). Le projet ne connaît que Satoshi : c'est
+   elle qui prend les deux rôles, en italique pour les premiers. L'italique
+   réelle est chargée pour ça — un faux italique fabriqué par le navigateur
+   casse les formes de lettres qui font tout l'effet.
+
+   Sa couleur de texte, `rgb(243, 240, 232)`, est à deux points de Dentelle
+   `#F7EDDE` : c'est Dentelle qui la remplace, sans discussion.
+
+   Les noms de classes sont les miens.
+   ========================================================================== */
+
+/* Remise à zéro, portée au seul composant, spécificité nulle. */
+:where(.cases) :where(h2, h3, p) {
+  margin: 0;
+}
+
+:where(.cases) :where(ul, li) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ==========================================================================
+   L'EMPILEMENT AU DÉFILEMENT — RIEN ICI N'EST MESURÉ
+
+   La bande noire glisse par-dessus la bande qui la précède, laquelle reste
+   immobile derrière elle. C'est une demande explicite.
+
+   ---------------------------------------------------------------------------
+   POURQUOI PAS GSAP
+
+   L'effet demandé était décrit comme « une animation GSAP ». Il n'en faut
+   pourtant ni la bibliothèque ni le moindre JavaScript : ce n'est pas une
+   animation, c'est un COLLAGE. La bande de dessous s'arrête, celle de dessus
+   continue — `position: sticky` dit exactement cela, en deux lignes, et le
+   navigateur le calcule sur le fil du défilement, jamais en retard d'une
+   image. GSAP + ScrollTrigger auraient ajouté ~70 kB, un `requestAnimationFrame`
+   permanent et un recalage à chaque redimensionnement, pour le même rendu.
+
+   Trois conditions étaient déjà réunies dans le projet, sinon rien de tout
+   ceci ne tiendrait :
+
+   1. La bande noire est OPAQUE et pleine largeur (`--cases-ground`, sans
+      `max-width`). Une bande transparente ne peut rien recouvrir.
+   2. Aucun ancêtre n'est un conteneur de défilement. `responsive-stopgap.css`
+      pose `overflow-x: clip` sur le canevas, et non `hidden` : `clip` laisse
+      l'axe vertical en `visible`, donc `sticky` se cale toujours sur la
+      fenêtre. Avec `hidden`, l'axe Y devenait défilant et l'effet tombait.
+   3. Les bandes font la hauteur de l'écran. La bande de dessous est donc
+      entièrement lue avant de se figer — rien n'est perdu sous l'en-tête.
+
+   `top: 0` et non `top: 96px` : la bande se fige là où elle passerait de
+   toute façon sous la barre translucide, donc l'instant du collage ne se voit
+   pas. Le caler sous la barre ferait au contraire dépasser son bas de l'écran.
+   ---------------------------------------------------------------------------
+   ========================================================================== */
+
+/* L'enveloppe reprend la mise en page de `.page-content` — colonne centrée,
+   pleine largeur — pour que les deux bandes qu'elle contient se comportent
+   exactement comme si elle n'existait pas. Elle ne sert qu'à BORNER la portée
+   du collage. Voir le commentaire dans page.tsx. */
+.stack-cases {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* La bande de dessous : celle qui s'arrête. Désignée par sa position et non
+   par son nom de classe — l'effet appartient à l'empilement, pas à la bande
+   des repères, et remplacer celle-ci par une autre ne demandera rien ici. */
+.stack-cases > :first-child {
+  position: sticky;
+  top: 0;
+}
+
+/* La bande de dessus : celle qui passe devant.
+
+   `z-index: 1` est explicite alors que l'ordre du document suffirait déjà
+   (deux éléments positionnés, le dernier gagne) : la règle survit ainsi à un
+   `z-index` posé un jour sur la bande de dessous.
+
+   L'ombre portée est le seul ajout esthétique. Sans elle, la bande noire
+   apparaît sans qu'on voie qu'elle passe DEVANT quelque chose : le bord
+   supérieur se lit alors comme une frontière entre deux sections, pas comme
+   un bord qui recouvre. Elle est portée vers le haut (décalage négatif),
+   c'est-à-dire sur la bande qu'elle recouvre. */
+.stack-cases > .cases {
+  z-index: 1;
+  box-shadow: 0 -24px 48px -12px rgba(20, 20, 20, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   #1 — la section
+   -------------------------------------------------------------------------- */
+
+.cases {
+  /* Les noms sont les miens. Ils existent parce que la bande inverse la
+     polarité de la page : ses couleurs ne peuvent pas être celles du thème. */
+  --cases-ink: var(--color-dentelle); /* relevé rgb(243, 240, 232) */
+  --cases-ground: var(--color-nuit); /* relevé rgb(0, 0, 0) */
+  --cases-card: 540px;
+  --cases-gap: 16px;
+
+  /* NON MESURÉE. Le relevé ne capture aucun mouvement, aucun état de survol,
+     aucune transition sur ce composant. 240ms est une valeur CHOISIE, et la
+     courbe avec. Elles sont regroupées ici pour être réglées d'un endroit.
+     Voir MISSING.md. */
+  --cases-duration: 240ms;
+  --cases-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  padding: 40px 80px;
+  background-color: var(--cases-ground);
+  color: var(--cases-ink);
+  font-family: var(--font-text);
+  box-sizing: border-box;
+
+  /* Aucun rayon : la bande est un rectangle plein, bord à bord. C'est ce que
+     donne le relevé. `overflow: hidden` sert ici à la piste, qui déborde
+     volontairement de la largeur de la section. */
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   LE BANDEAU CLIENTS — NON MESURÉ, ajout demandé
+
+   Il ouvre la bande noire, au-dessus des cas clients. Le titre vient du
+   document (« Ils nous ont confié leur trace. ») ; la piste défilante est
+   décrite dans `logo-ticker.css`.
+
+   Le bloc est le SEUL de la bande à sortir de la colonne de 1280px : il va
+   d'un bord à l'autre de la section. Une piste qui prétend ne pas avoir de
+   fin ne peut pas s'arrêter à 80px des bords — on verrait où elle commence.
+   Le débordement est obtenu en annulant le padding latéral de la section par
+   des marges négatives de même valeur ; l'`overflow: hidden` de `.cases`
+   garantit que rien ne fuit hors de la page. Les trois seuils de padding
+   (80 / 40 / 20px) ont donc chacun leur marge, plus bas.
+   -------------------------------------------------------------------------- */
+
+.cases__clients {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  width: calc(100% + 160px); /* padding latéral de la section × 2 */
+  margin: 0 -80px;
+  padding: 40px 0 56px;
+
+  /* Le filet marque la fin du bandeau et le début des cas clients. Il court
+     sur toute la largeur, comme la piste — c'est la même respiration. */
+  border-bottom: 1px solid rgba(247, 237, 222, 0.12);
+}
+
+/* Le titre est celui d'une OUVERTURE de section, pas d'un sous-bloc : il
+   prend l'échelle des titres du projet (`--text-title`, 52px pour 57,2px
+   d'interligne) et non les 40px du titre de la piste de cas, qui vient après
+   lui. La graisse 300 de la bande est conservée : sur fond noir, une graisse
+   700 à cette taille écrase tout ce qui suit. */
+.cases__clients-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: var(--weight-title); /* la graisse de titre de toute la page */
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--tracking-title);
+  text-align: center;
+  text-wrap: balance;
+  color: var(--cases-ink);
+  padding: 0 20px;
+}
+
+/* « leur trace. » — la mise en valeur du document. Elle reprend l'italique
+   des noms de cas de cette bande et l'accent chaud du projet : c'est le même
+   procédé que `.t-em-heading` ailleurs, transposé sur fond noir. */
+.cases__clients-emphasis {
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+/* La piste hérite du texte de la bande : c'est cette couleur que reprennent
+   les noms des clients tant que les logos manquent. */
+.cases__clients .logo-ticker {
+  color: var(--cases-ink);
+}
+
+/* --------------------------------------------------------------------------
+   #2 — la ligne d'en-tête : titre à gauche, contrôles à droite
+   -------------------------------------------------------------------------- */
+
+.cases__header {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  max-width: 1280px;
+  padding-top: 8px;
+}
+
+/* #4 — le titre. 40px pour 44px d'interligne, graisse 300 : beaucoup plus
+   léger que les titres de section du reste du projet, qui sont en 700. */
+.cases__title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 44px;
+  letter-spacing: -0.8px;
+  color: var(--cases-ink);
+}
+
+/* #5 — les deux boutons de défilement, 88px pour deux boutons de 40 et un
+   écart de 8. */
+.cases__controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* #7 et #10 — deux états mesurés du même bouton, et ils ne diffèrent pas que
+   par la couleur : l'inactif porte `cursor: default`, l'actif `cursor:
+   pointer`. Les deux sont reproduits.
+
+   L'inactif est un voile à 10 % sur le fond noir ; l'actif est un aplat
+   plein. C'est l'inverse du contraste habituel — ici, plus c'est clair, plus
+   c'est cliquable. */
+.cases__control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 40px;
+  background-color: var(--cases-ink);
+  color: var(--cases-ground);
+  cursor: pointer;
+  transition: background-color var(--cases-duration) var(--cases-ease),
+    color var(--cases-duration) var(--cases-ease),
+    transform var(--cases-duration) var(--cases-ease);
+}
+
+.cases__control:disabled {
+  background-color: rgba(247, 237, 222, 0.1); /* relevé rgba(243,240,232,.1) */
+  color: var(--cases-ink);
+  cursor: default;
+}
+
+/* AUCUN ÉTAT DE SURVOL N'EST MESURÉ sur ce composant — le relevé le dit
+   explicitement. Tout ce qui suit est donc une décision.
+
+   Le parti pris : un seul mouvement par élément, court, et jamais sur une
+   propriété qui recalcule la mise en page. Un carrousel dont les cartes
+   bougent en profondeur au survol devient vite fatigant ; celles-ci se
+   contentent d'un rapprochement de l'image et d'un éclaircissement. */
+.cases__control:not(:disabled):hover {
+  transform: scale(1.06);
+}
+
+.cases__control:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+/* Le focus clavier n'est pas mesuré non plus, et il n'est pas optionnel :
+   sans lui, les deux boutons sont inutilisables au clavier. */
+.cases__control:focus-visible {
+  outline: 2px solid var(--cases-ink);
+  outline-offset: 3px;
+}
+
+/* #8 et #11 — l'icône, 16 × 16 dans les deux états.
+
+   Le relevé la donne en fond de `div`, et la section « Icons and images » du
+   document a été retirée : le DESSIN de la flèche n'est donc pas mesuré,
+   seulement sa taille et sa couleur. Le chevron est à moi. Voir MISSING.md. */
+.cases__control svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   #12, #13 — la piste
+
+   Le relevé pose la piste en `position: absolute` dans un conteneur de
+   1164 × 602, ce qui laisse déborder les cartes hors du cadre — c'est
+   l'`overflow: hidden` de la section qui les coupe. Reproduit autrement :
+   la piste défile horizontalement, ce qui donne le même rendu ET rend les
+   deux boutons utiles. Le débordement absolu d'une capture figée ne se
+   transpose pas en carrousel utilisable.
+   -------------------------------------------------------------------------- */
+
+.cases__viewport {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 1280px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.cases__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.cases__rail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--cases-gap); /* 16px */
+}
+
+/* --------------------------------------------------------------------------
+   #14, #15 — une carte
+   -------------------------------------------------------------------------- */
+
+.case {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  width: var(--cases-card); /* 540px */
+  max-width: 88vw;
+  overflow: hidden;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+/* #16 — le visuel. Le dégradé ne colore rien : il assombrit le bas de
+   l'image pour que le nom posé dessus reste lisible. Ses deux positions
+   d'arrêt — 50,4808 % et 91,8563 % — sont reprises au dix-millième. */
+.case__media {
+  display: flex;
+  position: relative;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 100%;
+  aspect-ratio: 1.6875 / 1; /* 540 × 320 */
+  overflow: hidden;
+  background-image: linear-gradient(
+    rgba(25, 25, 25, 0) 50.4808%,
+    rgba(25, 25, 25, 0.8) 91.8563%
+  );
+}
+
+/* #17, #18 — les deux couches absolues sous le dégradé. `z-index: 0` les
+   place derrière lui : le dégradé est peint sur le PARENT, donc au-dessus. */
+.case__media-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.case__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--cases-ease);
+}
+
+/* Au survol de la carte, l'image se rapproche légèrement dans son cadre.
+   `overflow: hidden` sur le cadre fait le reste : rien ne déborde, et la
+   mise en page ne bouge pas d'un pixel. 600ms plutôt que 240 — un zoom lent
+   se lit comme une respiration, un zoom rapide comme un sursaut.
+   NON MESURÉ. */
+.case:hover .case__image,
+.case:focus-within .case__image {
+  transform: scale(1.04);
+}
+
+/* Le nom monte de quelques pixels en même temps. C'est le seul mouvement
+   vertical du composant, et il reste sous les 6px : au-delà, le nom se
+   décollerait du bas de l'image sur laquelle il est posé. NON MESURÉ. */
+.case__name {
+  transition: transform var(--cases-duration) var(--cases-ease);
+}
+
+.case:hover .case__name,
+.case:focus-within .case__name {
+  transform: translateY(-4px);
+}
+
+.case__image-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(247, 237, 222, 0.06);
+}
+
+.case__image-slot span {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: var(--tracking-chip);
+  text-transform: uppercase;
+  color: rgba(247, 237, 222, 0.5);
+}
+
+/* #20 — le nom, posé sur le bas du visuel. `z-index: 1` le fait passer
+   devant le dégradé. */
+.case__name {
+  display: flex;
+  position: relative;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  padding: 0 24px 24px;
+  z-index: 1;
+  margin-top: -114px; /* le nom chevauche le visuel, il ne le suit pas */
+}
+
+/* #21 — la première moitié du nom, alignée à droite. Son `padding-bottom` de
+   24px la décale vers le haut par rapport à la seconde : les deux moitiés ne
+   sont pas sur la même ligne de base, c'est ce décalage qui fait la
+   signature du bloc. */
+.case__name-first {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-bottom: 24px;
+}
+
+/* #24 — la seconde moitié, alignée à gauche, sans décalage. */
+.case__name-last {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* #23 et #26 — le nom lui-même. 60px en italique, interligne 66px,
+   approche -1,2px. */
+.case__name-text {
+  font-family: var(--font-display);
+  font-size: 60px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 66px;
+  letter-spacing: -1.2px;
+  color: var(--cases-ink);
+  white-space: pre-wrap;
+}
+
+.case__name-first .case__name-text {
+  text-align: right;
+}
+
+.case__name-last .case__name-text {
+  text-align: left;
+}
+
+/* #27 — le panneau de chiffres.
+
+   `backdrop-filter: blur(12px)` est mesuré. Il ne fait rien de visible ici,
+   le panneau n'ayant rien derrière lui — mais c'est une mesure, et la
+   retirer serait retirer une décision. */
+/* Le panneau est lu de haut en bas dans cet ordre, et l'écart entre ses
+   blocs le dit : lieu → chiffres → résumé → citation. L'écart de 24px du
+   relevé devient 20px, et ce sont les filets qui séparent maintenant les
+   blocs — un espacement uniforme laissait les quatre parties flotter au même
+   niveau, sans hiérarchie. NON MESURÉ. */
+.case__panel {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+  width: 100%;
+  padding: 32px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-sizing: border-box;
+}
+
+/* Le lieu, en surtitre. Traité comme une étiquette et non comme du texte :
+   c'est une localisation, pas une phrase. NON MESURÉ. */
+.case__place {
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tracking-chip);
+  text-transform: uppercase;
+  color: rgba(247, 237, 222, 0.5);
+}
+
+/* #28 — la rangée des trois chiffres. */
+.case__stats {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
+/* #29, #35, #41 — une colonne de chiffre. Le `padding-left: 16px` de chaque
+   colonne, combiné à l'écart de 16px, donne les 32px qui séparent
+   visuellement deux chiffres.
+
+   Le filet à gauche de chaque colonne est un AJOUT : il existait déjà sous
+   810px, où les chiffres s'empilent. Le remonter à toutes les largeurs rend
+   les trois colonnes lisibles comme un tableau — sans lui, un libellé sur
+   deux lignes et son voisin sur une seule donnent une rangée qui se lit de
+   travers. NON MESURÉ. */
+.case__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 16px;
+  border-left: 1px solid rgba(247, 237, 222, 0.18);
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   L'ALIGNEMENT DES TROIS CHIFFRES
+
+   Trois colonnes indépendantes ne s'alignent pas : « comptes touchés en un
+   mois » tient sur deux lignes, « ×2 » sur une, et chaque libellé commence
+   donc à une hauteur différente. Le bloc se lit alors de travers.
+
+   La rangée devient une VRAIE grille de deux lignes — les chiffres sur la
+   première, les libellés sur la seconde — et chaque colonne s'y raccorde par
+   `subgrid`. Tous les chiffres partagent une ligne de base, tous les
+   libellés commencent au même endroit, quelle que soit la longueur du texte.
+
+   `subgrid` est déclaré sous `@supports` : là où il manque, la mise en
+   colonnes en flex ci-dessus reste en place. C'est le même rendu, sans
+   l'alignement.
+   -------------------------------------------------------------------------- */
+
+@supports (grid-template-rows: subgrid) {
+  .case__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto auto; /* les chiffres, puis les libellés */
+    column-gap: 16px;
+    row-gap: 6px;
+  }
+
+  .case__stat {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+  }
+}
+
+/* #32 — la valeur. Italique, 32px, comme le nom en plus petit. */
+.case__stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 38.4px;
+  letter-spacing: -0.64px;
+  text-align: left;
+  color: var(--cases-ink);
+}
+
+/* #34 — la légende. Le relevé ne donne pas son corps, seulement son
+   interligne de 19,2px — soit 120 % de 16px, la taille héritée. */
+.case__stat-label {
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 19.2px;
+  text-align: left;
+  color: var(--cases-ink);
+}
+
+/* ==========================================================================
+   LE DÉTAIL DU CAS — RIEN ICI N'EST MESURÉ
+
+   Le relevé montre le résumé (#47, #48) toujours visible. Il est REPLIÉ sur
+   demande, derrière un bouton d'ouverture.
+
+   Le filet qui séparait les chiffres du récit reste, mais il remonte d'un
+   cran : il porte maintenant sur le bloc dépliant tout entier, donc la
+   séparation des deux registres — des mesures d'un côté, un récit de
+   l'autre — tient aussi quand le récit est caché.
+
+   L'élément est un `<details>` natif. Le `<summary>` est le bouton : c'est
+   pour cela qu'aucun `role` ni `aria-expanded` n'est écrit à la main dans le
+   composant, le navigateur les pose déjà.
+   ========================================================================== */
+
+.case__more {
+  width: 100%;
+  padding-top: 20px;
+  border-top: 1px solid rgba(247, 237, 222, 0.12);
+}
+
+/* Le bouton. `list-style: none` + le pseudo-élément WebKit retirent le
+   triangle par défaut du navigateur ; le chevron le remplace, et lui tourne.
+
+   La forme reprend celle des boutons de la page — rayon plein, filet clair,
+   libellé à 14px — sans réutiliser `.btn-nav`, qui pose un fond plein : ce
+   bouton-ci est secondaire, il ne doit pas concurrencer les chiffres
+   au-dessus. */
+.case__more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid rgba(247, 237, 222, 0.24);
+  border-radius: var(--radius-pill); /* 999px */
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(247, 237, 222, 0.82);
+  cursor: pointer;
+  list-style: none;
+  transition: border-color var(--cases-duration) var(--cases-ease),
+    color var(--cases-duration) var(--cases-ease);
+}
+
+.case__more-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.case__more-toggle:hover {
+  border-color: rgba(247, 237, 222, 0.5);
+  color: var(--cases-ink);
+}
+
+/* Le focus clavier doit rester visible sur fond noir : le contour reprend la
+   couleur d'encre de la bande, pas celle du navigateur. */
+.case__more-toggle:focus-visible {
+  outline: 2px solid var(--cases-ink);
+  outline-offset: 2px;
+}
+
+.case__more-chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform var(--cases-duration) var(--cases-ease);
+}
+
+.case__more[open] .case__more-chevron {
+  transform: rotate(180deg);
+}
+
+/* Les deux libellés sont dans le document, un seul est affiché. */
+.case__more-label-open,
+.case__more[open] .case__more-label-closed {
+  display: none;
+}
+
+.case__more[open] .case__more-label-open {
+  display: inline;
+}
+
+/* Le contenu déplié. L'écart de 20px est celui du panneau : le récit et la
+   citation gardent la même respiration que les blocs au-dessus d'eux. */
+.case__more-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+/* Le dépliage animé, en amélioration progressive.
+
+   `::details-content` et `interpolate-size` sont récents et inégalement
+   répandus : la règle est donc enfermée dans un `@supports`. Là où ils
+   manquent, le panneau s'ouvre d'un coup — c'est-à-dire le comportement natif,
+   qui est correct. Là où ils existent, la hauteur s'interpole depuis `0` et
+   `allow-discrete` fait durer `content-visibility` le temps de la transition,
+   sans quoi le contenu apparaîtrait avant de s'ouvrir.
+
+   `motion.css` neutralise déjà toute animation sous `prefers-reduced-motion`. */
+@supports selector(::details-content) {
+  .case__more {
+    interpolate-size: allow-keywords;
+  }
+
+  .case__more::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size var(--cases-duration) var(--cases-ease),
+      content-visibility var(--cases-duration) var(--cases-ease) allow-discrete;
+  }
+
+  .case__more[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* #47, #48 — le paragraphe de description. */
+.case__summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Le relevé donne 18px pour 21,6px d'interligne, soit 120 %. C'est le rapport
+   d'un TITRE, pas d'un paragraphe : sur quatre lignes de texte suivi, les
+   lignes se collent. Porté à 150 %, le corps mesuré étant conservé.
+   ÉCART ASSUMÉ, et il ne porte que sur l'interligne. */
+.case__summary p {
+  font-family: var(--font-text);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  color: rgba(247, 237, 222, 0.82);
+}
+
+/* La citation n'est pas dans le relevé : un seul des deux cas en a une, et
+   la laisser de côté reviendrait à jeter la seule parole de la cliente sur
+   son propre travail. Elle reprend le filet du reste du projet. */
+.case__quote {
+  margin: 0;
+  padding-left: 16px;
+  border-left: 2px solid rgba(247, 237, 222, 0.3);
+}
+
+.case__quote p {
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 24px;
+  color: rgba(247, 237, 222, 0.75);
+}
+
+/* ==========================================================================
+   RESPONSIVE — AUCUNE RÈGLE N'EST MESURÉE
+
+   Le relevé le dit explicitement : aucune requête média n'a été résolue, ce
+   qui est capturé est une seule largeur. Tout ce qui suit est décidé.
+
+   Les seuils, eux, ne sont pas inventés : ce sont les 810px et 1200px que le
+   relevé du bloc d'accroche a exposés, et que tout le projet emploie.
+
+   La logique de la bascule :
+
+     ≥ 1200px  deux cartes de 540px côte à côte, la piste ne défile pas
+     810–1199  une carte pleine, la suivante dépasse à droite pour signaler
+               qu'il y en a d'autres — c'est là que les boutons servent
+     < 810px   une carte par écran, défilement au doigt, contrôles conservés
+
+   Les corps de texte descendent en proportion, pas au hasard : chaque valeur
+   garde le rapport corps/interligne du relevé (120 % sur les légendes,
+   110 % sur les noms).
+   ========================================================================== */
+
+@media (max-width: 1199px) {
+  .cases {
+    padding: 40px;
+  }
+
+  /* Le padding de la section tombe à 40px : la marge négative du bandeau
+     clients suit, sans quoi il déborderait de 80px de chaque côté. */
+  .cases__clients {
+    width: calc(100% + 80px);
+    margin: 0 -40px;
+    gap: 40px;
+    padding: 28px 0 44px;
+  }
+
+  .cases__clients-title {
+    font-size: 40px;
+    line-height: 44px;
+    letter-spacing: -1.2px;
+  }
+
+  /* Une carte occupe presque tout l'écran, et la suivante dépasse : c'est ce
+     débordement qui dit au lecteur qu'il peut faire défiler. */
+  .case {
+    width: min(540px, 82vw);
+  }
+}
+
+@media (max-width: 809px) {
+  .cases {
+    padding: 32px 20px;
+    gap: 28px;
+  }
+
+  .cases__header {
+    padding-top: 0;
+  }
+
+  .cases__title {
+    font-size: 28px;
+    line-height: 30.8px;
+    letter-spacing: -0.6px;
+  }
+
+  .cases__clients {
+    width: calc(100% + 40px);
+    margin: 0 -20px;
+    gap: 28px;
+    padding: 16px 0 32px;
+  }
+
+  /* Le titre du bandeau descend comme celui de la bande, au même rapport
+     corps/interligne (110 %). Il reste au-dessus des 28px du titre des cas :
+     c'est lui qui ouvre la section. */
+  .cases__clients-title {
+    font-size: 32px;
+    line-height: 35.2px;
+    letter-spacing: -0.8px;
+    padding: 0 12px;
+  }
+
+  .case {
+    width: 86vw;
+  }
+
+  /* Le nom passe de 60 à 36px, et son décalage de 24 à 12px. Les deux vont
+     ensemble : à 36px, un décalage de 24px casserait l'alignement des deux
+     moitiés au lieu de le nuancer. */
+  .case__name-text {
+    font-size: 36px;
+    line-height: 39.6px;
+    letter-spacing: -0.8px;
+  }
+
+  .case__name {
+    margin-top: -76px;
+    padding: 0 16px 16px;
+    gap: 10px;
+  }
+
+  .case__name-first {
+    padding-bottom: 12px;
+  }
+
+  .case__panel {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+
+  /* Les trois colonnes de chiffres ne tiennent plus côte à côte sous 810px :
+     à 86vw, chacune ferait moins de 90px et les légendes se couperaient en
+     quatre lignes. Elles s'empilent, et le `padding-left` de 16px devient
+     un filet vertical qui les relie. */
+  .case__stats {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* `flex: 0 0 auto` ANNULE le `flex: 1 1 0` du large, et ce n'est pas un
+     détail : une fois le conteneur passé en colonne, `flex-basis: 0`
+     s'applique à la HAUTEUR. Chaque chiffre se retrouvait haut de zéro, et
+     l'`overflow: hidden` du gabarit mesuré les faisait disparaître
+     complètement. Les trois chiffres étaient absents de la carte sur
+     téléphone. */
+  .case__stat {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 12px;
+    overflow: visible;
+    border-left: 1px solid rgba(247, 237, 222, 0.18);
+  }
+
+  .case__stat-value {
+    font-size: 26px;
+    line-height: 31.2px;
+    flex-shrink: 0;
+  }
+
+  .case__stat-label {
+    font-size: 14px;
+    line-height: 16.8px;
+  }
+
+  .case__more {
+    padding-top: 16px;
+  }
+
+  .case__more-body {
+    padding-top: 16px;
+  }
+
+  .case__summary p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   L'ALIGNEMENT DES CHIFFRES SOUS 810px
+
+   Empilés, les trois chiffres posaient le même problème qu'en colonnes, dans
+   l'autre sens : « 7 622 » est trois fois plus large que « ×2 », donc chaque
+   libellé commençait à un endroit différent et la colonne de gauche partait
+   en escalier.
+
+   La rangée devient une grille de DEUX colonnes — les chiffres, les libellés
+   — et chaque chiffre s'y raccorde par `subgrid`. La largeur de la première
+   colonne est celle du chiffre le plus large de la carte : les trois
+   libellés commencent alors exactement au même endroit.
+
+   `minmax(64px, max-content)` empêche l'inverse : un chiffre isolé comme
+   « 3 » ne doit pas coller son libellé au filet.
+   -------------------------------------------------------------------------- */
+
+@supports (grid-template-columns: subgrid) {
+  @media (max-width: 809px) {
+    .case__stats {
+      grid-template-columns: minmax(64px, max-content) minmax(0, 1fr);
+      grid-template-rows: none;
+      grid-auto-rows: auto;
+      column-gap: 14px;
+      row-gap: 14px;
+    }
+
+    .case__stat {
+      grid-row: auto;
+      grid-column: span 2;
+      grid-template-rows: none;
+      grid-template-columns: subgrid;
+      align-items: baseline;
+    }
+  }
+}
+
+/* Le mouvement s'arrête si la préférence système le demande. La règle
+   globale de `motion.css` s'en charge déjà ; celle-ci la répète pour que le
+   fichier reste juste s'il est déplacé. */
+@media (prefers-reduced-motion: reduce) {
+  .cases__viewport {
+    scroll-behavior: auto;
+  }
+
+  .case__image,
+  .case__name,
+  .cases__control {
+    transition: none;
+  }
+
+  .case:hover .case__image,
+  .case:focus-within .case__image,
+  .case:hover .case__name,
+  .case:focus-within .case__name {
+    transform: none;
+  }
+}

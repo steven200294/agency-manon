@@ -1,0 +1,73 @@
+/* ==========================================================================
+   motion.css — ce qui a été mesuré du mouvement, et rien de plus
+   ==========================================================================
+
+   AVERTISSEMENT À LIRE AVANT D'UTILISER CE FICHIER.
+
+   La section « Motion engines on the page » du relevé a été RETIRÉE du
+   document pour tenir dans son budget. Ce n'est pas la même chose que
+   « rien n'a été mesuré » : il y a très probablement du mouvement sur la
+   page d'origine — le squelette montre un carrousel et un ruban défilant
+   (`ul.framer--carousel`, `li.ticker-item` × 14, `li.clone-item` × 14) —
+   mais ses durées, ses courbes et ses images-clés ne sont pas dans ce que
+   j'ai reçu.
+
+   Ce fichier ne contient donc que les deux seules propriétés d'animation
+   effectivement relevées, sur les liens et les boutons :
+
+       transition-property: all;
+       transition-timing-function: ease;
+
+   AUCUNE DURÉE N'A ÉTÉ MESURÉE. Sans durée, `transition` ne produit rien :
+   la durée par défaut de CSS est 0s. Les transitions déclarées sur les
+   primitives sont donc inertes en l'état — c'est volontaire. Inventer un
+   « 200ms qui va bien » donnerait un fichier impossible à distinguer d'une
+   mesure, et faux pour tous ceux qui le liraient ensuite.
+
+   POUR ACTIVER LE MOUVEMENT : renseigne `--duration-transition` ci-dessous.
+   Toutes les primitives s'animeront d'un coup. C'est une décision à prendre,
+   pas une valeur à retrouver.
+
+   Aucun état :hover n'a été relevé non plus — le relevé ne capture que
+   l'état de repos du DOM. Il n'y a donc rien à animer vers quoi que ce soit
+   tant que ces états ne sont pas définis. Voir MISSING.md.
+   ========================================================================== */
+
+@theme {
+  /* Mesurée — la seule courbe du document. */
+  --ease-link: ease;
+
+  /* NON mesurée. Laissée à 0s délibérément : c'est le comportement réel
+     d'une transition sans durée, et ça reste honnête vis-à-vis du relevé.
+     Passe-la à une vraie valeur pour activer les transitions. */
+  --duration-transition: 0s;
+}
+
+/* Les primitives déclarent déjà `transition-property` et
+   `transition-timing-function` avec leurs valeurs mesurées. Ce sélecteur ne
+   fait que leur brancher la durée, pour qu'il n'y ait qu'un seul endroit à
+   changer le jour où elle sera décidée. */
+.btn-nav,
+.btn-primary,
+.btn-control,
+.btn-control-active,
+.chip-solid,
+.chip-ghost,
+.link-nav,
+.t-link {
+  transition-duration: var(--duration-transition);
+}
+
+/* Respect de la préférence système. Cette règle n'est pas une mesure : c'est
+   une exigence d'accessibilité, indépendante du site relevé. Elle est sans
+   effet tant que --duration-transition vaut 0s. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
