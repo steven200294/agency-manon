@@ -802,92 +802,27 @@
 /* --------------------------------------------------------------------------
    Bande 13 — le pied de page
 
-   ÉCART DE LARGEUR : la bande mesure 495px. Trois colonnes d'informations
-   n'y tiennent pas. Le logo et la signature gardent ces 495px ; le bloc de
-   colonnes et la ligne légale passent à la largeur commune du projet.
+   PLUS RIEN ICI. Le pied de page a sa propre feuille, `footer.css`, et elle
+   est seule à le styler.
+
+   Ce qui était écrit à cette place venait d'une version précédente du
+   composant, dont le balisage n'existe plus (`__tagline`, `__columns`,
+   `__label`, `__social`, `__legal`, `__legal-links`). Quatre de ces règles
+   portaient pourtant des noms encore employés — `.site-footer`,
+   `.site-footer__brand`, `.site-footer__column`, `.site-footer__copyright` —
+   et comme `content.css` est importé AVANT `footer.css`, elles ne gênaient que
+   sur les propriétés que la nouvelle feuille ne redéclare pas. Deux
+   conséquences bien visibles :
+
+     — `max-width: 1240px` bridait le pied de page, qui doit être pleine
+       largeur : le fond sombre s'arrêtait avant les bords de l'écran ;
+     — `align-items: center` et `text-align: center` centraient les colonnes
+       de liens, alors qu'elles se lisent alignées à gauche.
+
+   La leçon, pour la prochaine refonte d'un composant : supprimer les anciennes
+   règles en même temps que l'ancien balisage. Un sélecteur orphelin ne fait
+   rien de visible jusqu'au jour où un nom est réemployé.
    -------------------------------------------------------------------------- */
-
-.site-footer {
-  max-width: var(--width-band); /* mesuré ailleurs : 1240px */
-  padding-right: 40px;
-  padding-left: 40px;
-}
-
-.site-footer__brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  max-width: 495px; /* la largeur mesurée de la bande */
-}
-
-.site-footer__tagline {
-  font-family: var(--font-text);
-  font-size: 16px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 24px;
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-.site-footer__columns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  width: 100%;
-  padding-top: 8px;
-}
-
-.site-footer__column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-}
-
-.site-footer__label {
-  font-family: var(--font-text);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: var(--tracking-chip);
-  text-transform: uppercase;
-  color: var(--color-accent);
-}
-
-.site-footer__social {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.site-footer__legal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-border-hairline); /* mesuré */
-}
-
-.site-footer__copyright,
-.site-footer__legal-links {
-  font-family: var(--font-text);
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-.site-footer__legal-links {
-  font-style: italic;
-}
 
 /* --------------------------------------------------------------------------
    Replis — mêmes seuils mesurés que partout ailleurs (810px et 1200px)
@@ -1048,8 +983,5 @@
     line-height: 28.6px;
   }
 
-  .site-footer__columns {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
+  /* Le repli du pied de page est dans `footer.css`, avec le reste. */
 }

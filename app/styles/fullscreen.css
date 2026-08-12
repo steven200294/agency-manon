@@ -84,8 +84,9 @@
   padding-bottom: 64px;
 }
 
-/* Le pied de page n'est plus concerné : il est sorti de `.page-content` et
-   porte sa propre hauteur d'un écran, en rideau. Voir footer.css. */
+/* Le pied de page n'est pas concerné : il est hors de `.page-content` et porte
+   sa propre hauteur, celle de son contenu. Un pied de page étiré à l'écran
+   plein laisserait un grand vide sous ses quatre colonnes. Voir footer.css. */
 
 /* La section noire porte son propre padding de 40px, mesuré sur son relevé.
    Il est conservé : c'est la seule bande dont l'espacement vertical vient

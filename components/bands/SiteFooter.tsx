@@ -1,56 +1,49 @@
 "use client";
 
 import Logo from "@/components/primitives/Logo";
-import MagneticLink from "@/components/primitives/MagneticLink";
-import { FOOTER } from "@/content/site";
+import { BRAND, FOOTER, NAV } from "@/content/site";
 
 /* ==========================================================================
-   BANDE 13 sur 13 — le pied de page, en rideau
+   BANDE 13 sur 13 — le pied de page
 
-   ÉCART TOTAL. La bande mesurée est une colonne de 495px de large, écart
-   36px, padding 120px / 63px, sans fond propre. Rien de tout ça ne subsiste :
-   le pied de page reprend les mécaniques d'un composant apporté séparément
-   (un « cinematic footer »), adapté à la charte du projet.
+   ÉCART ASSUMÉ. La bande mesurée est une colonne de 495px de large, écart
+   36px, padding 120px / 63px, sans fond propre. Ce pied de page-ci est en
+   Nuit et sur trois colonnes : la colonne mesurée ne portait qu'un bloc de
+   texte, et le contenu réel du document en demande quatre (marque,
+   navigation, réseaux, mentions).
 
    ---------------------------------------------------------------------------
-   COMMENT MARCHE LA RÉVÉLATION EN RIDEAU
+   IL EST « NORMAL », ET C'EST DEMANDÉ — POUR L'INSTANT
 
-   C'est la seule vraie astuce du composant, et elle tient en deux règles.
+   La version précédente était un rideau : un conteneur d'un écran de haut
+   portant un `clip-path`, et à l'intérieur un pied de page en
+   `position: fixed; bottom: 0` que la page découvrait progressivement en
+   remontant devant lui. Elle portait aussi un halo animé, une grille, un mot
+   géant en fond, un ruban défilant incliné et des pastilles aimantées au
+   curseur.
 
-   1. Un conteneur d'un écran de haut, en flux normal, qui porte un
-      `clip-path`. Un `clip-path` sur un parent découpe TOUT ce qu'il
-      contient, y compris ce qui est en `position: fixed` — c'est le seul
-      moyen simple de contraindre un élément fixe à une zone.
+   Tout cela est retiré sur demande, au profit d'un pied de page en FLUX
+   NORMAL : il arrive au bout de la page, il défile avec elle, et rien n'y
+   bouge. Le contenu, lui, est conservé en entier — les deux actions, les
+   réseaux, les mentions, l'adresse, le retour en haut.
 
-   2. À l'intérieur, le pied de page en `position: fixed; bottom: 0`, sur un
-      écran plein. Il ne bouge donc jamais ; c'est le conteneur qui remonte
-      avec le défilement, et la fenêtre découpée révèle progressivement le
-      pied de page comme un rideau qui se lève.
+   Le rideau n'est pas perdu : il est dans l'historique, au commit qui a
+   publié le site (`git show b89759d -- components/bands/SiteFooter.tsx
+   app/styles/footer.css`). Le rétablir ne demande que de reprendre ces deux
+   fichiers.
 
-   Conséquence indispensable : le contenu de la page doit être OPAQUE et
-   passer devant, sinon on voit le pied de page à travers toutes les bandes.
-   D'où le `.page-content` de `page.tsx`, qui porte le fond Dentelle et le
-   `z-index: 1`. Voir canvas.css.
+   Une conséquence à connaître : `.page-content` porte un fond OPAQUE et un
+   `z-index` qui n'existaient que pour masquer le pied de page fixe pendant la
+   lecture. Ils sont désormais inutiles mais restent en place — ils ne coûtent
+   rien, et ils redeviendront nécessaires le jour où le rideau reviendra.
+   Voir canvas.css et footer.css.
    ---------------------------------------------------------------------------
 
-   ADAPTATION À LA CHARTE
-
-   Le composant de référence est monochrome et suit les jetons de son thème.
-   Ici :
-
-   — le pied de page est en NUIT, pas en Dentelle. C'est un rideau : il doit
-     trancher avec la page qu'il recouvre, et il répond à la section noire
-     des cas clients ;
-   — le halo et la grille reprennent Terre d'Ombre et Châtaigne ;
-   — les pastilles de verre gardent leur principe (fond translucide,
-     `backdrop-filter`, liseré interne clair) mais sur les tons du projet ;
-   — le mot géant en fond est « TRACE ».
-
-   GSAP N'EST PAS EMPLOYÉ. Le composant de référence s'en sert pour
-   l'aimantation et une parallaxe au défilement. L'aimantation tient en
-   trente lignes (voir MagneticLink), et la parallaxe est remplacée par la
-   révélation en rideau, qui est déjà un effet de défilement — en superposer
-   un second n'ajoutait rien.
+   Ce qui est traité, parce qu'un pied de page qui ne le fait pas est bancal :
+     — les trois listes sont de vraies listes, dans de vrais `<nav>` nommés ;
+     — le retour en haut respecte `prefers-reduced-motion` ;
+     — les liens encore inconnus valent `#` et sont signalés À FOURNIR dans
+       `content/site.ts`, pas ici.
    ========================================================================== */
 
 function ArrowUp() {
@@ -70,121 +63,107 @@ function ArrowUp() {
   );
 }
 
-/* Le ruban est dupliqué : quand la première série a défilé de sa propre
-   largeur, la seconde occupe exactement sa place et la boucle se referme sans
-   couture. Le duplicata est masqué aux lecteurs d'écran. */
-function MarqueeRun({ hidden }: { hidden?: boolean }) {
-  return (
-    <div className="footer-marquee__run" aria-hidden={hidden}>
-      {FOOTER.marquee.map((word) => (
-        <span key={word} className="footer-marquee__item">
-          {word}
-          <span className="footer-marquee__sep" aria-hidden="true">
-            ✦
-          </span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export default function SiteFooter() {
+  /* Le défilement fluide est une animation : sous `prefers-reduced-motion`, le
+     saut est immédiat. La requête est lue à l'appel et non une fois pour
+     toutes — la préférence système peut changer pendant la visite. */
   const scrollToTop = () => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   };
 
   return (
-    /* Le conteneur en flux : un écran de haut, et un `clip-path` qui découpe
-       le pied de page fixe qu'il contient. */
-    <div className="footer-curtain">
-      <footer className="footer-panel">
-        {/* Halo et grille. Purement décoratifs, donc hors du flux et hors du
-            parcours au clavier. */}
-        <div className="footer-panel__aurora" aria-hidden="true" />
-        <div className="footer-panel__grid" aria-hidden="true" />
+    <footer className="site-footer">
+      <div className="site-footer__inner">
+        {/* La colonne de marque. Le logo est en variante beige : le pied de
+            page est la seule surface sombre de la page avec la bande des cas
+            clients. */}
+        <div className="site-footer__brand">
+          <a href="#" aria-label="Accueil">
+            <Logo width={180} variant="beige" />
+          </a>
 
-        {/* Le mot géant, découpé dans un dégradé. */}
-        <div className="footer-panel__giant" aria-hidden="true">
-          {FOOTER.giantWord}
-        </div>
+          <p className="site-footer__baseline">{FOOTER.heading}</p>
 
-        {/* Le ruban, incliné et débordant des deux côtés. */}
-        <div className="footer-marquee">
-          <div className="footer-marquee__track">
-            <MarqueeRun />
-            <MarqueeRun hidden />
-          </div>
-        </div>
-
-        <div className="footer-panel__center">
-          <Logo width={240} variant="beige" />
-
-          <h2 className="footer-panel__heading">{FOOTER.heading}</h2>
-
-          {/* Les deux actions principales. */}
-          <div className="footer-pills">
+          {/* Les deux actions principales restent des boutons pleins : ce sont
+              les seuls liens du pied de page qui appellent un geste. */}
+          <div className="site-footer__actions">
             {FOOTER.primary.map((action) => (
-              <MagneticLink
+              <a
                 key={action.label}
                 href={action.href}
-                className="footer-pill footer-pill--primary"
+                className="site-footer__action"
               >
                 {action.label}
-              </MagneticLink>
+              </a>
             ))}
           </div>
+        </div>
 
-          {/* Les réseaux, puis les mentions. Deux rangées de pastilles plus
-              petites, moins accrochées au curseur que les principales. */}
-          <div className="footer-pills footer-pills--small">
+        {/* Les trois colonnes de liens. Les entrées de navigation sont celles
+            de la barre, reprises telles quelles : deux listes différentes pour
+            la même page seraient une occasion de divergence. */}
+        <nav className="site-footer__column" aria-label="Navigation du site">
+          <h2 className="site-footer__column-title">{BRAND.name}</h2>
+          <ul>
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <a className="site-footer__link" href={item.href}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav className="site-footer__column" aria-label="Réseaux sociaux">
+          <h2 className="site-footer__column-title">{FOOTER.social.label}</h2>
+          <ul>
             {FOOTER.social.links.map((link) => (
-              <MagneticLink
-                key={link}
-                href="#"
-                className="footer-pill"
-                strength={0.22}
-              >
-                {link}
-              </MagneticLink>
+              <li key={link}>
+                {/* À FOURNIR : les trois URL. Voir content/site.ts. */}
+                <a className="site-footer__link" href="#">
+                  {link}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
+        </nav>
 
-          <div className="footer-pills footer-pills--small">
+        <nav className="site-footer__column" aria-label="Informations légales">
+          <h2 className="site-footer__column-title">Informations</h2>
+          <ul>
             {FOOTER.legal.map((item) => (
-              <MagneticLink
-                key={item}
-                href="#"
-                className="footer-pill footer-pill--quiet"
-                strength={0.18}
-              >
-                {item}
-              </MagneticLink>
+              <li key={item}>
+                <a className="site-footer__link" href="#">
+                  {item}
+                </a>
+              </li>
             ))}
-          </div>
-        </div>
+          </ul>
+          <p className="site-footer__agency">
+            <span className="site-footer__agency-label">
+              {FOOTER.agency.label}
+            </span>
+            {FOOTER.agency.value}
+          </p>
+        </nav>
+      </div>
 
-        {/* La barre du bas : mention légale, adresse, retour en haut. */}
-        <div className="footer-bar">
-          <p className="footer-bar__copyright">{FOOTER.copyright}</p>
+      {/* La barre du bas, séparée par un filet : mention de droits d'un côté,
+          retour en haut de l'autre. */}
+      <div className="site-footer__bar">
+        <p className="site-footer__copyright">{FOOTER.copyright}</p>
 
-          <div className="footer-pill footer-pill--static">
-            <span className="footer-bar__label">{FOOTER.agency.label}</span>
-            <span className="footer-bar__value">{FOOTER.agency.value}</span>
-          </div>
-
-          <MagneticLink
-            as="button"
-            type="button"
-            onClick={scrollToTop}
-            aria-label={FOOTER.backToTop}
-            className="footer-pill footer-pill--round"
-            strength={0.3}
-          >
-            <ArrowUp />
-          </MagneticLink>
-        </div>
-      </footer>
-    </div>
+        <button
+          type="button"
+          className="site-footer__top"
+          onClick={scrollToTop}
+        >
+          <span>{FOOTER.backToTop}</span>
+          <ArrowUp />
+        </button>
+      </div>
+    </footer>
   );
 }

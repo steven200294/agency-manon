@@ -4,10 +4,10 @@ import type { CSSProperties } from "react";
    LogoTicker — une piste de logos qui défile en boucle, sans fin
 
    NON MESURÉ. Aucun relevé du projet ne capture ce mécanisme : c'est une
-   demande explicite pour la bande noire des cas clients. Le seul précédent
-   maison est le ruban du pied de page (`.footer-marquee`), et ce composant
-   en reprend le principe — c'est le même mouvement, il doit se régler de la
-   même façon.
+   demande explicite pour la bande noire des cas clients. Le principe et les
+   réglages viennent du ruban qui défilait dans le pied de page, retiré depuis
+   avec le rideau (voir footer.css) : c'était le même mouvement, il devait se
+   régler de la même façon.
 
    LE PRINCIPE
 

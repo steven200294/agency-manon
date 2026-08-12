@@ -1,400 +1,219 @@
 /* ==========================================================================
-   footer.css — le pied de page en rideau
+   footer.css — le pied de page, en flux normal
    ==========================================================================
 
    ⚠ RIEN ICI N'EST MESURÉ sur les relevés du projet.
 
    La bande 13 est relevée comme une colonne de 495px de large, écart 36px,
-   padding 120px / 63px, sans fond propre. Ce fichier la remplace entièrement
-   par les mécaniques d'un composant apporté séparément, adapté à la charte.
+   padding 120px / 63px, sans fond propre. Ce fichier la remplace : quatre
+   colonnes sur fond Nuit, plus une barre de bas de page.
 
-   Les seules valeurs qui viennent d'ailleurs sont les jetons du projet :
-   couleurs du brandboard, rayons mesurés (999px pour les pastilles), et
-   l'approche de +0,52px des puces, qui est la seule approche positive de
-   tout le relevé.
+   Les seules valeurs venues d'ailleurs sont des jetons du projet : couleurs du
+   brandboard, largeur commune de 1240px, rayon de 999px des pastilles, et
+   l'approche de +0,52px des puces — la seule approche positive du relevé.
+
+   ---------------------------------------------------------------------------
+   CE FICHIER A REMPLACÉ UN RIDEAU
+
+   La version précédente révélait le pied de page comme un rideau qui se lève :
+   un conteneur d'un écran de haut portant un `clip-path` (qui découpe tout son
+   sous-arbre, y compris les descendants en `position: fixed`), et à
+   l'intérieur un pied de page fixe que la page découvrait en remontant devant
+   lui. S'y ajoutaient un halo animé, une grille masquée, un mot géant en
+   contour, un ruban défilant incliné de 2° et des pastilles aimantées.
+
+   Tout est retiré sur demande — « un footer normal, pour l'instant ». Le pied
+   de page défile désormais avec la page, et plus rien n'y bouge, à part le
+   défilement fluide du retour en haut.
+
+   Le rideau est dans l'historique : `git show b89759d -- app/styles/footer.css`.
+   ---------------------------------------------------------------------------
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   Le rideau
-
-   Un conteneur d'un écran de haut, en flux normal, qui porte un `clip-path`.
-
-   Le `clip-path` est le cœur du mécanisme, et pour une raison précise : il
-   découpe TOUT son sous-arbre, y compris les descendants en `position:
-   fixed`. C'est le seul moyen simple de contraindre un élément fixe à une
-   zone de la page. Sans lui, le pied de page resterait collé au bas de
-   l'écran pendant toute la lecture.
-   -------------------------------------------------------------------------- */
-
-.footer-curtain {
-  position: relative;
-  width: 100%;
-  height: 100svh;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+/* Remise à zéro, portée au seul composant — même principe qu'ailleurs dans le
+   projet : les mesures ont été prises sans les styles par défaut du
+   navigateur, et `:where()` garde une spécificité nulle. */
+:where(.site-footer) :where(h2, p) {
+  margin: 0;
 }
 
-/* Le pied de page ne bouge jamais : c'est le rideau qui remonte devant lui. */
-.footer-panel {
+:where(.site-footer) :where(ul, li) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer {
   --footer-ink: var(--color-dentelle);
   --footer-ground: var(--color-nuit);
+  --footer-hairline: rgba(247, 237, 222, 0.14);
 
-  position: fixed;
-  bottom: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 40px;
   width: 100%;
-  height: 100svh;
-  padding: 0 40px 32px;
+  padding: 80px 40px 32px;
   background-color: var(--footer-ground);
   color: var(--footer-ink);
   font-family: var(--font-text);
-  overflow: hidden;
   box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------
-   Le décor de fond
+   Les quatre colonnes
+
+   La marque prend le double d'une colonne de liens : elle porte un logo, une
+   accroche et deux boutons, les autres une liste de trois ou quatre entrées.
+   D'où `2fr` contre `1fr` — un rapport, pas des largeurs figées.
    -------------------------------------------------------------------------- */
 
-/* Le halo. Terre d'Ombre au centre, Châtaigne autour — les deux tons chauds
-   du brandboard, très dilués. Il respire en 10 secondes. */
-.footer-panel__aurora {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80vw;
-  height: 60vh;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  filter: blur(90px);
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(168, 118, 85, 0.35) 0%,
-    rgba(119, 64, 42, 0.28) 42%,
-    transparent 70%
-  );
-  animation: footer-breathe 10s ease-in-out infinite alternate;
-}
-
-/* La grille. Un maillage de 60px, estompé en haut et en bas par un masque :
-   sans lui, la grille se couperait net sur les bords et se lirait comme une
-   texture posée plutôt que comme une profondeur. */
-.footer-panel__grid {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-size: 60px 60px;
-  background-image:
-    linear-gradient(
-      to right,
-      rgba(247, 237, 222, 0.05) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(247, 237, 222, 0.05) 1px,
-      transparent 1px
-    );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 28%,
-    black 72%,
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    black 28%,
-    black 72%,
-    transparent
-  );
-}
-
-/* Le mot géant. Il n'est pas rempli : un contour d'un pixel, et un dégradé
-   découpé dans les lettres qui s'éteint avant le bas. Le corps est en `vw`
-   pour qu'il occupe toujours la même part de l'écran. */
-.footer-panel__giant {
-  position: absolute;
-  bottom: -4vh;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: 26vw;
-  font-weight: 900;
-  line-height: 0.75;
-  letter-spacing: -0.05em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(247, 237, 222, 0.08);
-  background: linear-gradient(
-    180deg,
-    rgba(247, 237, 222, 0.13) 0%,
-    transparent 62%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
-/* --------------------------------------------------------------------------
-   Le ruban défilant
-
-   Incliné de 2°, agrandi de 10 % et débordant des deux côtés : c'est
-   l'agrandissement qui évite de voir les extrémités du ruban une fois
-   incliné. `overflow: hidden` sur le pied de page fait le reste.
-   -------------------------------------------------------------------------- */
-
-.footer-marquee {
-  position: absolute;
-  top: 14vh;
-  left: 0;
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
   width: 100%;
-  z-index: 1;
-  overflow: hidden;
-  padding: 14px 0;
-  border-top: 1px solid rgba(247, 237, 222, 0.14);
-  border-bottom: 1px solid rgba(247, 237, 222, 0.14);
-  background-color: rgba(20, 20, 20, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transform: rotate(-2deg) scale(1.1);
-}
-
-.footer-marquee__track {
-  display: flex;
-  width: max-content;
-  animation: footer-marquee 42s linear infinite;
-}
-
-.footer-marquee__run {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.footer-marquee__item {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding-right: 28px;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 20px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(247, 237, 222, 0.55);
-  white-space: nowrap;
-}
-
-.footer-marquee__sep {
-  color: var(--color-terre-ombre);
-}
-
-/* La distance d'un cycle est la largeur d'une série, soit la moitié de la
-   piste — les deux séries étant identiques. Écrit en pourcentage, la règle
-   tient quel que soit le nombre de mots. */
-@keyframes footer-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes footer-breathe {
-  from {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.65;
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1.12);
-    opacity: 1;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Le contenu central
-   -------------------------------------------------------------------------- */
-
-.footer-panel__center {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  width: 100%;
-  max-width: 1040px;
+  max-width: var(--width-band); /* 1240px, la largeur commune du projet */
   margin: 0 auto;
-  padding-top: 12vh;
 }
 
-/* Le titre est découpé dans un dégradé qui s'éteint vers le bas — le même
-   principe que le mot géant, en rempli. C'est ce qui lui donne son aspect
-   métallique sans ajouter la moindre image. */
-.footer-panel__heading {
-  margin: 0;
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+
+  /* Assez large pour que les deux actions tiennent côte à côte — elles font
+     ~370px avec leur écart — et pas plus : au-delà, l'accroche s'étale sur une
+     seule ligne et la colonne perd son aplomb face aux trois listes. */
+  max-width: 420px;
+}
+
+.site-footer__baseline {
   font-family: var(--font-display);
-  font-size: clamp(34px, 5.4vw, 68px);
+  font-size: 20px;
   font-weight: var(--weight-title);
-  line-height: 1.05;
-  letter-spacing: -2px;
-  text-align: center;
-  background: linear-gradient(
-    180deg,
-    var(--footer-ink) 0%,
-    rgba(247, 237, 222, 0.42) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 24px rgba(247, 237, 222, 0.16));
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+  color: var(--footer-ink);
 }
 
 /* --------------------------------------------------------------------------
-   Les pastilles de verre
+   Les deux actions
 
-   Le principe vient du composant de référence : un fond translucide très
-   faible, un liseré interne clair qui simule une arête éclairée, et un flou
-   d'arrière-plan. Les couleurs sont celles du projet, et le rayon de 999px
-   est la valeur mesurée sur les puces du relevé.
+   Elles reprennent la forme des boutons de la page — rayon plein, libellé à
+   14px, approche des puces — mais en Terre d'Ombre : c'est le seul ton chaud
+   du brandboard assez clair pour se détacher sur Nuit (3,3:1, donc réservé aux
+   grands corps et aux aplats, jamais au petit texte sur fond sombre).
    -------------------------------------------------------------------------- */
 
-.footer-pills {
+.site-footer__actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-.footer-pills--small {
-  gap: 10px;
-}
-
-.footer-pill {
+.site-footer__action {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 16px 28px;
-  font-family: var(--font-text);
+  padding: 14px 24px;
+  border-radius: var(--radius-pill); /* 999px — mesuré */
+  background-color: var(--color-terre-ombre);
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  letter-spacing: var(--tracking-chip); /* 0.52px — mesuré */
-  color: rgba(247, 237, 222, 0.78);
-  text-decoration: none;
-  border: 1px solid rgba(247, 237, 222, 0.1);
-  border-radius: var(--radius-pill); /* 999px — mesuré */
-  background: linear-gradient(
-    145deg,
-    rgba(247, 237, 222, 0.06) 0%,
-    rgba(247, 237, 222, 0.02) 100%
-  );
-  box-shadow:
-    0 10px 30px -10px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(247, 237, 222, 0.12),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  cursor: pointer;
-  transition: background 400ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 400ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 400ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: var(--tracking-chip); /* 0,52px — mesuré */
+  color: var(--color-nuit);
+  transition: background-color 240ms var(--ease-link);
 }
 
-.footer-pill:hover {
-  color: var(--footer-ink);
-  border-color: rgba(247, 237, 222, 0.24);
-  background: linear-gradient(
-    145deg,
-    rgba(247, 237, 222, 0.12) 0%,
-    rgba(247, 237, 222, 0.04) 100%
-  );
-  box-shadow:
-    0 20px 44px -12px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1px rgba(247, 237, 222, 0.22);
+.site-footer__action:hover {
+  background-color: var(--color-dentelle);
 }
 
-/* La pastille principale est pleine — Terre d'Ombre, comme le seul ton chaud
-   assez clair pour se détacher sur Nuit. */
-.footer-pill--primary {
-  padding: 18px 34px;
+.site-footer__action:focus-visible {
+  outline: 2px solid var(--color-dentelle);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Les colonnes de liens
+   -------------------------------------------------------------------------- */
+
+.site-footer__column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.site-footer__column ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Les titres de colonne sont traités comme des étiquettes et non comme des
+   titres : capitales, petit corps, approche ouverte. Ce sont des repères de
+   lecture, pas une hiérarchie éditoriale — même s'ils sont bien des `h2` dans
+   le document, pour que la structure reste juste au lecteur d'écran. */
+.site-footer__column-title {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 237, 222, 0.5);
+}
+
+.site-footer__link {
   font-size: 15px;
-  color: var(--color-nuit);
-  background: var(--color-terre-ombre);
-  border-color: transparent;
+  font-weight: 400;
+  line-height: 22px;
+  color: rgba(247, 237, 222, 0.78);
+  transition: color 240ms var(--ease-link);
 }
 
-.footer-pill--primary:hover {
-  color: var(--color-nuit);
-  background: var(--color-dentelle);
-  border-color: transparent;
+.site-footer__link:hover {
+  color: var(--footer-ink);
 }
 
-.footer-pill--quiet {
-  padding: 12px 20px;
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(247, 237, 222, 0.55);
+.site-footer__link:focus-visible {
+  outline: 2px solid var(--color-terre-ombre);
+  outline-offset: 3px;
 }
 
-.footer-pill--round {
-  width: 52px;
-  height: 52px;
-  padding: 0;
-  border: 1px solid rgba(247, 237, 222, 0.1);
-  background: linear-gradient(
-    145deg,
-    rgba(247, 237, 222, 0.06) 0%,
-    rgba(247, 237, 222, 0.02) 100%
-  );
+.site-footer__agency {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 20px;
+  color: rgba(247, 237, 222, 0.78);
 }
 
-.footer-pill--round svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* La pastille d'adresse n'est pas cliquable : elle porte une information,
-   pas une action. Le curseur le dit. */
-.footer-pill--static {
-  gap: 12px;
-  padding: 12px 22px;
-  cursor: default;
+.site-footer__agency-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 237, 222, 0.5);
 }
 
 /* --------------------------------------------------------------------------
    La barre du bas
    -------------------------------------------------------------------------- */
 
-.footer-bar {
-  position: relative;
-  z-index: 2;
+.site-footer__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   width: 100%;
-  max-width: 1240px; /* la largeur commune du projet */
+  max-width: var(--width-band);
   margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--footer-hairline);
 }
 
-.footer-bar__copyright {
-  margin: 0;
+.site-footer__copyright {
   font-size: 11px;
   font-weight: 600;
   line-height: 16px;
@@ -403,111 +222,66 @@
   color: rgba(247, 237, 222, 0.5);
 }
 
-.footer-bar__label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(247, 237, 222, 0.5);
+.site-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--footer-hairline);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-chip);
+  color: rgba(247, 237, 222, 0.78);
+  cursor: pointer;
+  transition: border-color 240ms var(--ease-link),
+    color 240ms var(--ease-link);
 }
 
-.footer-bar__value {
-  font-size: 13px;
-  font-weight: 600;
+.site-footer__top:hover {
+  border-color: rgba(247, 237, 222, 0.44);
   color: var(--footer-ink);
 }
 
-/* --------------------------------------------------------------------------
-   L'aimantation
-
-   La transition assure le retour au repos : le crochet React efface le
-   `transform` quand le pointeur sort, et c'est elle qui ramène l'élément
-   en douceur. Pendant le mouvement, elle donne un très léger retard qui rend
-   le suivi souple plutôt que collé.
-   -------------------------------------------------------------------------- */
-
-.magnetic {
-  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-
-.footer-pill:focus-visible {
+.site-footer__top:focus-visible {
   outline: 2px solid var(--color-terre-ombre);
   outline-offset: 3px;
+}
+
+.site-footer__top svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* --------------------------------------------------------------------------
    Sous 810px
 
-   Le rideau tient, mais tout ce qui compte sur la largeur cède : le ruban
-   incliné, le mot géant et la barre du bas en trois colonnes.
+   Quatre colonnes ne tiennent pas : la marque prend toute la largeur, les
+   trois listes se rangent en deux colonnes. Les mettre les unes sous les
+   autres allongerait le pied de page de trois écrans.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 809px) {
-  .footer-panel {
-    padding: 0 20px 24px;
+  .site-footer {
+    gap: 32px;
+    padding: 56px 20px 24px;
   }
 
-  .footer-marquee {
-    top: 11vh;
-    padding: 10px 0;
+  .site-footer__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
   }
 
-  .footer-marquee__item {
-    gap: 18px;
-    padding-right: 18px;
-    font-size: 11px;
-    letter-spacing: 0.22em;
+  .site-footer__brand {
+    grid-column: 1 / -1;
+    max-width: none;
   }
 
-  .footer-panel__giant {
-    font-size: 38vw;
-    bottom: -2vh;
-  }
-
-  .footer-panel__center {
-    gap: 18px;
-    padding-top: 16vh;
-  }
-
-  .footer-pill {
-    padding: 13px 20px;
-    font-size: 13px;
-  }
-
-  .footer-pill--primary {
-    padding: 15px 24px;
-    font-size: 14px;
-  }
-
-  /* La barre du bas s'empile, et l'adresse disparaît : elle est déjà dans
-     les pastilles au-dessus, et trois blocs empilés sur un téléphone
-     poussent le retour en haut hors de l'écran. */
-  .footer-bar {
+  .site-footer__bar {
     flex-direction: column;
-    gap: 14px;
-  }
-
-  .footer-pill--static {
-    display: none;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Préférence de mouvement réduit
-
-   Tout s'arrête : le halo, le ruban, l'aimantation. Le rideau, lui, reste —
-   ce n'est pas une animation mais une conséquence du défilement, et le
-   supprimer casserait la mise en page.
-   -------------------------------------------------------------------------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-panel__aurora,
-  .footer-marquee__track {
-    animation: none;
-  }
-
-  .magnetic {
-    transition: none;
+    align-items: flex-start;
+    gap: 16px;
   }
 }

@@ -8,9 +8,12 @@
    — durée, écart, hauteur, fondus des bords — est décidé.
 
    Les valeurs ne sortent pourtant pas de nulle part : la durée et la
-   mécanique de boucle reprennent celles du ruban du pied de page
-   (`.footer-marquee`, 42s, `translateX(-50%)`), pour que les deux
-   mouvements du site aient la même vitesse de lecture.
+   mécanique de boucle reprennent celles du ruban qui défilait dans le pied de
+   page — 42s, `translateX(-50%)`, deux séries identiques. Ce ruban a disparu
+   avec le passage à un pied de page normal (voir footer.css), mais ses valeurs
+   restent la référence du projet : c'est aujourd'hui le seul défilement
+   continu du site, et le ruban du bloc d'accroche s'aligne sur la même
+   lenteur.
 
    Les noms de classes sont les miens.
    ========================================================================== */
