@@ -100,8 +100,8 @@
 /* --------------------------------------------------------------------------
    Les deux actions
 
-   Elles reprennent la forme des boutons de la page — rayon plein, libellé à
-   14px, approche des puces — mais en Terre d'Ombre : c'est le seul ton chaud
+   Elles reprennent la forme des boutons de la page — angle net de 4px,
+   libellé à 14px, approche des puces — mais en Terre d'Ombre : c'est le seul ton chaud
    du brandboard assez clair pour se détacher sur Nuit (3,3:1, donc réservé aux
    grands corps et aux aplats, jamais au petit texte sur fond sombre).
    -------------------------------------------------------------------------- */
@@ -116,7 +116,10 @@
   display: inline-flex;
   align-items: center;
   padding: 14px 24px;
-  border-radius: var(--radius-pill); /* 999px — mesuré */
+  /* Même angle que les boutons de la page depuis qu'ils ont quitté la
+     capsule : le pied de page suit le reste, il n'a pas de raison d'avoir sa
+     propre forme. Voir primitives.css. */
+  border-radius: var(--radius-media-sm); /* 4px */
   background-color: var(--color-terre-ombre);
   font-size: 14px;
   font-weight: 600;
@@ -228,7 +231,7 @@
   gap: 10px;
   padding: 10px 16px;
   border: 1px solid var(--footer-hairline);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-media-sm); /* 4px, comme le reste des boutons */
   background: transparent;
   font-family: var(--font-text);
   font-size: 12px;

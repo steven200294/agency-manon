@@ -1,7 +1,7 @@
-import ImageBox from "@/components/primitives/ImageBox";
+import Image from "next/image";
 import CountUp from "@/components/primitives/CountUp";
 import { ButtonNav } from "@/components/primitives/Buttons";
-import { UGC, UGC_BRANDS, UGC_FIGURES } from "@/content/site";
+import { UGC, UGC_FIGURES } from "@/content/site";
 
 /* ==========================================================================
    BANDE 6 sur 13 — `div.framer-16jxr11`  ·  SECTION 6, focus UGC
@@ -27,86 +27,89 @@ import { UGC, UGC_BRANDS, UGC_FIGURES } from "@/content/site";
 export default function UgcBand() {
   return (
     <section className="band-team" id="ugc">
-      <div className="flex w-full flex-col items-center" style={{ gap: "12px" }}>
+      {/* Le titre tenait sur deux `h2` de même niveau, le second en accent et
+          centré. Ils forment une seule phrase — « L'UGC, ce n'est pas une
+          tendance. C'est devenu le format de référence. » — et se lisent donc
+          comme un titre et son chapô, pas comme deux titres.
+
+          C'est aussi la section la plus haute de la page : c'est elle qui
+          débordait par le haut et dont le titre passait sous la barre fixe.
+          L'ancrage de lower-bands.css corrige ça pour les huit bandes. */}
+      <div className="band-head">
         <h2 className="t-h2">{UGC.title}</h2>
-        <h2 className="t-h2-accent" style={{ textAlign: "center" }}>
-          {UGC.subtitle}
-        </h2>
+        <p className="band-head__lede">{UGC.subtitle}</p>
       </div>
 
-      <div className="ugc">
-        {/* Ce que c'est */}
-        <div className="ugc__block">
-          <h3 className="ugc__block-title">{UGC.whatTitle}</h3>
-          <p className="t-intro ugc__text">{UGC.what}</p>
-          <div className="ugc__antitheses">
+      {/* Les trois blocs d'explication, séparés par des filets verticaux
+          plutôt que par du vide. */}
+      <div className="ugc-cols">
+        <div className="ugc-cols__block">
+          <h3 className="ugc-cols__title">{UGC.whatTitle}</h3>
+          <p className="ugc-cols__text">{UGC.what}</p>
+          <div className="ugc-cols__lines">
             {UGC.whatLines.map((line) => (
-              <p key={line} className="ugc__antithesis">
+              <p key={line} className="ugc-cols__line">
                 {line}
               </p>
             ))}
           </div>
         </div>
 
-        {/* Pourquoi ça marche */}
-        <div className="ugc__block">
-          <h3 className="ugc__block-title">{UGC.whyTitle}</h3>
-          <p className="t-intro ugc__text">{UGC.why}</p>
-          <p className="ugc__closing">{UGC.whyClosing}</p>
+        <div className="ugc-cols__block">
+          <h3 className="ugc-cols__title">{UGC.whyTitle}</h3>
+          <p className="ugc-cols__text">{UGC.why}</p>
+          <p className="ugc-cols__line">{UGC.whyClosing}</p>
         </div>
 
-        {/* La valeur ajoutée. Elle était empilée sous les deux autres ; elle
-            les rejoint en troisième colonne pour que la section tienne sur un
-            écran. Voir fullscreen.css. */}
-        <div className="ugc__block">
-          <h3 className="ugc__block-title">{UGC.valueTitle}</h3>
-          <p className="t-intro ugc__text">{UGC.value}</p>
-          <p className="ugc__closing">{UGC.valueClosing}</p>
+        <div className="ugc-cols__block">
+          <h3 className="ugc-cols__title">{UGC.valueTitle}</h3>
+          <p className="ugc-cols__text">{UGC.value}</p>
+          <p className="ugc-cols__line">{UGC.valueClosing}</p>
         </div>
       </div>
 
-      {/* Les quatre chiffres */}
-      <div className="flex w-full flex-col items-center" style={{ gap: "20px" }}>
-        <h3 className="ugc__block-title">{UGC.figuresTitle}</h3>
+      {/* LA PREUVE — une image et quatre chiffres.
 
-        <div className="ugc__figures">
+          Les chiffres étaient posés à 30px au milieu d'un paragraphe : dans
+          une section qui affirme que l'UGC convertit dix fois mieux, ce sont
+          eux l'argument, et rien ne le montrait. Ils passent en corps
+          d'affichage, en lignes réglées, avec leur source.
+
+          ⚠ PHOTO PROVISOIRE. Voir public/brand/sections/CREDITS.md. */}
+      <div className="ugc-proof">
+        <div className="ugc-proof__media">
+          <Image
+            src="/brand/sections/ugc.jpg"
+            alt="Un plat filmé au smartphone, en cours de tournage"
+            fill
+            sizes="(max-width: 1199px) 100vw, 40vw"
+          />
+        </div>
+
+        <div className="ugc-proof__figures">
+          <h3 className="ugc-cols__title">{UGC.figuresTitle}</h3>
+
           {UGC_FIGURES.map((figure) => (
-            <div key={figure.value} className="ugc__figure">
-              <CountUp
-                value={figure.value}
-                className="t-h3-stat ugc__figure-value"
-              />
-              <p className="t-body">{figure.label}</p>
-              {figure.source ? (
-                <p className="ugc__figure-source">{figure.source}</p>
-              ) : null}
+            <div key={figure.value} className="ugc-figure">
+              <CountUp value={figure.value} className="ugc-figure__value" />
+              <div className="ugc-figure__text">
+                <p className="ugc-figure__label">{figure.label}</p>
+                {figure.source ? (
+                  <p className="ugc-figure__source">{figure.source}</p>
+                ) : null}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* `section [flex row]` → `ul.framer--carousel [flex row, gap 32px]`
-          Le bandeau de logos UGC. Deux marques nommées dans le document, les
-          autres restent des emplacements. Voir MISSING.md. */}
-      <section className="flex w-full flex-row items-center">
-        <ul
-          className="framer--carousel flex min-w-0 flex-1 flex-row items-center justify-center flex-wrap"
-          style={{ gap: "32px" }}
-        >
-          {UGC_BRANDS.map((brand) => (
-            <li key={brand} className="medallion">
-              <ImageBox label={brand} width="56px" variant="media-sm" />
-            </li>
-          ))}
-          {[1, 2, 3].map((slot) => (
-            <li key={`slot-${slot}`} className="medallion">
-              <ImageBox label="À fournir" width="56px" variant="media-sm" />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <ButtonNav>{UGC.ctaLabel} →</ButtonNav>
+      {/* Les marques accompagnées. Deux sont nommées dans le document, le
+          reste attend — mêmes noms composés que la liste des clients, plutôt
+          que des médaillons vides. Voir MISSING.md. */}
+      <div className="band-foot">
+        <p className="band-foot__lead">{UGC.brandsLead}</p>
+        <ButtonNav>{UGC.ctaLabel}</ButtonNav>
+      </div>
     </section>
   );
 }

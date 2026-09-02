@@ -1,4 +1,3 @@
-import ImageBox from "@/components/primitives/ImageBox";
 import { ButtonNav } from "@/components/primitives/Buttons";
 import { FOUNDER } from "@/content/site";
 
@@ -26,36 +25,34 @@ import { FOUNDER } from "@/content/site";
 export default function FounderBand() {
   return (
     <section className="band-founder" id="agence">
-      <h2 className="t-h2">{FOUNDER.title}</h2>
+      <div className="band-head">
+        <h2 className="t-h2">{FOUNDER.title}</h2>
+      </div>
 
-      {/* `div.framer-dplkph [flex row, gap 56px]` */}
-      <div className="founder">
-        {/* `div.framer-1xl49vv [flex row, gap 10px, center]` */}
-        <div
-          className="flex shrink-0 flex-row items-center justify-center"
-          style={{ gap: "10px" }}
-        >
-          <div className="medallion">
-            <ImageBox
-              label={FOUNDER.portraitLabel}
-              width="320px"
-              variant="media-sm"
-            />
-          </div>
-        </div>
+      {/* LE PORTRAIT EST RETIRÉ, PAS REMPLACÉ.
 
-        {/* `div.framer-1h4my8h [flex column, gap 32px]` */}
-        <div className="flex flex-1 flex-col" style={{ gap: "32px" }}>
-          <blockquote className="founder__quote">
-            <p>« {FOUNDER.quote} »</p>
-          </blockquote>
+          L'emplacement affichait un médaillon vide de 320px portant la
+          mention « portrait de Manon » : une boîte grise à côté d'une
+          citation, qui déséquilibrait la section sans rien montrer.
 
-          <p className="founder__attribution">{FOUNDER.attribution}</p>
+          Il n'est pas comblé par une photo de banque d'images : mettre le
+          visage d'un inconnu sous le nom d'une personne réelle n'est pas un
+          emplacement provisoire, c'est un faux. La citation porte donc la
+          section seule — et le jour où le vrai portrait arrive, il reprend la
+          colonne de gauche que la grille lui garde. Voir
+          public/brand/sections/CREDITS.md. */}
+      <figure className="founder">
+        <blockquote className="founder__quote">
+          <p className="statement statement--wide">« {FOUNDER.quote} »</p>
+        </blockquote>
 
-          <div>
-            <ButtonNav>{FOUNDER.ctaLabel} →</ButtonNav>
-          </div>
-        </div>
+        <figcaption className="founder__attribution">
+          {FOUNDER.attribution}
+        </figcaption>
+      </figure>
+
+      <div className="band-foot">
+        <ButtonNav>{FOUNDER.ctaLabel}</ButtonNav>
       </div>
     </section>
   );

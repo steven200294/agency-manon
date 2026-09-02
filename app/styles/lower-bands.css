@@ -1,0 +1,990 @@
+/* ==========================================================================
+   lower-bands.css — la composition des huit bandes basses
+   ==========================================================================
+
+   ⚠ RIEN ICI N'EST MESURÉ. Ce fichier est une décision de design, prise après
+   constat : les huit bandes qui suivent les cas clients ne tenaient pas.
+
+   ---------------------------------------------------------------------------
+   LE CONSTAT, POINT PAR POINT
+
+   1. Le contenu FLOTTAIT. Chaque bande fait un écran de haut (fullscreen.css)
+      avec son contenu centré verticalement. Quand ce contenu est court, il
+      nage au milieu de quatre cents pixels de beige ; quand il est plus haut
+      qu'un écran — la section UGC — il déborde des DEUX côtés, et le haut
+      passait sous la barre fixe. Le titre y était coupé net.
+
+   2. TOUT ÉTAIT CENTRÉ. Titres, chapôs, listes, citations. Centrer est un
+      accent ; tout centrer, c'est n'accentuer rien, et c'est laisser le
+      lecteur sans bord auquel revenir d'une ligne à l'autre.
+
+   3. LES SURFACES ÉTAIENT FANTÔMES. Les cartes, les pastilles de clients, les
+      étiquettes : du beige sur du beige, sans filet. Elles ne se lisaient pas
+      comme des objets, seulement comme des taches un peu plus claires.
+
+   4. AUCUN RYTHME. Onze bandes claires d'affilée pour une seule sombre.
+
+   ---------------------------------------------------------------------------
+   LE PARTI PRIS : UN RELEVÉ
+
+   Le haut de la page tient grâce à ses photographies. Le bas n'en a presque
+   pas : c'est donc sa structure qui doit porter.
+
+   Or l'agence parle déjà finance — « une marque est un actif, pas une
+   dépense », « ce que chaque euro investi vous rapporte », « comme en
+   finance ». La fondatrice en vient. Le bas de la page est donc composé comme
+   un RELEVÉ : une colonne ancrée à gauche, des filets entre les lignes, les
+   chiffres en corps d'affichage, les libellés en texte courant.
+
+   Ce n'est pas un habillage : c'est ce qui règle le point 3 sans inventer un
+   contraste absent du brandboard. Un filet d'un pixel sépare mieux que du
+   beige sur du beige, et il ne coûte aucune couleur.
+
+   Ce que ce fichier NE fait PAS : ajouter des couleurs hors charte, des
+   animations au défilement, ou une seconde famille de caractères. Le problème
+   n'était pas là.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. L'ANCRAGE
+
+   `fullscreen.css` donne à chaque bande un écran de haut et centre son
+   contenu. La hauteur reste — c'est une demande explicite, et elle donne son
+   rythme à la page. Le CENTRAGE VERTICAL, lui, tombe pour ces huit bandes.
+
+   Conséquence directe : une section plus haute qu'un écran ne peut plus
+   déborder vers le haut, donc son titre ne peut plus passer sous la barre.
+   Le bug de la section UGC est corrigé ici, pas ailleurs.
+
+   Le padding haut de 128px n'est pas décoratif : la barre fixe fait 96px et
+   recouvre le début de la section. 128px la dégagent de 32px, l'écart que le
+   canevas emploie déjà partout.
+
+   `align-items: stretch` remplace le `center` des bandes : les enfants
+   occupent alors toute la colonne de 1240px au lieu de se rétracter sur leur
+   contenu. C'est ce qui permet aux filets d'aller d'un bord à l'autre.
+   -------------------------------------------------------------------------- */
+
+:is(.page-content, .stack-cases) > section:is(
+    .band-solutions,
+    .band-fit,
+    .band-team,
+    .manifesto-band,
+    .band-founder,
+    .band-creators,
+    .band-learn-more,
+    .band-faq
+  ) {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-top: 128px;
+  padding-bottom: 96px;
+  text-align: left;
+}
+
+/* --------------------------------------------------------------------------
+   2. L'EN-TÊTE DE SECTION
+
+   Le même objet dans les huit bandes : un titre, une ligne de sous-titre, et
+   un filet qui ferme l'en-tête et ouvre le relevé.
+
+   Le filet est le seul ornement du fichier. Il fait un pixel, il porte la
+   couleur de bordure déjà mesurée du projet, et il dit quelque chose : ici
+   commence la liste.
+   -------------------------------------------------------------------------- */
+
+.band-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--color-border-hairline);
+  text-align: left;
+}
+
+/* Le chapô. 20px plutôt que 18 : sous un titre de 52px, l'ancien 18px se
+   lisait comme une note de bas de page. La mesure est plafonnée — voir plus
+   bas pourquoi 62 signes. */
+.band-head__lede {
+  max-width: 62ch;
+  font-family: var(--font-text);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   3. LA MESURE
+
+   62 signes, pas 80. La règle des 80 signes vaut pour une colonne unique de
+   texte suivi ; ici les paragraphes vivent en colonnes de galerie ou en
+   lignes de relevé, où l'œil doit retrouver le début de la ligne suivante
+   sans effort. Satoshi a un œil large, ce qui raccourcit encore la mesure
+   confortable.
+   -------------------------------------------------------------------------- */
+
+.measure {
+  max-width: 62ch;
+}
+
+/* --------------------------------------------------------------------------
+   4. LA GALERIE
+
+   Quatre colonnes : une image, un titre, un paragraphe. AUCUNE boîte, aucun
+   fond, aucune ombre — l'image est déjà l'objet, l'entourer d'un cadre beige
+   ne ferait que la répéter en moins bien.
+
+   C'est le gabarit du haut de page, appliqué plus bas : les huit cadres du
+   bloc d'accroche ne portent pas de carte non plus.
+   -------------------------------------------------------------------------- */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto auto auto;
+  gap: 28px;
+  width: 100%;
+  padding-top: 40px;
+}
+
+/* `subgrid` raccroche chaque colonne aux TROIS rangées de la galerie : les
+   images finissent à la même hauteur, les titres commencent à la même ligne,
+   et les paragraphes aussi — même quand un titre passe sur deux lignes, comme
+   « Les PME qui voient plus loin que leur site internet ». Sans lui, chaque
+   colonne décalait la suivante et la rangée partait en escalier. */
+.gallery__item {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  gap: 14px;
+  min-width: 0;
+  align-content: start;
+}
+
+/* Le rapport 4/5, debout. Une image couchée dans une colonne étroite se
+   réduit à une bande ; debout, elle garde son sujet. Le rayon est celui des
+   cadres du bloc d'accroche, pas celui des cartes : ces images appartiennent
+   à la même famille que le collage du haut. */
+.gallery__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-frame); /* 16px */
+  overflow: hidden;
+  background-color: var(--color-surface-card);
+}
+
+.gallery__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: var(--tracking-lede);
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.gallery__body {
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25px;
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   5. LE PIED DE SECTION
+
+   La ligne d'appel qui ferme plusieurs bandes. Elle passe à gauche comme le
+   reste, et le bouton se pose à côté de la question plutôt qu'en dessous :
+   une question et sa réponse se lisent sur la même ligne.
+   -------------------------------------------------------------------------- */
+
+.band-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border-hairline);
+}
+
+.band-foot__lead {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: var(--tracking-lede);
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   REPLIS
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1199px) {
+  .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+@media (max-width: 809px) {
+  :is(.page-content, .stack-cases) > section:is(
+      .band-solutions,
+      .band-fit,
+      .band-team,
+      .manifesto-band,
+      .band-founder,
+      .band-creators,
+      .band-learn-more,
+      .band-faq
+    ) {
+    padding-top: 96px;
+    padding-bottom: 72px;
+  }
+
+  .band-head__lede {
+    font-size: 17px;
+    line-height: 27px;
+  }
+
+  .gallery {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 28px;
+  }
+
+  /* Couchée sur téléphone : la colonne fait toute la largeur, une image
+     debout y prendrait tout l'écran à elle seule. */
+  .gallery__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  .band-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+/* ==========================================================================
+   6. LE RELEVÉ — la liste réglée
+
+   Le gabarit central du fichier. Des lignes séparées par des filets, une
+   colonne de repère à gauche, le titre, puis le texte. C'est la forme d'un
+   relevé de compte, et c'est délibéré : l'agence vend une marque comme un
+   actif, la page peut se lire comme un état de cet actif.
+
+   Deux emplois, et une différence qui compte :
+
+   — la méthode NUMÉROTE ses lignes, parce que ce sont quatre étapes dans
+     l'ordre : on cartographie avant de diriger, on dirige avant d'exécuter.
+     Le numéro est une information ;
+   — les expertises ne numérotent PAS. Ce sont cinq métiers, pas cinq étapes.
+     Les « 01 → 05 » qu'elles portaient décoraient une liste sans ordre, et
+     c'est exactement le genre de faux repère qu'il faut retirer.
+   ========================================================================== */
+
+.ledger {
+  width: 100%;
+  padding-top: 8px;
+}
+
+.ledger__row {
+  display: grid;
+  align-items: baseline;
+  gap: 8px 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--color-border-hairline);
+}
+
+/* Méthode : repère, titre, texte. La colonne de repère est étroite et fixe —
+   c'est une marge de lecture, pas une colonne de contenu. */
+.ledger--steps .ledger__row {
+  grid-template-columns: 72px minmax(0, 260px) minmax(0, 1fr);
+}
+
+/* Expertises : titre, texte, mention. La mention part à droite, alignée au
+   bord de la colonne : elle qualifie la ligne sans l'ouvrir. */
+.ledger--offers .ledger__row {
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr) minmax(0, 160px);
+}
+
+/* Le repère de séquence. Chiffres tabulaires : « 01 » et « 04 » n'ont alors
+   pas la même largeur par hasard, ils s'empilent exactement. */
+.ledger__mark {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.ledger__title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: var(--tracking-lede);
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.ledger__body {
+  max-width: 62ch;
+  font-family: var(--font-text);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 27px;
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text-secondary);
+}
+
+/* La mention d'une ligne d'expertise. En Châtaigne, en casse normale : une
+   petite capitale espacée en dirait autant en criant plus fort. */
+.ledger__note {
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-accent);
+}
+
+/* La ligne de clôture du relevé — « Comme en finance. » Alignée à droite,
+   sous le dernier filet : c'est le total en bas de la colonne. */
+.ledger__close {
+  padding-top: 24px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: var(--tracking-lede);
+  text-align: right;
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   7. LE TABLEAU DE NOMS
+
+   Quinze clients, trois marques passées à la télévision. Aucun logo n'est
+   fourni, et les pastilles vides qui tenaient leur place se lisaient comme un
+   bug : quinze contours beiges sur fond beige, avec un nom minuscule dedans.
+
+   Les noms sont donc composés POUR EUX-MÊMES, en grille réglée. Une liste de
+   références assumée vaut mieux qu'une grille de cadres vides — et le jour où
+   les logos arrivent, ils remplacent le texte dans la même grille.
+   ========================================================================== */
+
+.roster {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border-hairline);
+}
+
+.roster__name {
+  padding: 18px 8px 18px 0;
+  border-bottom: 1px solid var(--color-border-hairline);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: var(--tracking-lede);
+  color: var(--color-text-primary);
+}
+
+/* ==========================================================================
+   8. LA DÉCLARATION
+
+   Une phrase seule, en grand, qui porte une section à elle toute seule. Deux
+   emplois : la conclusion de l'émission, et la citation de la fondatrice.
+
+   Le corps est fluide et la mesure courte : une phrase de cette taille doit
+   tenir en trois ou quatre lignes, pas en une seule qui traverse l'écran.
+   ========================================================================== */
+
+.statement {
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: var(--weight-title); /* 300 */
+  line-height: 1.18;
+  letter-spacing: var(--tracking-title);
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.statement--wide {
+  max-width: 26ch;
+}
+
+@media (max-width: 1199px) {
+  .ledger--steps .ledger__row {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .ledger--steps .ledger__body {
+    grid-column: 2;
+  }
+
+  .ledger--offers .ledger__row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 140px);
+  }
+
+  .ledger--offers .ledger__body {
+    grid-column: 1 / -1;
+  }
+
+  .roster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 809px) {
+  .ledger__row {
+    gap: 6px 16px;
+    padding: 22px 0;
+  }
+
+  .ledger--steps .ledger__row,
+  .ledger--offers .ledger__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ledger--steps .ledger__body,
+  .ledger--offers .ledger__body {
+    grid-column: auto;
+  }
+
+  .ledger__title {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .ledger__body {
+    font-size: 16px;
+    line-height: 25px;
+  }
+
+  .roster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster__name {
+    font-size: 19px;
+    padding: 14px 8px 14px 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   La bande de l'émission — deux colonnes
+
+   La déclaration à gauche, les marques à droite. Deux blocs de nature
+   différente côte à côte plutôt qu'empilés : la phrase n'est pas le titre de
+   la liste, elle est sa conclusion.
+   -------------------------------------------------------------------------- */
+
+.tv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 56px;
+  width: 100%;
+  padding-top: 44px;
+}
+
+.tv__roster {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 1199px) {
+  .tv {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 809px) {
+  .tv {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding-top: 32px;
+  }
+}
+
+/* ==========================================================================
+   9. LE MANIFESTE — la seconde surface sombre
+
+   Onze bandes claires d'affilée pour une seule sombre : ce n'est pas un
+   rythme, c'est une teinte. La page reçoit ici sa seconde respiration.
+
+   L'endroit n'est pas choisi au hasard. C'est le seul texte de la page où
+   quelqu'un parle à la première personne, entre des sections qui décrivent
+   une méthode et des livrables. Le fond qui change dit qu'on change de
+   registre — et il répond à la bande noire des cas clients, à six sections
+   de distance, ce qui donne à la page deux points d'appui au lieu d'un.
+
+   ---------------------------------------------------------------------------
+   LA PLEINE LARGEUR
+
+   Les bandes sont plafonnées à 1240px. Une surface colorée qui s'arrête à
+   1240px se lit comme un panneau posé sur la page, pas comme une section :
+   c'est ce que faisait le pied de page avant correction.
+
+   Le plafond est donc levé sur la SECTION, et reporté sur une enveloppe
+   intérieure. Le fond va d'un bord à l'autre, le texte reste dans la colonne
+   commune.
+   ========================================================================== */
+
+.manifesto-band {
+  max-width: none;
+  padding-right: 40px;
+  padding-left: 40px;
+  background-color: var(--color-nuit);
+  color: var(--color-dentelle);
+}
+
+.manifesto-band__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: var(--width-band); /* 1240px */
+  margin: 0 auto;
+}
+
+/* Sur fond Nuit, la charte n'autorise plus les mêmes encres : le texte
+   secondaire du thème est un noir transparent, invisible ici. Les valeurs
+   ci-dessous sont celles qu'emploie déjà la bande des cas clients, pour que
+   les deux surfaces sombres se ressemblent.
+
+   SURTOUT PAS `:where()` ICI. Sa spécificité est nulle, donc le `.t-h2` de
+   type.css passait devant et le titre restait en Nuit — du noir sur du noir,
+   invisible. C'est exactement l'inverse de l'emploi habituel de `:where()`
+   dans ce projet, où il sert à des remises à zéro que tout doit pouvoir
+   écraser. Une surcharge de couleur doit gagner, donc elle prend une vraie
+   spécificité. */
+.manifesto-band .t-h2 {
+  color: var(--color-dentelle);
+
+  /* `-webkit-text-fill-color` DOIT être repris avec la couleur. Il est posé
+     ailleurs pour les titres, et lorsqu'il vaut autre chose que `currentColor`
+     il l'emporte TOUJOURS sur `color` — c'est sa raison d'être. Le titre
+     restait donc peint en Nuit sur fond Nuit : présent dans le document,
+     mesurable, et parfaitement invisible. */
+  -webkit-text-fill-color: var(--color-dentelle);
+}
+
+/* Le centrage vient de `content.css`, qui compose cette bande centrée depuis
+   l'origine. Il est repris ligne par ligne : la bande est passée à gauche
+   comme les sept autres, et un texte centré au milieu d'une colonne ancrée à
+   gauche se lirait comme un accident. */
+.manifesto-band .manifesto,
+.manifesto-band .manifesto__intro,
+.manifesto-band .manifesto__turn,
+.manifesto-band .manifesto__grief,
+.manifesto-band .manifesto__principle,
+.manifesto-band .manifesto__signature {
+  align-items: flex-start;
+  max-width: none;
+  text-align: left;
+}
+
+.manifesto-band .band-head {
+  border-bottom-color: rgba(247, 237, 222, 0.14);
+}
+
+.manifesto-band .band-head__lede {
+  color: rgba(247, 237, 222, 0.78);
+}
+
+/* Les griefs et le pivot. Mesure courte : ce sont des phrases qui se lisent
+   d'un souffle, pas des paragraphes. */
+.manifesto-band .manifesto__grief {
+  max-width: 54ch;
+  font-family: var(--font-text);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: var(--tracking-body);
+  color: rgba(247, 237, 222, 0.7);
+}
+
+.manifesto-band .manifesto__turn {
+  max-width: 58ch;
+  font-family: var(--font-text);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: var(--tracking-label);
+  color: rgba(247, 237, 222, 0.88);
+}
+
+/* Les trois principes portent la promesse : ils prennent le corps le plus
+   fort de la bande. Terre d'Ombre plutôt que Châtaigne — sur fond Nuit, c'est
+   le ton chaud du brandboard qui ressort, et il ne sert qu'à du grand corps,
+   ce qui est précisément le cas ici. */
+.manifesto-band .manifesto__principle {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: var(--tracking-lede);
+  color: var(--color-terre-ombre);
+}
+
+.manifesto-band .manifesto__signature {
+  font-family: var(--font-text);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgba(247, 237, 222, 0.6);
+}
+
+.manifesto-band .manifesto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+}
+
+.manifesto-band .manifesto__griefs,
+.manifesto-band .manifesto__principles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   10. LA SIGNATURE DE LA FONDATRICE
+
+   Une citation, une attribution. Rien d'autre — le portrait n'est pas fourni,
+   et il n'est pas remplacé par une photo d'inconnu.
+
+   La grille garde pourtant DEUX colonnes, dont une vide à gauche sur grand
+   écran : c'est la place du portrait. Elle n'est pas perdue, elle est tenue.
+   -------------------------------------------------------------------------- */
+
+.band-founder .founder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  margin: 0;
+  padding-top: 44px;
+}
+
+.band-founder .founder__quote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.band-founder .founder__attribution {
+  font-family: var(--font-text);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 809px) {
+  .manifesto-band {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .manifesto-band .manifesto__grief {
+    font-size: 17px;
+    line-height: 27px;
+  }
+
+  .manifesto-band .manifesto__turn {
+    font-size: 18px;
+    line-height: 29px;
+  }
+}
+
+/* ==========================================================================
+   11. LE FOCUS UGC
+
+   La section la plus longue de la page, et celle qui était le plus abîmée :
+   son contenu dépassant la hauteur d'un écran, le centrage vertical la
+   faisait déborder par le HAUT et son titre passait sous la barre fixe. Ce
+   point-là est réglé par l'ancrage, en tête de fichier.
+
+   Reste sa composition. Trois blocs d'explication, puis la preuve.
+   ========================================================================== */
+
+.ugc-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  width: 100%;
+  padding-top: 44px;
+}
+
+/* Le filet vertical sépare mieux que quarante pixels de vide, et il coûte un
+   pixel. Il ne s'applique pas à la première colonne : un filet à gauche du
+   premier bloc l'enfermerait au lieu de le séparer. */
+.ugc-cols__block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding-left: 32px;
+  border-left: 1px solid var(--color-border-hairline);
+}
+
+.ugc-cols__block:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+/* Les intertitres étaient en capitales espacées — « D'ABORD, C'EST QUOI ? ».
+   Ils reprennent leur casse : une question se pose, elle ne s'affiche pas sur
+   un fronton. La couleur suffit à les distinguer du texte. */
+.ugc-cols__title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: var(--tracking-lede);
+  text-transform: none;
+  color: var(--color-accent);
+}
+
+.ugc-cols__text {
+  font-family: var(--font-text);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 27px;
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text-secondary);
+}
+
+.ugc-cols__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Les phrases de bascule — « Pas une pub. Une recommandation. » Elles portent
+   l'argument : elles gardent l'encre pleine quand le texte autour est en
+   encre secondaire. */
+.ugc-cols__line {
+  font-family: var(--font-text);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 27px;
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   La preuve — une image, quatre chiffres
+
+   Les chiffres étaient composés à 30px, en rangée, au milieu du texte. Dans
+   une section qui affirme que l'UGC convertit dix fois mieux, ce sont eux
+   l'argument : ils passent en corps d'affichage, chacun sur sa ligne réglée,
+   avec sa source.
+   -------------------------------------------------------------------------- */
+
+.ugc-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  align-items: start;
+  gap: 48px;
+  width: 100%;
+  margin-top: 56px;
+  padding-top: 44px;
+  border-top: 1px solid var(--color-border-hairline);
+}
+
+.ugc-proof__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-frame); /* 16px */
+  overflow: hidden;
+  background-color: var(--color-surface-card);
+}
+
+.ugc-proof__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ugc-proof__figures {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ugc-figure {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-border-hairline);
+}
+
+/* Le chiffre. `tabular-nums` aligne « × 10,38 » et « 92 % » sur la même
+   avance : sans ça, une colonne de chiffres se lit en escalier. */
+.ugc-figure__value {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 3.6vw, 52px);
+  font-weight: var(--weight-title); /* 300 */
+  line-height: 1.05;
+  letter-spacing: var(--tracking-title);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.ugc-figure__label {
+  font-family: var(--font-text);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text-primary);
+}
+
+.ugc-figure__source {
+  margin-top: 4px;
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 1199px) {
+  .ugc-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  /* En deux colonnes, c'est le TROISIÈME bloc qui ouvre la seconde rangée :
+     c'est lui qui ne doit plus porter de filet. */
+  .ugc-cols__block:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .ugc-proof {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .ugc-proof__media {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 809px) {
+  .ugc-cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 28px;
+  }
+
+  .ugc-cols__block {
+    padding-left: 0;
+    padding-top: 24px;
+    border-left: 0;
+    border-top: 1px solid var(--color-border-hairline);
+  }
+
+  .ugc-cols__block:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .ugc-figure {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. LES DEUX BANDES SANS COLONNE
+
+   `.band-creators` et `.band-learn-more` sont relevées SANS `max-width` ni
+   padding latéral : ce sont deux bandes pleine largeur, dont le contenu était
+   recentré par ses propres enveloppes (`px-10`, `max-width` en ligne).
+
+   Ces enveloppes ont disparu avec la recomposition, et le texte est allé
+   toucher le bord de l'écran — le titre des clients était coupé à gauche.
+
+   Elles reçoivent donc la colonne commune, comme les six autres. C'est écrit
+   ici et non dans `sections.css` : là-bas, la valeur est un relevé, et il
+   reste vrai.
+   -------------------------------------------------------------------------- */
+
+.band-creators,
+.band-learn-more {
+  max-width: var(--width-band); /* 1240px */
+  padding-right: var(--band-padding-inline); /* 40px */
+  padding-left: var(--band-padding-inline);
+}
+
+@media (max-width: 809px) {
+  .band-creators,
+  .band-learn-more {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. L'ALIGNEMENT DES TITRES
+
+   `.t-h2` porte `text-align: center` — le rôle est ainsi défini dans
+   `type.css`, parce que la page relevée centre ses titres de section.
+
+   Une valeur posée SUR l'élément l'emporte sur celle qu'il hérite de son
+   parent : le `text-align: left` de l'ancrage ne pouvait donc rien contre
+   elle. Au large, la différence ne se voyait pas — un titre de 52px occupe
+   presque toute la colonne, centré ou non. Sous 810px il se replie sur trois
+   lignes, et le centrage réapparaissait au milieu d'une section alignée à
+   gauche.
+
+   La règle est donc écrite ici, sur le titre lui-même, et pour les deux
+   paliers à la fois.
+   -------------------------------------------------------------------------- */
+
+.band-head .t-h2,
+.band-head .t-h2-accent,
+.band-head .t-h2-caps {
+  text-align: left;
+}

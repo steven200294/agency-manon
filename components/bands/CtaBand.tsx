@@ -40,8 +40,11 @@ export default function CtaBand() {
 
         <p className="final-cta__reassurance">{FINAL_CTA.reassurance}</p>
 
+        {/* La flèche collée au libellé est retirée, comme sur les autres
+            appels de la page : le bouton est déjà un bouton, la flèche ne
+            disait rien de plus que sa forme. */}
         <ButtonPrimary labelClassName="t-label" className="final-cta__button">
-          {FINAL_CTA.ctaLabel} →
+          {FINAL_CTA.ctaLabel}
         </ButtonPrimary>
       </div>
     </section>

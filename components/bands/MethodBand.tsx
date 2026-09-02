@@ -18,29 +18,30 @@ import { METHOD, METHOD_STEPS } from "@/content/site";
 export default function MethodBand() {
   return (
     <section className="band-fit">
-      <div className="flex w-full flex-col items-center" style={{ gap: "16px" }}>
+      <div className="band-head">
         <h2 className="t-h2">{METHOD.title}</h2>
-        <p className="t-intro">{METHOD.subtitle}</p>
+        <p className="band-head__lede">{METHOD.subtitle}</p>
       </div>
 
-      <div className="flex w-full flex-col" style={{ gap: "16px" }}>
+      {/* Les quatre étapes en relevé. Les tuiles sont abandonnées : sur le
+          fond Dentelle, une tuile `--color-surface-raised` ne se détachait
+          pas, et le numéro en italique posé à droite se lisait comme une
+          décoration alors qu'il porte l'ORDRE des étapes.
+
+          Ici le numéro ouvre sa ligne, à gauche, où l'œil le trouve avant le
+          titre — c'est une séquence, elle se lit dans le sens de la lecture. */}
+      <div className="ledger ledger--steps">
         {METHOD_STEPS.map((step) => (
-          <div key={step.number} className="tile method-step">
-            <div className="method-step__body">
-              <h4
-                className="t-h4"
-                style={{ fontSize: "26px", lineHeight: "33.8px" }}
-              >
-                {step.title}
-              </h4>
-              <p className="t-body">{step.body}</p>
-            </div>
-            <span className="method-step__number">{step.number}</span>
+          <div key={step.number} className="ledger__row">
+            <span className="ledger__mark">{step.number}</span>
+            <h3 className="ledger__title">{step.title}</h3>
+            <p className="ledger__body">{step.body}</p>
           </div>
         ))}
       </div>
 
-      <p className="method__closing">{METHOD.closing}</p>
+      {/* « Comme en finance. » — le total en bas de colonne. */}
+      <p className="ledger__close">{METHOD.closing}</p>
     </section>
   );
 }

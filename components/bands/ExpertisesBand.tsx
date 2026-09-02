@@ -24,37 +24,32 @@ import { EXPERTISES, EXPERTISES_INTRO } from "@/content/site";
 export default function ExpertisesBand() {
   return (
     <section className="band-faq expertises-band" id="expertises">
-      <div className="flex w-full flex-col items-center" style={{ gap: "16px" }}>
+      <div className="band-head">
         <h2 className="t-h2">{EXPERTISES_INTRO.title}</h2>
-        <p className="t-intro">{EXPERTISES_INTRO.lede}</p>
+        <p className="band-head__lede">{EXPERTISES_INTRO.lede}</p>
       </div>
 
-      <div className="expertises">
-        <ul className="expertises__rail">
-          {EXPERTISES.map((item) => (
-            <li key={item.number} className="card expertise">
-              <div className="expertise__head">
-                <span className="expertise__number">{item.number}</span>
-                {item.tag ? (
-                  <span className="expertise__tag">{item.tag}</span>
-                ) : null}
-              </div>
+      {/* Le carrousel est abandonné. Il rognait ses cartes des deux côtés sans
+          affordance : la première et la dernière étaient coupées en plein
+          milieu, ce qui se lisait comme un débordement, pas comme une piste
+          qu'on fait défiler.
 
-              <div className="flex flex-col" style={{ gap: "8px" }}>
-                <h4
-                  className="t-h4"
-                  style={{ fontSize: "24px", lineHeight: "31.2px" }}
-                >
-                  {item.title}
-                </h4>
-                <p className="t-body">{item.body}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+          Les numéros aussi : « 01 → 05 » sur cinq métiers qui ne se suivent
+          pas dans un ordre. La méthode, elle, garde les siens — ce sont
+          quatre étapes. Voir `.ledger` dans lower-bands.css. */}
+      <ul className="ledger ledger--offers">
+        {EXPERTISES.map((item) => (
+          <li key={item.number} className="ledger__row">
+            <h3 className="ledger__title">{item.title}</h3>
+            <p className="ledger__body">{item.body}</p>
+            {item.tag ? <span className="ledger__note">{item.tag}</span> : null}
+          </li>
+        ))}
+      </ul>
+
+      <div className="band-foot">
+        <ButtonNav>{EXPERTISES_INTRO.ctaLabel}</ButtonNav>
       </div>
-
-      <ButtonNav>{EXPERTISES_INTRO.ctaLabel} →</ButtonNav>
     </section>
   );
 }

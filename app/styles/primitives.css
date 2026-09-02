@@ -331,3 +331,76 @@
   text-transform: uppercase;
   color: var(--color-text-secondary);
 }
+
+/* ==========================================================================
+   LES BOUTONS DE LA PAGE — angle net, filet
+
+   ⚠ NON MESURÉ. Le relevé ne donne qu'une forme de bouton : la capsule pleine
+   de la barre de navigation, rayon 42px, aplat Châtaigne, ombre portée. Elle
+   était réemployée pour tous les appels de la page.
+
+   Elle ne tient plus. La page a été recomposée aux filets et à l'alignement à
+   gauche (voir lower-bands.css) ; au milieu de ça, quatre capsules brunes à
+   ombre portée se lisent comme un élément importé d'un autre gabarit.
+
+   Les appels de section prennent donc l'angle net et le filet. La BARRE garde
+   sa capsule : c'est le seul appel permanent du site, il a le droit de se
+   distinguer des appels de section — et c'est une demande explicite.
+   ========================================================================== */
+
+/* L'appel principal. Il garde son aplat Châtaigne : c'est le geste le plus
+   fort de la page, il doit rester plein. Il perd la capsule et l'ombre.
+
+   4px de rayon, pas zéro : l'angle parfaitement vif jure avec les 16px des
+   cadres photo et les 28px des cartes. 4px est déjà un jeton du projet — le
+   rayon interne des cadres du bloc d'accroche. */
+.btn-primary {
+  border-radius: var(--radius-media-sm); /* 4px */
+  box-shadow: none;
+}
+
+/* Le libellé descend de 20px à 17px. À 20px dans une boîte à angle net, le
+   bouton devenait un pavé ; la capsule, elle, absorbait ce corps parce que
+   ses bords ronds resserraient l'œil. */
+.btn-primary .t-action,
+.btn-primary .t-label {
+  font-size: 17px;
+  line-height: 24px;
+}
+
+/* L'appel secondaire — celui des quatre sections basses. Fond nu, un filet,
+   l'encre Châtaigne. Au survol il se remplit : le filet devient l'aplat,
+   c'est-à-dire qu'il devient le bouton principal le temps du geste. */
+.btn-outline {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-media-sm); /* 4px */
+  background-color: transparent;
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 240ms var(--ease-link),
+    color 240ms var(--ease-link);
+}
+
+.btn-outline .t-action {
+  font-size: 17px;
+  line-height: 24px;
+  color: currentColor;
+  -webkit-text-fill-color: currentColor;
+}
+
+.btn-outline:hover {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.btn-outline:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

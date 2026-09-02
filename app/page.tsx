@@ -7,7 +7,6 @@ import MethodBand from "@/components/bands/MethodBand";
 import UgcBand from "@/components/bands/UgcBand";
 import ExpertisesBand from "@/components/bands/ExpertisesBand";
 import FounderBand from "@/components/bands/FounderBand";
-import ClientsBand from "@/components/bands/ClientsBand";
 import MarkersBand from "@/components/bands/MarkersBand";
 import TvBand from "@/components/bands/TvBand";
 import CasesBand from "@/components/bands/CasesBand";
@@ -16,12 +15,19 @@ import SiteFooter from "@/components/bands/SiteFooter";
 import { HERO } from "@/content/site";
 
 /* ==========================================================================
-   La page — les 13 bandes mesurées, dans l'ordre mesuré
+   La page — les bandes mesurées, dans l'ordre mesuré
 
-   Le nombre de bandes et leur enchaînement sont des mesures, pas un choix
-   éditorial. Aucune n'est retirée, aucune n'est ajoutée, aucune n'est
-   déplacée. Les douze bandes qui ne peignent aucun fond restent des bandes :
-   elles laissent simplement voir le canevas.
+   Le relevé donne TREIZE bandes, et leur enchaînement est une mesure, pas un
+   choix éditorial. Aucune n'est ajoutée, aucune n'est déplacée.
+
+   UNE est retirée : la bande des clients, dont le contenu faisait doublon
+   avec l'ouverture de la bande noire — même titre, même liste. La numérotation
+   ci-dessous suit donc la page telle qu'elle est rendue, pas le relevé ; le
+   détail est au commentaire qui prend sa place.
+
+   Les bandes qui ne peignent aucun fond restent des bandes : elles laissent
+   simplement voir le canevas. Elles sont dix, depuis que le manifeste est
+   passé en Nuit pour répondre à la bande noire (voir lower-bands.css).
 
    Ce qui a changé avec l'arrivée du kit média, c'est le RÔLE de chaque
    bande, pas sa place. Le relevé donne des gabarits — une rangée de quatre
@@ -91,10 +97,21 @@ export default function Home() {
         {/*  7 */} <UgcBand />
         {/*  8 */} <ManifestoBand />
         {/*  9 */} <FounderBand />
-        {/* 10 */} <ClientsBand />
-        {/* 11 */} <TvBand />
-        {/* 12 */} <ExpertisesBand />
-        {/* 13 */} <CtaBand />
+        {/* La bande des clients est RETIRÉE : c'était un doublon.
+
+            Le même titre — « Ils nous ont confié leur trace. » — et la même
+            liste de quinze noms ouvrent déjà la bande noire des cas clients,
+            en bandeau défilant (voir `.cases__clients` dans CasesBand). Les
+            deux blocs lisaient la même source, `CLIENTS` dans
+            content/site.ts : la page annonçait donc ses références deux fois,
+            à trois sections d'intervalle.
+
+            Celle du haut est gardée, parce qu'elle est à sa place : on montre
+            à qui l'agence a affaire juste avant de montrer ce que ça a donné
+            en chiffres. Le composant reste dans le dépôt, inemployé. */}
+        {/* 10 */} <TvBand />
+        {/* 11 */} <ExpertisesBand />
+        {/* 12 */} <CtaBand />
       </div>
       {/* 13 */} <SiteFooter />
     </div>

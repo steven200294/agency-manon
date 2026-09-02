@@ -247,6 +247,10 @@ export const UGC = {
   valueClosing:
     "C'est la différence entre une agence qui produit, et une agence qui pense.",
 
+
+  /* Ferme la section : les marques accompagnées, en toutes lettres. */
+  brandsLead:
+    "Respire, Cimalp, et une trentaine d'autres marques accompagnées.",
   ctaLabel: "En savoir plus sur notre offre UGC",
 } as const;
 
@@ -275,6 +279,13 @@ export const UGC_FIGURES = [
 
 /* À FOURNIR — le document ne nomme que deux marques du portfolio UGC et
    renvoie à ugcwith-manon.my.canva.site pour les autres. */
+/* Les marques UGC nommées dans le document. Elles étaient affichées en
+   médaillons — deux logos fournis, trois emplacements vides à côté, ce qui
+   donnait une rangée de cadres beiges sur fond beige. Elles reviennent ici en
+   une phrase, où elles se lisent.
+
+   Le « une trentaine d'autres » n'est pas inventé : c'est le « +30 marques
+   accompagnées en création UGC » des repères de la bande 10. */
 export const UGC_BRANDS = ["Respire", "Cimalp"] as const;
 
 /* --------------------------------------------------------------------------
@@ -420,8 +431,16 @@ export const MARKERS_FOOTNOTE = [
 ] as const;
 
 export const TV = {
-  eyebrow: "Vues à la télévision",
-  title: "qui veut être mon associé ?",
+  /* Le surtitre « Vues à la télévision » est retiré. Il coiffait un titre en
+     capitales avec un autre texte en capitales : deux titres l'un sur
+     l'autre, dont aucun ne dominait. Ce qu'il disait — que des clients de
+     l'agence sont passés à la télévision — est déjà dans la ligne
+     ci-dessous, où c'est une phrase et non une étiquette. */
+
+  /* Le nom de l'émission prend sa majuscule : il était écrit en minuscules
+     parce que le gabarit le passait en capitales par la feuille de style.
+     Le gabarit a changé, la casse doit être juste dans le contenu. */
+  title: "Qui veut être mon associé ?",
   lead:
     "Plusieurs entrepreneurs accompagnés par The Trace Agency sont passés " +
     "sur le plateau de l'émission.",

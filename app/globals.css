@@ -17,6 +17,9 @@
 @import "./styles/cases.css";
 @import "./styles/footer.css";
 @import "./styles/fullscreen.css";
+/* APRÈS `fullscreen.css` : il recompose les huit bandes basses par-dessus le
+   rythme d'un écran par section, dont il doit écraser le centrage vertical. */
+@import "./styles/lower-bands.css";
 @import "./styles/motion.css";
 
 /* Le seul fichier du projet dont aucune valeur n'est mesurée. Il empêche la

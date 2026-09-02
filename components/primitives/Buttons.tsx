@@ -32,9 +32,19 @@ type LinkProps = {
 };
 
 /** Lien variante 1 sur 4 — 11 occurrences (en-tête, corps, bande 10). */
+/* Les appels de SECTION portent `.btn-outline`, pas `.btn-nav`.
+
+   Les deux classes existaient parce que le relevé ne donne qu'un bouton, la
+   capsule pleine de la barre de navigation, réemployée partout. Une capsule
+   Châtaigne pleine, avec son ombre, ne tient plus au milieu d'une page
+   composée aux filets : elle vient d'un autre système.
+
+   La barre, elle, GARDE sa capsule — c'est le seul appel permanent de la
+   page, et elle l'écrit en clair dans SiteHeader plutôt que par ce composant.
+   Changer ce qui suit ne la touche donc pas. Voir primitives.css. */
 export function ButtonNav({ children, href = "#", className = "" }: LinkProps) {
   return (
-    <a href={href} className={`btn-nav ${className}`}>
+    <a href={href} className={`btn-outline ${className}`}>
       <p className="t-action">{children}</p>
     </a>
   );

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ButtonPrimary } from "@/components/primitives/Buttons";
 import { AUDIENCE, AUDIENCES } from "@/content/site";
 
@@ -6,46 +7,88 @@ import { AUDIENCE, AUDIENCES } from "@/content/site";
 
    Aucun fond propre. Même gabarit que la bande 3, sans `overflow: hidden`.
 
-   Structure mesurée dans le squelette :
-     `div.framer-1gpxn4z [flex row, gap 24px]`
-       → 3 × `div.framer-11wqwu7` → boîte 4 sur 4 (`.card`)
+   ---------------------------------------------------------------------------
+   RECOMPOSÉE. Le relevé mesure une rangée de TROIS cartes — padding 32px,
+   rayon 28px, fond de carte, ombre portée — et le document décrit QUATRE
+   publics.
 
-   La carte apporte ses valeurs mesurées : padding 32px, écart interne 24px,
-   rayon 28px, fond de carte, ombre portée.
+   Les cartes sont abandonnées. Sur le fond Dentelle, une carte au fond
+   `--color-surface-card` est du beige sur du beige : elle ne se lit pas comme
+   un objet, et quatre de ces taches côte à côte donnaient la section la plus
+   faible de la page.
 
-   ÉCART : le relevé mesure une rangée de TROIS cartes, le document décrit
-   QUATRE publics. La rangée se replie en 2 + 2 — un partage régulier, alors
-   qu'une rangée de trois aurait laissé une carte seule. Voir MISSING.md.
+   À la place, une galerie de quatre colonnes : une image, un titre, un
+   paragraphe. C'est le gabarit du bloc d'accroche appliqué ici — ses huit
+   cadres ne portent pas de carte non plus, et c'est ce qui les fait tenir.
+
+   Chaque public reçoit l'image de son monde : un lieu de travail partagé, un
+   studio, une terrasse du soir, un atelier. Voir `.gallery` dans
+   lower-bands.css et les crédits dans public/brand/sections/CREDITS.md.
+
+   ⚠ PHOTOS PROVISOIRES — à remplacer par les réalisations de l'agence.
    ========================================================================== */
+
+/* L'image de chaque public. L'ordre suit celui de `AUDIENCES` dans
+   content/site.ts ; la clé est le titre, pour qu'un réagencement du contenu
+   n'aille pas décrocher les images de leur texte. */
+const MEDIA: Record<string, { src: string; alt: string }> = {
+  "Les entrepreneurs ambitieux": {
+    src: "/brand/sections/entrepreneurs.jpg",
+    alt: "Une fondatrice dans son espace de travail",
+  },
+  "Les marques wellness": {
+    src: "/brand/sections/wellness.jpg",
+    alt: "Un studio de pilates aux grandes baies vitrées",
+  },
+  "Les lieux d'exception": {
+    src: "/brand/sections/hospitality.jpg",
+    alt: "Une terrasse de restaurant éclairée à la tombée du jour",
+  },
+  "Les PME qui voient plus loin que leur site internet": {
+    src: "/brand/sections/pme.jpg",
+    alt: "Un atelier d'artisan, mains au travail",
+  },
+};
 
 export default function AudienceBand() {
   return (
     <section className="band-solutions">
-      <div className="flex w-full flex-col items-center" style={{ gap: "16px" }}>
+      <div className="band-head">
         <h2 className="t-h2">{AUDIENCE.title}</h2>
-        <p className="t-intro">{AUDIENCE.subtitle}</p>
+        <p className="band-head__lede">{AUDIENCE.subtitle}</p>
       </div>
 
-      <div className="band-cards-2">
-        {AUDIENCES.map((item) => (
-          <article key={item.title} className="card band-cards-2__item">
-            <div className="flex flex-col" style={{ gap: "8px" }}>
-              <h4
-                className="t-h4"
-                style={{ fontSize: "26px", lineHeight: "33.8px" }}
-              >
-                {item.title}
-              </h4>
-              <p className="t-body">{item.body}</p>
-            </div>
-          </article>
-        ))}
+      <div className="gallery">
+        {AUDIENCES.map((item) => {
+          const media = MEDIA[item.title];
+
+          return (
+            <article key={item.title} className="gallery__item">
+              <div className="gallery__media">
+                {media ? (
+                  /* `sizes` évite de servir 1400px de large à une colonne qui
+                     n'en fait que 280 : quatre colonnes à 1200px et au-delà,
+                     deux au palier moyen, une seule sous 810px. */
+                  <Image
+                    src={media.src}
+                    alt={media.alt}
+                    fill
+                    sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 25vw"
+                  />
+                ) : null}
+              </div>
+
+              <h3 className="gallery__title">{item.title}</h3>
+              <p className="gallery__body">{item.body}</p>
+            </article>
+          );
+        })}
       </div>
 
-      <div className="flex flex-col items-center" style={{ gap: "20px" }}>
-        <p className="t-intro">{AUDIENCE.ctaLead}</p>
+      <div className="band-foot">
+        <p className="band-foot__lead">{AUDIENCE.ctaLead}</p>
         <ButtonPrimary labelClassName="t-label">
-          {AUDIENCE.ctaLabel} →
+          {AUDIENCE.ctaLabel}
         </ButtonPrimary>
       </div>
     </section>

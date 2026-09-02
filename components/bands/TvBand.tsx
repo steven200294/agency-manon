@@ -30,29 +30,40 @@ import { TV } from "@/content/site";
 export default function TvBand() {
   return (
     <section className="band-learn-more">
-      <h3 className="t-h3-eyebrow">{TV.eyebrow}</h3>
+      <div className="band-head">
+        {/* Le surtitre en capitales espacées est retiré, et le titre avec.
+            « VUES À LA TÉLÉVISION » au-dessus de « QUI VEUT ÊTRE MON
+            ASSOCIÉ ? », les deux en capitales, se disputaient le même rôle :
+            deux titres l'un sur l'autre n'en font aucun.
 
-      <h2 className="t-h2-caps">{TV.title}</h2>
+            Le nom de l'émission redevient le titre de la section, en casse
+            normale ; la mention de la diffusion passe en chapô, où elle
+            informe au lieu de crier. */}
+        <h2 className="t-h2">{TV.title}</h2>
+        <p className="band-head__lede">{TV.lead}</p>
+      </div>
 
-      <p className="t-intro" style={{ maxWidth: "620px" }}>
-        {TV.lead}
-      </p>
+      <div className="tv">
+        {/* La déclaration porte la section. C'est la seule phrase de la page
+            qui relie la marque à l'investisseur — elle mérite le corps
+            d'affichage, pas une ligne de capitales centrées. */}
+        <p className="statement statement--wide">{TV.statement}</p>
 
-      {/* Trois marques restent à fournir : le document laisse les
-          emplacements ouverts. */}
-      <ul className="tv__brands">
-        {TV.brands.map((brand) => (
-          <li key={brand} className="tv__brand">
-            {brand}
-          </li>
-        ))}
-      </ul>
+        {/* ⚠ TROIS MARQUES À FOURNIR. Le document laisse les emplacements
+            ouverts ; ils sont composés comme la liste des clients pour que
+            l'attente ne ressemble pas à une panne. */}
+        <ul className="roster tv__roster">
+          {TV.brands.map((brand) => (
+            <li key={brand} className="roster__name">
+              {brand}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <h5 className="t-h5" style={{ maxWidth: "820px" }}>
-        {TV.statement}
-      </h5>
-
-      <ButtonNav>{TV.ctaLabel} →</ButtonNav>
+      <div className="band-foot">
+        <ButtonNav>{TV.ctaLabel}</ButtonNav>
+      </div>
     </section>
   );
 }

@@ -22,38 +22,49 @@ import { MANIFESTO } from "@/content/site";
 
 export default function ManifestoBand() {
   return (
-    <section className="band-stats">
-      <h2 className="t-h2" style={{ maxWidth: "880px" }}>
-        {MANIFESTO.title}
-      </h2>
+    /* `manifesto-band` s'ajoute à `band-stats` : la classe mesurée est
+       partagée avec la bande « Quelques repères », qui garde sa composition.
+       Sans ce nom propre, tout ce qui suit s'appliquerait aussi à elle. */
+    <section className="band-stats manifesto-band">
+      {/* La seule autre surface sombre de la page avec les cas clients.
 
-      <div className="manifesto">
-        <p className="t-intro manifesto__intro">{MANIFESTO.intro}</p>
-
-        {/* Les trois griefs, en anaphore : chacun commence par « Trop de ».
-            Ils sont serrés pour que la répétition se voie. */}
-        <div className="manifesto__griefs">
-          {MANIFESTO.griefs.map((line) => (
-            <p key={line} className="manifesto__grief">
-              {line}
-            </p>
-          ))}
+          Onze bandes claires d'affilée ne font pas un rythme. Ce texte-ci est
+          le bon endroit pour la seconde respiration sombre : c'est la voix de
+          la fondatrice, au milieu de sections qui parlent de méthode et de
+          livrables. Le changement de fond dit qu'on change de registre —
+          quelqu'un parle. */}
+      <div className="manifesto-band__inner">
+        <div className="band-head">
+          <h2 className="t-h2">{MANIFESTO.title}</h2>
+          <p className="band-head__lede">{MANIFESTO.intro}</p>
         </div>
 
-        <p className="t-intro manifesto__turn">{MANIFESTO.turn}</p>
+        <div className="manifesto">
+          {/* Les trois griefs, en anaphore : chacun commence par « Trop de ».
+              Serrés, pour que la répétition se voie. */}
+          <div className="manifesto__griefs">
+            {MANIFESTO.griefs.map((line) => (
+              <p key={line} className="manifesto__grief">
+                {line}
+              </p>
+            ))}
+          </div>
 
-        {/* Les trois principes, chacun bâti sur « X avant Y ». Ce sont eux
-            qui portent la promesse : ils prennent le rôle typographique le
-            plus fort de la bande. */}
-        <div className="manifesto__principles">
-          {MANIFESTO.principles.map((line) => (
-            <p key={line} className="manifesto__principle">
-              {line}
-            </p>
-          ))}
+          <p className="manifesto__turn">{MANIFESTO.turn}</p>
+
+          {/* Les trois principes, chacun bâti sur « X avant Y ». Ce sont eux
+              qui portent la promesse : ils prennent le corps le plus fort de
+              la bande. */}
+          <div className="manifesto__principles">
+            {MANIFESTO.principles.map((line) => (
+              <p key={line} className="manifesto__principle">
+                {line}
+              </p>
+            ))}
+          </div>
+
+          <p className="manifesto__signature">{MANIFESTO.signature}</p>
         </div>
-
-        <p className="manifesto__signature">{MANIFESTO.signature}</p>
       </div>
     </section>
   );
