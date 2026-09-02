@@ -1,4 +1,5 @@
 import { ButtonNav } from "@/components/primitives/Buttons";
+import MediaSlot from "@/components/primitives/MediaSlot";
 import { FOUNDER } from "@/content/site";
 
 /* ==========================================================================
@@ -29,26 +30,33 @@ export default function FounderBand() {
         <h2 className="t-h2">{FOUNDER.title}</h2>
       </div>
 
-      {/* LE PORTRAIT EST RETIRÉ, PAS REMPLACÉ.
+      {/* LE PORTRAIT N'EST PAS COMBLÉ PAR UNE PHOTO DE BANQUE D'IMAGES.
 
-          L'emplacement affichait un médaillon vide de 320px portant la
-          mention « portrait de Manon » : une boîte grise à côté d'une
-          citation, qui déséquilibrait la section sans rien montrer.
+          Mettre le visage d'un inconnu sous le nom d'une personne réelle n'est
+          pas un emplacement provisoire, c'est un faux. La colonne de gauche
+          garde donc sa place avec un emplacement déclaré : il tient le rapport
+          et l'encombrement du portrait définitif, et il dit le cadrage
+          attendu, pour que le fichier fourni tombe juste du premier coup.
 
-          Il n'est pas comblé par une photo de banque d'images : mettre le
-          visage d'un inconnu sous le nom d'une personne réelle n'est pas un
-          emplacement provisoire, c'est un faux. La citation porte donc la
-          section seule — et le jour où le vrai portrait arrive, il reprend la
-          colonne de gauche que la grille lui garde. Voir
-          public/brand/sections/CREDITS.md. */}
+          Ce qu'il remplace : un médaillon vide de 320px portant la mention
+          « portrait de Manon », qui ne disait ni ce qu'on attendait ni à quel
+          format. Voir MediaSlot et public/brand/sections/CREDITS.md. */}
       <figure className="founder">
-        <blockquote className="founder__quote">
-          <p className="statement statement--wide">« {FOUNDER.quote} »</p>
-        </blockquote>
+        <MediaSlot
+          subject="Portrait de Manon Ferrandino"
+          format="1000 × 1250, cadrage portrait"
+          className="founder__portrait"
+        />
 
-        <figcaption className="founder__attribution">
-          {FOUNDER.attribution}
-        </figcaption>
+        <div className="founder__words">
+          <blockquote className="founder__quote">
+            <p className="statement statement--wide">« {FOUNDER.quote} »</p>
+          </blockquote>
+
+          <figcaption className="founder__attribution">
+            {FOUNDER.attribution}
+          </figcaption>
+        </div>
       </figure>
 
       <div className="band-foot">

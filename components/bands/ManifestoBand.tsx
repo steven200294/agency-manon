@@ -1,3 +1,4 @@
+import MediaSlot from "@/components/primitives/MediaSlot";
 import { MANIFESTO } from "@/content/site";
 
 /* ==========================================================================
@@ -39,31 +40,45 @@ export default function ManifestoBand() {
           <p className="band-head__lede">{MANIFESTO.intro}</p>
         </div>
 
-        <div className="manifesto">
-          {/* Les trois griefs, en anaphore : chacun commence par « Trop de ».
-              Serrés, pour que la répétition se voie. */}
-          <div className="manifesto__griefs">
-            {MANIFESTO.griefs.map((line) => (
-              <p key={line} className="manifesto__grief">
-                {line}
-              </p>
-            ))}
+        {/* Le texte à gauche, l'image à droite.
+
+            L'emplacement n'est pas un remplissage : cette bande est la seule
+            de la page où quelqu'un parle à la première personne, et une voix
+            appelle un visage. Il tient le rapport 4/5 du visuel définitif,
+            donc rien ne bougera quand la photo arrivera. Voir MediaSlot. */}
+        <div className="manifesto-band__body">
+          <div className="manifesto">
+              {/* Les trois griefs, en anaphore : chacun commence par « Trop de ».
+                Serrés, pour que la répétition se voie. */}
+            <div className="manifesto__griefs">
+              {MANIFESTO.griefs.map((line) => (
+                <p key={line} className="manifesto__grief">
+                  {line}
+                </p>
+              ))}
+            </div>
+
+            <p className="manifesto__turn">{MANIFESTO.turn}</p>
+
+            {/* Les trois principes, chacun bâti sur « X avant Y ». Ce sont eux
+                qui portent la promesse : ils prennent le corps le plus fort de
+                la bande. */}
+            <div className="manifesto__principles">
+              {MANIFESTO.principles.map((line) => (
+                <p key={line} className="manifesto__principle">
+                  {line}
+                </p>
+              ))}
+            </div>
+
+            <p className="manifesto__signature">{MANIFESTO.signature}</p>
           </div>
 
-          <p className="manifesto__turn">{MANIFESTO.turn}</p>
-
-          {/* Les trois principes, chacun bâti sur « X avant Y ». Ce sont eux
-              qui portent la promesse : ils prennent le corps le plus fort de
-              la bande. */}
-          <div className="manifesto__principles">
-            {MANIFESTO.principles.map((line) => (
-              <p key={line} className="manifesto__principle">
-                {line}
-              </p>
-            ))}
-          </div>
-
-          <p className="manifesto__signature">{MANIFESTO.signature}</p>
+          <MediaSlot
+            variant="dark"
+            subject="Manon dans son atelier de travail"
+            format="1200 × 1500, cadrage portrait"
+          />
         </div>
       </div>
     </section>

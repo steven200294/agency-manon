@@ -687,14 +687,26 @@
    écran : c'est la place du portrait. Elle n'est pas perdue, elle est tenue.
    -------------------------------------------------------------------------- */
 
+/* Le portrait à gauche, la citation à droite. La citation prend la part la
+   plus large : c'est elle qu'on lit, le portrait l'accompagne.
+
+   `align-items: start` empêche l'emplacement de s'étirer sur la hauteur de la
+   citation — il tient son rapport, et pas plus. */
 .band-founder .founder {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 56px;
+  width: 100%;
+  margin: 0;
+  padding-top: 44px;
+}
+
+.band-founder .founder__words {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  width: 100%;
-  margin: 0;
-  padding-top: 44px;
 }
 
 .band-founder .founder__quote {
@@ -713,7 +725,18 @@
   color: var(--color-text-secondary);
 }
 
+@media (max-width: 1199px) {
+  .band-founder .founder {
+    gap: 40px;
+  }
+}
+
 @media (max-width: 809px) {
+  .band-founder .founder {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
   .manifesto-band {
     padding-right: 20px;
     padding-left: 20px;
@@ -987,4 +1010,106 @@
 .band-head .t-h2-accent,
 .band-head .t-h2-caps {
   text-align: left;
+}
+
+/* ==========================================================================
+   14. LES EMPLACEMENTS D'IMAGE EN ATTENTE
+
+   ⚠ OBJET DE CHANTIER. Il a vocation à disparaître avec le dernier visuel
+   manquant. Voir components/primitives/MediaSlot.tsx pour le raisonnement.
+
+   Deux règles de dessin :
+
+   — il ne ressemble PAS à une image. Pas de fond plein qui pourrait passer
+     pour une photo sombre, pas de rayon généreux qui l'assimilerait aux
+     cadres du bloc d'accroche. Un filet discontinu et un fond à peine teinté :
+     l'œil comprend qu'il manque quelque chose ;
+   — il ne CRIE pas non plus. C'est un chantier montré à une cliente, pas un
+     bandeau d'erreur. Encre secondaire, petit corps, deux lignes.
+   ========================================================================== */
+
+.media-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 24px;
+  border-radius: var(--radius-frame); /* 16px, comme les cadres photo */
+  text-align: center;
+  box-sizing: border-box;
+
+  /* Le filet discontinu est le seul de tout le projet. C'est délibéré : il
+     n'a qu'un emploi, et il doit se reconnaître d'un coup d'œil. */
+  border: 1px dashed var(--color-border-hairline);
+  background-color: rgba(20, 20, 20, 0.03);
+}
+
+.media-slot__subject {
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-secondary);
+}
+
+.media-slot__format {
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* Sur les surfaces en Nuit, le filet et le fond s'inversent. Les valeurs sont
+   celles qu'emploient déjà la bande des cas clients et le pied de page. */
+.media-slot--dark {
+  border-color: rgba(247, 237, 222, 0.2);
+  background-color: rgba(247, 237, 222, 0.04);
+}
+
+.media-slot--dark .media-slot__subject {
+  color: rgba(247, 237, 222, 0.72);
+}
+
+.media-slot--dark .media-slot__format {
+  color: rgba(247, 237, 222, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   Le manifeste sur deux colonnes
+
+   Le texte garde la part la plus large : c'est lui le sujet de la bande,
+   l'image l'accompagne. `align-items: start` évite que l'emplacement s'étire
+   sur toute la hauteur du texte — il tient son rapport 4/5, et pas plus.
+   -------------------------------------------------------------------------- */
+
+.manifesto-band__body {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  align-items: start;
+  gap: 64px;
+  width: 100%;
+}
+
+@media (max-width: 1199px) {
+  .manifesto-band__body {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 809px) {
+  .manifesto-band__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  /* Couché sur téléphone : un emplacement 4/5 pleine largeur y prendrait tout
+     l'écran pour ne rien montrer. */
+  .media-slot {
+    aspect-ratio: 3 / 2 !important;
+  }
 }
