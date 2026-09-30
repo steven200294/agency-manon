@@ -1,5 +1,6 @@
-import MediaSlot from "@/components/primitives/MediaSlot";
-import { MANIFESTO } from "@/content/site";
+import Image from "next/image";
+import { ButtonPrimary } from "@/components/primitives/Buttons";
+import { FOUNDER, MANIFESTO } from "@/content/site";
 
 /* ==========================================================================
    BANDE 7 sur 13 — `div.framer-1ra32b7`  ·  SECTION 3, le manifeste
@@ -74,12 +75,18 @@ export default function ManifestoBand() {
             <p className="manifesto__signature">{MANIFESTO.signature}</p>
           </div>
 
-          <MediaSlot
-            variant="dark"
-            subject="Manon dans son atelier de travail"
-            format="1200 × 1500, cadrage portrait"
+          <Image
+            src="/brand/manon.webp"
+            alt="Manon Ferrandino, souriante, devant un mur de briques blanches"
+            width={574}
+            height={460}
+            className="manifesto-band__portrait"
           />
         </div>
+
+        {/* Le bouton vers le parcours de Manon, qui était dans la bande
+            « signature » retirée : c'est ici que la fondatrice parle. */}
+        <ButtonPrimary href="/agence">{FOUNDER.ctaLabel}</ButtonPrimary>
       </div>
     </section>
   );

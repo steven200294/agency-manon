@@ -991,3 +991,51 @@
     transform: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Les liens vers les pages de cas détaillés, sous la piste de chiffres.
+   Sur la bande noire : encre Dentelle, filet Dentelle à 20 %.
+   -------------------------------------------------------------------------- */
+.cases__pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--cases-gap);
+  width: 100%;
+  max-width: 1280px;
+}
+
+.cases__page {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px;
+  border: 1px solid rgba(247, 237, 222, 0.2);
+  border-radius: 16px;
+  color: var(--cases-ink);
+  text-decoration: none;
+  transition: background-color var(--cases-duration) var(--cases-ease);
+}
+
+.cases__page:hover,
+.cases__page:focus-visible {
+  background-color: rgba(247, 237, 222, 0.08);
+}
+
+.cases__page-kicker {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.cases__page-client {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 41.6px;
+}
+
+.cases__page-teaser {
+  font-size: 16px;
+  line-height: 24px;
+  opacity: 0.85;
+}

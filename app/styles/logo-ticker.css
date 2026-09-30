@@ -149,20 +149,18 @@
    boîte a une hauteur fixe, un nom long comme « Le Petit Chaperon Rouge » n'y
    tiendrait pas sur une seule. */
 .logo-ticker__name {
-  font-family: var(--font-text);
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.35;
-  letter-spacing: var(--tracking-chip);
-  text-transform: uppercase;
+  /* Blanc plein, opacité pleine : faute de logos, le nom EST le logo, il doit
+     se lire d'un coup d'œil sur le fond noir. Serif, en casse normale, comme
+     les noms de clients des cartes — le mélange de la charte. */
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-size-adjust: 0.46;
   text-align: center;
   text-wrap: balance;
-  color: currentColor;
-  opacity: 0.6;
-  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.logo-ticker__item:hover .logo-ticker__name {
+  color: #fff;
   opacity: 1;
 }
 
@@ -200,7 +198,7 @@
   }
 
   .logo-ticker__name {
-    font-size: 13px;
+    font-size: 20px;
   }
 }
 

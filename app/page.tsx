@@ -6,11 +6,10 @@ import AudienceBand from "@/components/bands/AudienceBand";
 import MethodBand from "@/components/bands/MethodBand";
 import UgcBand from "@/components/bands/UgcBand";
 import ExpertisesBand from "@/components/bands/ExpertisesBand";
-import FounderBand from "@/components/bands/FounderBand";
 import MarkersBand from "@/components/bands/MarkersBand";
 import TvBand from "@/components/bands/TvBand";
 import CasesBand from "@/components/bands/CasesBand";
-import CtaBand from "@/components/bands/CtaBand";
+import PhotoWallBand from "@/components/bands/PhotoWallBand";
 import SiteFooter from "@/components/bands/SiteFooter";
 import { HERO } from "@/content/site";
 
@@ -59,17 +58,21 @@ export default function Home() {
       <div className="page-content">
         {/*  — */}{" "}
         <HeroBand
-          title={HERO.titleLine1}
+          title={
+            <>
+              {HERO.titleLine1Before}
+              <span className="hero__serif">{HERO.titleLine1Emphasis}</span>
+              {HERO.titleLine1After}
+            </>
+          }
           subtitle={
             <>
               {HERO.titleLine2Before}
               <span className="hero__emphasis">{HERO.titleLine2Emphasis}</span>
             </>
           }
-          kicker={HERO.kicker}
           lede={HERO.lede}
           ctaLabel={HERO.ctaLabel}
-          webmarkLabel={HERO.webmarkLabel}
         />
         {/*  2 */} <ConstatBand />
         {/* L'EMPILEMENT AU DÉFILEMENT — bandes 3 et 4.
@@ -96,7 +99,6 @@ export default function Home() {
         {/*  6 */} <MethodBand />
         {/*  7 */} <UgcBand />
         {/*  8 */} <ManifestoBand />
-        {/*  9 */} <FounderBand />
         {/* La bande des clients est RETIRÉE : c'était un doublon.
 
             Le même titre — « Ils nous ont confié leur trace. » — et la même
@@ -111,7 +113,7 @@ export default function Home() {
             en chiffres. Le composant reste dans le dépôt, inemployé. */}
         {/* 10 */} <TvBand />
         {/* 11 */} <ExpertisesBand />
-        {/* 12 */} <CtaBand />
+        {/* 12 */} <PhotoWallBand />
       </div>
       {/* 13 */} <SiteFooter />
     </div>

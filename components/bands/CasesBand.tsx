@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import CountUp from "@/components/primitives/CountUp";
 import LogoTicker from "@/components/primitives/LogoTicker";
+import { CASE_PAGES } from "@/content/cases";
 import {
   CASES,
   CASES_TITLE,
@@ -79,6 +80,21 @@ function Chevron({
     </svg>
   );
 }
+
+/* Les photos des trois cartes, par nom de client.
+
+   ⚠ ATTRIBUTION À CONFIRMER AVEC MANON. Les photos viennent des dossiers
+   WeTransfer reçus, dont l'étiquette client n'est pas certaine :
+   — La Bodega et Le Bonnet (La Plagne) ← photos d'altitude, terrasse sur les
+     pistes (dossier « expedition ») ;
+   — Le Dos du Praz (Courchevel Le Praz) ← le chalet « Bar Restaurant »
+     (dossier « dsc_0290 »).
+   Une carte sans photo garde son emplacement déclaré. */
+const CASE_PHOTOS: Record<string, string> = {
+  Bodega: "/brand/galerie/g10.webp",
+  Bonnet: "/brand/galerie/g13.webp",
+  "du Praz": "/brand/galerie/g09.webp",
+};
 
 export default function CasesBand() {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -185,13 +201,24 @@ export default function CasesBand() {
               <div className="case__media">
                 {/* #17, #18 */}
                 <div className="case__media-layer">
-                  <div
-                    className="case__image-slot"
-                    role="img"
-                    aria-label={`Emplacement d'image : ${study.imageLabel}`}
-                  >
-                    <span>{study.imageLabel}</span>
-                  </div>
+                  {CASE_PHOTOS[study.nameLast] ? (
+                    // Décorative : le nom du client est écrit juste dessus.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={CASE_PHOTOS[study.nameLast]}
+                      alt=""
+                      className="case__image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div
+                      className="case__image-slot"
+                      role="img"
+                      aria-label={`Emplacement d'image : ${study.imageLabel}`}
+                    >
+                      <span>{study.imageLabel}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -278,6 +305,19 @@ export default function CasesBand() {
           ))}
         </ul>
       </div>
+
+      {/* Les cas détaillés : une page chacun, alimentée par
+          content/cases.ts. Placés sous la piste de chiffres, pas dedans —
+          ce ne sont pas des cartes de la piste. */}
+      <nav className="cases__pages" aria-label="Cas clients détaillés">
+        {CASE_PAGES.map((page) => (
+          <a key={page.slug} className="cases__page" href={`/cas/${page.slug}`}>
+            <span className="cases__page-kicker">{page.kicker}</span>
+            <span className="cases__page-client">{page.client}</span>
+            <span className="cases__page-teaser">{page.teaser}</span>
+          </a>
+        ))}
+      </nav>
     </section>
   );
 }

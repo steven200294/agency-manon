@@ -60,7 +60,7 @@ export default function FounderBand() {
       </figure>
 
       <div className="band-foot">
-        <ButtonNav>{FOUNDER.ctaLabel}</ButtonNav>
+        <ButtonNav href="/agence">{FOUNDER.ctaLabel}</ButtonNav>
       </div>
     </section>
   );

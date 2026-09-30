@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import Logo from "@/components/primitives/Logo";
 
@@ -82,9 +83,9 @@ export default function MobileMenu({ items, cta }: MobileMenuProps) {
         inert={!open}
       >
         <div className="header__panel-top">
-          <a href="#" aria-label="Accueil" onClick={() => setOpen(false)}>
+          <Link href="/" aria-label="Accueil" onClick={() => setOpen(false)}>
             <Logo width={130} />
-          </a>
+          </Link>
         </div>
 
         <nav className="header__panel-nav" aria-label="Navigation principale">

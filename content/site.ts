@@ -45,28 +45,33 @@ export const BRAND = {
    -------------------------------------------------------------------------- */
 
 export const NAV = [
-  { label: "Nos expertises", href: "#expertises" },
-  { label: "L'UGC", href: "#ugc" },
-  { label: "Réalisations", href: "#realisations" },
-  { label: "L'agence", href: "#agence" },
+  { label: "Nos expertises", href: "/#expertises" },
+  { label: "L'UGC", href: "/#ugc" },
+  { label: "Réalisations", href: "/#cas-clients" },
+  { label: "L'agence", href: "/agence" },
 ] as const;
 
 export const WHATSAPP_LABEL = "Discuter sur WhatsApp";
+
+/* Le numéro de Manon, au format international sans « + » ni espaces : c'est ce
+   que demande `wa.me`. 06 21 88 53 07 → 33 6 21 88 53 07. Le lien ouvre
+   WhatsApp sur une conversation avec elle. */
+export const WHATSAPP_URL = "https://wa.me/33621885307";
 
 /* --------------------------------------------------------------------------
    Bloc d'accroche — SECTION 1
    -------------------------------------------------------------------------- */
 
 export const HERO = {
-  titleLine1: "Vos concurrents font du contenu.",
+  titleLine1Before: "Vos concurrents font du ",
+  titleLine1Emphasis: "contenu",
+  titleLine1After: ".",
   titleLine2Before: "Vous, vous allez faire la ",
   titleLine2Emphasis: "différence",
-  kicker: "Sur les réseaux, tout passe. Seule la trace reste.",
   lede:
     "The Trace Agency — l'agence des marques qui marquent. " +
     "Wellness, hospitality, entrepreneurs. De Marseille à Marrakech.",
   ctaLabel: "Découvrir nos services",
-  webmarkLabel: "98 % de clients satisfaits, plus de 500 clients accompagnés",
 } as const;
 
 /* --------------------------------------------------------------------------
@@ -606,11 +611,11 @@ export const FOOTER = {
 
   heading: "Faire trace, depuis Marseille.",
 
-  /* Les deux actions principales. À FOURNIR : l'adresse e-mail et le numéro
-     WhatsApp — les deux `href` valent `#`. */
+  /* Les deux actions principales. À FOURNIR : l'adresse e-mail (son `href`
+     vaut `#`). Le numéro WhatsApp est en place. */
   primary: [
     { label: "Écrire à l'agence", href: "#" },
-    { label: "Discuter sur WhatsApp", href: "#" },
+    { label: "Discuter sur WhatsApp", href: WHATSAPP_URL },
   ],
 
   /* À FOURNIR — les trois liens de réseaux. */

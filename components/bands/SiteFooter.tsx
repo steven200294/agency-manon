@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "@/components/primitives/Logo";
+import Link from "next/link";
 import { BRAND, FOOTER, NAV } from "@/content/site";
 
 /* ==========================================================================
@@ -79,9 +80,9 @@ export default function SiteFooter() {
             page est la seule surface sombre de la page avec la bande des cas
             clients. */}
         <div className="site-footer__brand">
-          <a href="#" aria-label="Accueil">
+          <Link href="/" aria-label="Accueil">
             <Logo width={180} variant="beige" />
-          </a>
+          </Link>
 
           <p className="site-footer__baseline">{FOOTER.heading}</p>
 

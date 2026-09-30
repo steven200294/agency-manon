@@ -15,30 +15,47 @@ import { METHOD, METHOD_STEPS } from "@/content/site";
    en colonne, les numéros ponctuent la marge.
    ========================================================================== */
 
+/* Une photo par étape, dans l'ordre :
+   cartographie → la côte vue d'en haut, comme une carte ; direction → le
+   portrait composé, chapeau et tenue choisis ; exécution → le tournage sur
+   site ; empreinte → la neige fraîche, là où l'on laisse une trace. */
+const PHOTOS = [
+  "/brand/hero/marseille.jpg",
+  "/brand/hero/chapeau-vert.webp",
+  "/brand/hero/tournage-food.jpg",
+  "/brand/hero/station.jpg",
+] as const;
+
 export default function MethodBand() {
   return (
-    <section className="band-fit">
+    <section className="band-fit method-band">
       <div className="band-head">
         <h2 className="t-h2">{METHOD.title}</h2>
         <p className="band-head__lede">{METHOD.subtitle}</p>
       </div>
 
-      {/* Les quatre étapes en relevé. Les tuiles sont abandonnées : sur le
-          fond Dentelle, une tuile `--color-surface-raised` ne se détachait
-          pas, et le numéro en italique posé à droite se lisait comme une
-          décoration alors qu'il porte l'ORDRE des étapes.
-
-          Ici le numéro ouvre sa ligne, à gauche, où l'œil le trouve avant le
-          titre — c'est une séquence, elle se lit dans le sens de la lecture. */}
-      <div className="ledger ledger--steps">
-        {METHOD_STEPS.map((step) => (
-          <div key={step.number} className="ledger__row">
-            <span className="ledger__mark">{step.number}</span>
-            <h3 className="ledger__title">{step.title}</h3>
-            <p className="ledger__body">{step.body}</p>
-          </div>
+      {/* Sur fond Nuit : quatre colonnes, chacune ouverte par une photo en
+          bandeau, puis un numéro géant, le titre et le texte. Le numéro est le
+          repère de la séquence — il prend la place, comme un chiffre dans un
+          relevé. Les photos sont tenues fines (16 / 9) pour que la rangée
+          tienne d'un coup d'œil. */}
+      <ol className="method">
+        {METHOD_STEPS.map((step, i) => (
+          <li key={step.number} className="method__step">
+            {/* Décorative : le titre dit déjà de quoi il s'agit. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={PHOTOS[i]}
+              alt=""
+              className="method__photo"
+              loading="lazy"
+            />
+            <span className="method__number">{step.number}</span>
+            <h3 className="method__title">{step.title}</h3>
+            <p className="method__body">{step.body}</p>
+          </li>
         ))}
-      </div>
+      </ol>
 
       {/* « Comme en finance. » — le total en bas de colonne. */}
       <p className="ledger__close">{METHOD.closing}</p>

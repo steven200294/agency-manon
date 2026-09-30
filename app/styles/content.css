@@ -28,22 +28,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   Bloc d'accroche — la ligne détachée
-   -------------------------------------------------------------------------- */
-
-.hero__kicker {
-  font-family: var(--font-text);
-  font-size: 20px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 30px;
-  letter-spacing: -0.4px;
-  text-align: center;
-  color: var(--color-accent);
-  margin-bottom: 12px;
-}
-
-/* --------------------------------------------------------------------------
    Le compteur animé
 
    Deux enfants dans la MÊME case de grille : le gabarit invisible, qui fixe

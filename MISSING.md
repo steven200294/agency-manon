@@ -775,3 +775,17 @@ Les quatre entrées de menu et le libellé du bouton attendent le contenu de la
 cliente. Les mots du site mesuré ne sont pas repris. Tous les `href` valent
 `#`, y compris celui du bouton WhatsApp — **il faudra le vrai numéro**, sous
 la forme `https://wa.me/33XXXXXXXXX`.
+
+## Pages de cas client (`/cas/zinamara`, `/cas/bni-aix-avenir`)
+
+À fournir — tant qu'ils manquent, la page affiche des emplacements déclarés :
+
+- **Vidéos ZinAmara** : les liens Instagram sont en place, mais le site ne les intègre pas (l'embed charge un script tiers). Emplacement 9 / 16 + lien. À remplacer par un fichier vidéo si on veut lire sur place.
+- **CTA « Réserver un Diagnostic Trace »** : pointe vers `/#contact` (bande finale de la home), pas vers un outil de réservation.
+- **Texte source** : « l'un de ces trois rôles » (liaison de la méthode) alors que les piliers sont quatre — repris tel quel, à confirmer.
+
+## Pages du kit média (`/expertises`, `/agence`)
+
+- **Offres non reprises** : le PDF ne donne que « 800 € — Engagement 3 mois minimum » et « 1 200 € », sans nom ni contenu (pages 16 à 38 vides à l'export). À fournir : nom, prix, périodicité, contenu de chaque offre.
+- **Visuels du kit** (portraits de Manon, photos d'expertises) : emplacements déclarés sur `/agence`.
+- **Écart de positionnement** : le kit parle d'établissements touristiques premium, la home de personal branding et wellness. Pages séparées volontairement.

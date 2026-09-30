@@ -1,0 +1,94 @@
+/* ==========================================================================
+   serif.css — le mélange Satoshi + Cormorant Garamond
+
+   RÈGLE : le serif prend les TITRES DE SECTION et les MOTS ACCENTUÉS ; tout le
+   reste (accroches de la hero, phrases pivots, texte, boutons, menus) reste en
+   Satoshi. Ce fichier ne pose que des familles, des graisses et des approches :
+   les CORPS restent ceux de chaque règle d'origine, pour ne casser aucun
+   point de rupture.
+
+   `font-size-adjust` : Cormorant a un petit œil (x-height ~0,40) devant
+   Satoshi (~0,50). À corps égal, il paraît plus petit. `font-size-adjust`
+   rétablit l'œil sans toucher aux corps déclarés — le serif se lit à la même
+   taille que le sans-serif qu'il côtoie.
+
+   Approche : les -2px des titres Satoshi étoufferaient un serif à empattements.
+   On passe à -0,02em, proportionnelle au corps.
+
+   Chargé APRÈS les autres feuilles : mêmes spécificités, ordre décisif.
+   ========================================================================== */
+
+/* ---- Titres de section --------------------------------------------------- */
+
+.t-h2,
+.t-h2-left,
+.t-h2-accent,
+.band-constat__title,
+.case-hero__title,
+.cases__clients-title,
+.cases__title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-size-adjust: 0.46;
+}
+
+/* ---- Mots accentués : le serif en couleur d'accent ----------------------- */
+/* C'est le mélange le plus visible : une ligne en Satoshi, son mot fort en
+   serif brun, DROIT comme dans le modèle fourni (pas d'italique). Graisse 600 : à 500 le contraste des jambages se perd à côté du
+   gras de Satoshi. */
+
+.tv-band__title span,
+.wall__title span,
+.t-em-heading,
+.cases__clients-emphasis,
+.band-constat__closing em {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.01em;
+  font-size-adjust: 0.46;
+}
+
+.band-constat__closing em {
+  font-weight: 500;
+}
+
+/* ---- La hero : deux mots en serif DANS le titre ---------------------------
+   Les deux lignes restent en Satoshi gras ; seuls « contenu » et « différence »
+   passent en serif. C'est le mélange le plus net : le rythme du sans-serif,
+   deux mots posés en relief.
+
+   POUR QUE LE MÉLANGE NE SE VOIE PAS COMME UN COLLAGE, le serif est réglé à
+   l'ŒIL de Satoshi : `font-size-adjust: 0.5` donne au serif exactement la même
+   hauteur de minuscule que le sans-serif voisin, donc les deux mots se posent
+   sur la même ligne de pied et à la même taille visuelle. Graisse 700 (le maximum de la
+   fonte) : plus légère, les jambages fins disparaissent à côté du 700 de
+   Satoshi. Interligne hérité,
+   pour que la ligne ne bouge pas de hauteur. */
+
+.hero__serif,
+.hero__emphasis {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.005em;
+  font-size-adjust: 0.5;
+  line-height: inherit;
+}
+
+/* ---- La bande noire des cas clients --------------------------------------
+   Les noms des clients, en grand sur chaque carte (« La Bodega »), passent en
+   serif italique : c'est là que le serif fait le plus d'effet, sur fond noir,
+   posé sur une photo. Ce sont des NOMS PROPRES, pas du texte : ils supportent
+   l'italique fine du serif. */
+
+.case__name-text {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  font-size-adjust: 0.46;
+  /* Posé sur une photo : l'ombre détache le nom du fond, même très chargé. */
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+}

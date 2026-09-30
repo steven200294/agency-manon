@@ -363,7 +363,7 @@
     display: flex;
   }
 
-  .header__panel-cta .btn-nav {
+  .header__panel-cta .btn-primary {
     flex: 1;
     justify-content: center;
   }

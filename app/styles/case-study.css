@@ -1,0 +1,532 @@
+/* ==========================================================================
+   case-study.css — les pages de cas client (/cas/[slug])
+
+   Surface claire (Dentelle), texte Nuit, accents Châtaigne : la page suit la
+   polarité du reste du site. Seul le bloc de clôture s'inverse.
+
+   L'ordre du DOM d'un concept est l'ordre imposé — problème, concept,
+   vidéo, effets. Rien ici ne le change avec `order` : au large, la vidéo est
+   placée par la grille dans la colonne de droite, sur toute la hauteur du
+   bloc ; à l'étroit, tout s'empile dans l'ordre du DOM.
+   ========================================================================== */
+
+.case-page {
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+  width: 100%;
+  max-width: 1240px;
+  padding: 96px 40px 120px;
+  box-sizing: border-box;
+}
+
+.case-page :where(h1, h2, h3, h4, p, ol, ul, figure, table) {
+  margin: 0;
+  padding: 0;
+}
+
+.case-page :where(ol, ul) {
+  list-style: none;
+}
+
+/* ---- En-tête ------------------------------------------------------------ */
+
+.case-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 960px;
+}
+
+.case-hero__kicker {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.case-hero__client {
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--color-text-secondary);
+}
+
+.case-hero__title {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  font-weight: 500;
+}
+
+/* ---- Sections ----------------------------------------------------------- */
+
+.case-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.case-section__title {
+  font-family: var(--font-display);
+  font-size: var(--text-subtitle);
+  line-height: var(--text-subtitle--line-height);
+  font-weight: 500;
+  max-width: 900px;
+}
+
+.case-subtitle {
+  margin-top: 24px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 31.2px;
+  font-weight: 500;
+}
+
+.case-body,
+.case-lead,
+.concept__problem,
+.concept__concept,
+.concept__effects p,
+.episode__text {
+  max-width: 720px;
+  font-size: 18px;
+  line-height: 29px;
+  color: var(--color-text-secondary);
+}
+
+.case-body--intro {
+  font-size: 22px;
+  line-height: 33px;
+  color: var(--color-text-primary);
+}
+
+.case-lead strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.case-verdict {
+  max-width: 720px;
+  padding-left: 20px;
+  border-left: 3px solid var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 34px;
+  color: var(--color-accent);
+}
+
+.case-caption {
+  font-size: 14px;
+  line-height: 21px;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.case-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 300px));
+  align-items: start;
+  gap: 16px;
+}
+
+.case-stats img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-frame);
+}
+
+.case-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  counter-reset: step;
+}
+
+.case-order li {
+  counter-increment: step;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border-hairline);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.case-order li::before {
+  content: counter(step) " · ";
+  color: var(--color-accent);
+}
+
+/* ---- Piliers et concepts ------------------------------------------------ */
+
+.pillar {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-top: 24px;
+}
+
+.pillar + .pillar {
+  margin-top: 40px;
+}
+
+.pillar__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-hairline);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.pillar__label {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.pillar__title em {
+  color: var(--color-text-secondary);
+}
+
+.concept {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+/* Le nom du concept est le produit : il est composé plus gros que tout le
+   reste du bloc, et que le nom du client en tête de page. */
+.concept__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.concept__number {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.concept__name {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.concept__tagline {
+  font-size: 20px;
+  line-height: 28px;
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+.concept__problem {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.concept__effects {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-hairline);
+}
+
+.video-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.video-frame__embed {
+  width: 100%;
+  aspect-ratio: 9 / 17;
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-frame);
+  background-color: var(--color-canvas);
+}
+
+/* Une vidéo hébergée est en 9 / 16 exact : le cadre suit ses proportions. */
+video.video-frame__embed {
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background-color: #000;
+}
+
+.video-frame__link {
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.video-frame__link--pending {
+  color: var(--color-text-secondary);
+}
+
+.concept .video-frame {
+  align-self: start;
+}
+
+@media (min-width: 900px) {
+  .concept {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    column-gap: 64px;
+  }
+
+  .concept > * {
+    grid-column: 1;
+  }
+
+  /* La vidéo passe à droite sur toute la hauteur ; les autres éléments
+     gardent leur ordre dans la colonne de gauche. */
+  .concept > .video-frame {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+  }
+}
+
+/* ---- Méthode ------------------------------------------------------------ */
+
+.phases,
+.pillar-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.phases li,
+.pillar-cols li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 20px;
+  background-color: var(--color-surface-card);
+}
+
+.phases__number {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.phases h3,
+.pillar-cols h4 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 31.2px;
+  font-weight: 500;
+}
+
+.phases p,
+.pillar-cols p {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+.recap {
+  width: 100%;
+  max-width: 720px;
+  border-collapse: collapse;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.recap th,
+.recap td {
+  padding: 12px 16px 12px 0;
+  border-bottom: 1px solid var(--color-border-hairline);
+  text-align: left;
+}
+
+.recap th {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ---- BNI : le concept et les trois épisodes ----------------------------- */
+
+.concept-name {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.concept-name em {
+  font-size: 20px;
+  line-height: 28px;
+  font-style: italic;
+  text-transform: none;
+  color: var(--color-accent);
+}
+
+.episodes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 48px;
+}
+
+@media (min-width: 900px) {
+  .episodes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+.episode {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.episode__pillar {
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* Le logo du format reste sur la vignette : c'est lui qui prouve qu'il
+   s'agit d'un format et non de trois tournages isolés. */
+.episode__thumb {
+  position: relative;
+}
+
+.episode__thumb .video-frame {
+  max-width: none;
+}
+
+.episode__logo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30%;
+  padding: 6px;
+  background-color: var(--color-canvas);
+}
+
+.episode__logo .media-slot__subject {
+  font-size: 10px;
+  line-height: 13px;
+}
+
+.episode__logo .media-slot__format {
+  display: none;
+}
+
+.episode__title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 31.2px;
+  font-weight: 500;
+}
+
+.episode__quote {
+  font-size: 18px;
+  line-height: 27px;
+  font-style: italic;
+  color: var(--color-text-primary);
+}
+
+/* ---- Clôture et appel --------------------------------------------------- */
+
+.case-closing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 64px 56px;
+  border-radius: 32px;
+  background-color: var(--color-chataigne);
+  color: var(--color-dentelle);
+}
+
+.case-closing__title {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--text-title--line-height);
+  font-weight: 500;
+}
+
+.case-closing p {
+  max-width: 720px;
+  font-size: 20px;
+  line-height: 30px;
+}
+
+/* Le bouton plein Châtaigne disparaîtrait sur le fond Châtaigne : il
+   s'inverse en Dentelle. */
+.case-closing .btn-primary {
+  margin-top: 12px;
+  background-color: var(--color-dentelle);
+  box-shadow: none;
+}
+
+.case-closing .btn-primary .t-label {
+  color: var(--color-chataigne);
+}
+
+.case-cta {
+  display: flex;
+}
+
+@media (max-width: 767px) {
+  .case-page {
+    gap: 64px;
+    padding: 64px 16px 80px;
+  }
+
+  .case-hero__title {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  .case-section__title {
+    font-size: 26px;
+    line-height: 34px;
+  }
+
+  .concept__name,
+  .concept-name,
+  .case-closing__title {
+    font-size: 36px;
+    line-height: 40px;
+  }
+
+  .case-closing {
+    padding: 40px 24px;
+  }
+
+  .case-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .video-frame {
+    max-width: 320px;
+  }
+}

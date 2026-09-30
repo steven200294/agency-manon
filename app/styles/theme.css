@@ -143,6 +143,10 @@
 
   --font-display: "Satoshi", system-ui, -apple-system, sans-serif;
   --font-text: "Satoshi", system-ui, -apple-system, sans-serif;
+
+  /* Le serif du mélange : titres de section et mots accentués (voir
+     serif.css). Il n'a pas de rôle de texte courant. */
+  --font-serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   /* ------------------------------------------------------------------------
      TYPOGRAPHIE — corps, interlignes, approches
      Toutes ces valeurs sont mesurées. Elles ne sont pas dérivées d'une gamme.

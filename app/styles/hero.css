@@ -71,52 +71,42 @@
 }
 
 /* --------------------------------------------------------------------------
-   #1 — la racine
+   LA RACINE — texte centré en haut, ruban d'images en bas
 
-   Large : rangée centrée, écart 32px, padding 100 / 24 / 80.
-   Étroit : colonne alignée en haut, écart 61px, padding 50 / 24 / 80.
-   Les deux jeux sont mesurés.
+   Composition reprise d'un modèle fourni : un écran plein, le texte au
+   centre, et en bas un ruban de photos inclinées qui défilent en boucle,
+   fondues en haut et en bas par un masque.
+
+   Ce qui remplace : le collage de huit cadres encadrant le texte, et les deux
+   rubans verticaux de la variante étroite. Une seule structure sert
+   maintenant toutes les largeurs.
+
+   Le texte, lui, garde ses mesures (titres, chapô, bouton, sceau).
+
+   `--hero-marquee-height` réserve la place du ruban : le padding bas de la
+   racine est calculé dessus, pour que le texte ne passe jamais dessous, même
+   sur un écran peu haut.
    -------------------------------------------------------------------------- */
 
 .hero {
-  --hero-gap: 32px;
-  --hero-padding-top: 100px;
-
-  /* Écart entre les deux rubans du ruban mobile, et entre leurs vignettes. */
-  --hero-ticker-column-gap: 13px;
-  --hero-ticker-item-gap: 10px;
-
-  /* NON MESURÉE. Le relevé capture deux positions de ruban figées
-     (−157,054px et −443,946px) mais aucune durée, aucune courbe, aucune
-     image-clé. 44s est une valeur CHOISIE. Voir MISSING.md. */
-  --hero-ticker-duration: 44s;
+  /* Hauteur du ruban : un tiers de l'écran, bornée. */
+  --hero-marquee-height: clamp(360px, 52svh, 520px);
+  /* NON MESURÉE. Durée d'un tour complet du ruban : valeur CHOISIE. */
+  --hero-marquee-duration: 40s;
 
   display: flex;
   position: relative;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--hero-gap);
   width: 100%;
-
-  /* Le bloc occupe un écran plein : rien de la bande suivante ne dépasse.
-
-     Ce n'est pas une invention. Le relevé large donne `height: 977px` à la
-     racine, et 977px est exactement la hauteur du viewport de capture — le
-     bloc remplissait déjà l'écran. La règle CSS de la variante large annonce
-     d'ailleurs `height: 800px`, ce qui confirme une hauteur imposée et non
-     dictée par le contenu.
-
-     `100svh` plutôt que `100vh` : sur mobile, `vh` compte la barre d'adresse
-     du navigateur comme si elle était toujours rétractée, ce qui fait sauter
-     la mise en page au premier défilement. `svh` prend la plus petite
-     hauteur possible, donc stable.
-
-     Les 32px retirés sont le dégagement que le canevas pose au-dessus pour
-     la barre fixe : sans cette soustraction, le bloc dépasserait l'écran
-     d'exactement cette hauteur. */
+  overflow: hidden;
+  /* `100svh` plutôt que `100vh` : sur mobile, `vh` compte la barre d'adresse
+     comme rétractée, ce qui fait sauter la mise en page au premier défilement.
+     Les 32px retirés sont le dégagement que le canevas pose au-dessus pour la
+     barre fixe. */
   min-height: calc(100svh - 32px);
-
-  padding: var(--hero-padding-top) 24px 80px;
+  padding: 80px 24px calc(var(--hero-marquee-height) * 0.8);
   font-family: var(--font-text);
   font-size: 12px;
   font-weight: 400;
@@ -125,105 +115,66 @@
 }
 
 /* --------------------------------------------------------------------------
-   #2 et #38 (relevé large) — les deux groupes de photos
+   Le ruban d'images
 
-   `width: 22%` est la règle mesurée, `max-width: 600px` la borne, et
-   `flex: 0 0 auto` empêche le groupe de compenser quoi que ce soit : c'est
-   la colonne centrale qui absorbe le reste.
+   Posé en bas, sur toute la largeur. Le masque fond le haut et le bas du
+   ruban dans le fond de page : les photos surgissent et disparaissent au lieu
+   d'être coupées net. Les marges verticales laissent la place aux rotations.
 
-   `z-index: 1` est mesuré sur les deux. Il les fait passer au-dessus de la
-   colonne centrale, ce qui n'a d'effet que si les trois se chevauchent.
+   L'animation déplace la piste de 0 à −50 % de sa largeur. La piste contient
+   la liste d'images deux fois : à −50 %, la seconde copie occupe exactement la
+   place de la première, et la boucle se referme sans saut visible.
    -------------------------------------------------------------------------- */
 
-.hero__cluster {
-  display: flex;
-  position: relative;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 8px;
-  flex: 0 0 auto;
-  width: 22%;
-  max-width: 600px;
-  height: min-content;
-  z-index: 1;
-}
-
-/* Une colonne de deux cadres. `flex: 1 0 0` avec `width: 1px` dans le relevé :
-   la largeur de base est nulle, les deux colonnes se partagent le groupe. */
-.hero__column {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 8px;
-  flex: 1 0 0;
-  width: 1px;
-  height: min-content;
-}
-
-/* --------------------------------------------------------------------------
-   Les cadres photo — variante large
-
-   Chacun est un liseré dégradé de 4px autour d'une image. Deux variantes de
-   rayon sont mesurées, et elles vont par paires : un cadre à 8px contient
-   une image à 4px, un cadre à 16px une image à 12px. L'écart de 4px entre
-   les deux rayons est exactement l'épaisseur du liseré — c'est ce qui rend
-   la courbe continue.
-
-   Le dégradé du liseré garde les positions d'arrêt mesurées
-   (0 %, 38,7265 %, 100 %) ; seules les trois teintes grises du site relevé
-   sont remplacées par les tons chauds du brandboard. Voir --gradient-frame.
-   -------------------------------------------------------------------------- */
-
-.hero__frame {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 100%;
-  height: auto;
-  padding: 4px;
-  background-image: var(--gradient-frame);
-  box-sizing: border-box;
-}
-
-/* Variante à liseré serré — 8px dehors, 4px dedans. Six cadres sur huit. */
-.hero__frame--sm {
-  border-radius: var(--radius-frame-sm); /* 8px */
-}
-
-/* Variante à liseré large — 16px dehors, 12px dedans. Deux cadres, tous les
-   deux dans la seconde colonne du groupe de gauche. */
-.hero__frame--lg {
-  border-radius: var(--radius-frame); /* 16px */
-}
-
-/* Le conteneur de l'image, qui établit le repère absolu. */
-.hero__frame-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-/* La couche absolue qui porte l'image. */
-.hero__frame-layer {
+.hero__marquee {
   position: absolute;
-  inset: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--hero-marquee-height);
   overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14%,
+    #000 84%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14%,
+    #000 84%,
+    transparent
+  );
+  pointer-events: none;
 }
 
-.hero__frame--sm .hero__frame-inner,
-.hero__frame--sm .hero__frame-layer,
-.hero__frame--sm .hero__image {
-  border-radius: var(--radius-frame-inner-sm); /* 4px */
+.hero__marquee-track {
+  display: flex;
+  /* Les photos s'alignent sur le bas du ruban : leur haut reste sous le
+     bouton, quelle que soit la hauteur de l'écran. */
+  align-items: flex-end;
+  gap: 16px;
+  width: max-content;
+  height: 100%;
+  padding: 0 8px 20px;
+  animation: hero-marquee-scroll var(--hero-marquee-duration) linear infinite;
 }
 
-.hero__frame--lg .hero__frame-inner,
-.hero__frame--lg .hero__frame-layer,
-.hero__frame--lg .hero__image {
-  border-radius: var(--radius-frame-inner); /* 12px */
+.hero__marquee-item {
+  flex: 0 0 auto;
+  /* Les photos prennent 80 % de la hauteur : le reste absorbe l'inclinaison
+     et le fondu du masque. */
+  height: 84%;
+  aspect-ratio: 3 / 4;
+  rotate: -2deg;
+}
+
+/* Une sur deux penche de l'autre côté, plus franchement : c'est ce
+   déséquilibre qui donne le côté posé à la main. */
+.hero__marquee-item:nth-child(even) {
+  rotate: 5deg;
 }
 
 .hero__image {
@@ -231,564 +182,149 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(20, 20, 20, 0.16);
 }
 
-/* Emplacement en attente d'image. Il occupe la couche entière, donc le cadre
-   garde sa hauteur : rien ne bougera quand la vraie photo arrivera. */
-.hero__image-slot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-surface-card);
-}
-
-.hero__image-slot span {
-  padding: 6px;
-  font-family: var(--font-text);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: var(--tracking-chip);
-  text-align: center;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
-   Les rapports d'aspect, cadre par cadre.
-
-   Ce sont les seules valeurs du composant qui ne sont ni des proportions de
-   mise en page ni des jetons : ce sont les cadrages photo eux-mêmes, et ils
-   sont tous distincts. Les reprendre au millionième est ce qui reproduit
-   l'irrégularité du collage — les arrondir l'alignerait.
-   -------------------------------------------------------------------------- */
-
-.hero__frame--r1 { aspect-ratio: 1 / 1; }
-.hero__frame--r2 { aspect-ratio: 0.672043 / 1; }
-.hero__frame--r3 { aspect-ratio: 0.675781 / 1; }
-.hero__frame--r4 { aspect-ratio: 0.765487 / 1; }
-.hero__frame--r5 { aspect-ratio: 0.675824 / 1; }
-.hero__frame--r6 { aspect-ratio: 0.798701 / 1; }
-.hero__frame--r7 { aspect-ratio: 1 / 1; }
-.hero__frame--r8 { aspect-ratio: 0.675676 / 1; }
-
-/* Les huit cadres restent tels que le relevé les pose : deux colonnes
-   alignées en haut, écart 8px, tous parfaitement d'aplomb. Aucune rotation,
-   aucun décalage vertical — le relevé n'en donne aucun. */
-
-/* ==========================================================================
-   LES RUBANS — variante étroite uniquement
-
-   En dessous de 810px, le collage de huit cadres disparaît et deux rubans
-   verticaux le remplacent. C'est une structure entièrement différente, pas
-   un réagencement du collage.
-
-   Ce que le relevé donne :
-
-     conteneur   336 × 528, `overflow: clip`, écart 13px entre les rubans
-     ruban       colonne de 161,5px, `overflow: clip`
-     liste       3 `ticker-item` + 3 `clone-item`, écart 10px
-     cadre       rayon 10px, `overflow: clip`, PAS de liseré dégradé
-     décalages   ruban 1 : translateY(−157,054px)
-                 ruban 2 : translateY(−443,946px)
-
-   Trois observations qui décident de l'implémentation :
-
-   — Trois vignettes suivies de leurs trois clones, c'est la forme canonique
-     d'une boucle sans couture : quand la liste a défilé de la hauteur des
-     trois premières, le premier clone occupe exactement la place de la
-     première vignette, et on peut recommencer sans que l'œil le voie.
-
-   — Les clones portent `aria-hidden="true"`, les originaux `"false"`. Repris
-     tel quel : un lecteur d'écran ne doit entendre les vignettes qu'une fois.
-
-   — Les deux décalages relevés sont différents, et ils ne sont pas
-     proportionnels aux hauteurs : les deux rubans sont volontairement
-     DÉPHASÉS. Le déphasage écrit plus bas est calculé à partir d'eux.
-
-   Ce qui n'est PAS mesuré : la durée, la courbe, le sens. Le sens se déduit
-   du signe des décalages (les deux sont négatifs, donc vers le haut) ; la
-   durée est choisie. Voir MISSING.md.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   CE QUI DONNE SA HAUTEUR AU BLOC DES RUBANS — ET CE QUI NE DOIT PAS
-
-   Les deux listes contiennent six vignettes chacune (trois plus leurs trois
-   clones) : ensemble, elles font plus de 1300px de haut, pour un bloc qui en
-   fait 528. Tant que ces listes restent DANS LE FLUX, cette hauteur remonte
-   la chaîne — le ruban se dimensionne sur elle, le bloc sur le ruban, et le
-   bloc d'accroche entier s'étire sur mobile pour contenir des vignettes qui
-   ne sont même pas visibles.
-
-   Trois règles, qui vont ensemble, coupent la chaîne :
-
-     — `align-items: stretch` sur le bloc : les rubans prennent la hauteur du
-       bloc, et non celle de leur contenu (le relevé donne `flex-start`, qui
-       revenait à leur faire dicter la hauteur — ÉCART ASSUMÉ) ;
-     — les rubans sont bornés à 100 % de cette hauteur, `min-height: 0` pour
-       lever la taille minimale automatique des enfants flex ;
-     — les LISTES sortent du flux (`position: absolute`). Elles ne comptent
-       plus pour rien dans le calcul des hauteurs, et l'`overflow: clip` du
-       ruban les coupe proprement en haut et en bas.
-
-   L'animation, elle, ne change pas : `translateY` d'un demi-cycle fonctionne
-   à l'identique sur un élément hors flux.
-   -------------------------------------------------------------------------- */
-
-.hero__tickers {
-  display: none; /* activé sous 810px */
-  position: relative;
-  align-items: stretch;
-  justify-content: center;
-  gap: var(--hero-ticker-column-gap); /* 13px */
-  width: 100%;
-  height: 528px;
-
-  /* NON MESURÉ. Le relevé ne donne aucun rayon au bloc — seulement 10px aux
-     vignettes. Le bloc en reçoit un à son tour : c'est le rayon des panneaux
-     du projet (32px), le plus grand de la charte après les boutons, et le
-     seul qui ne se lise pas comme un timbre à cette taille.
-
-     `overflow: clip` était déjà là pour couper les vignettes en haut et en
-     bas ; c'est lui qui fait aussi respecter le rayon aux quatre coins. */
-  border-radius: var(--radius-panel);
-  overflow: clip;
-}
-
-.hero__ticker {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--hero-ticker-item-gap); /* 10px */
-  flex: 1 1 0;
-  height: 100%;
-  min-height: 0;
-  overflow: clip;
-}
-
-.hero__ticker-list {
-  display: flex;
-  /* Hors flux : voir le bloc ci-dessus. `left`/`right` à zéro donnent la
-     largeur, `top` l'origine ; la hauteur reste celle du contenu, ce dont le
-     `translateY` de la boucle a besoin. */
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--hero-ticker-item-gap);
-  width: auto;
-  max-width: 100%;
-
-  animation-name: hero-ticker-scroll;
-  animation-duration: var(--hero-ticker-duration);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-/* Le déphasage du second ruban est DÉRIVÉ des deux décalages relevés.
-
-   Un cycle complet vaut la hauteur des trois premières vignettes plus leurs
-   trois écarts :
-
-     ruban 1 : 238,977 + 161,5 + 239,938 + 3 × 10 = 670,415px
-     ruban 2 : 210,977 + 243,75 + 161,5  + 3 × 10 = 646,227px
-
-   Au moment de la capture :
-
-     ruban 1 : 157,054 / 670,415 = 23,4 % du cycle
-     ruban 2 : 443,946 / 646,227 = 68,7 % du cycle
-
-   Soit 45,3 points d'écart. Un `animation-delay` négatif de 45,3 % de la
-   durée reproduit ce déphasage quelle que soit la durée retenue. */
-.hero__ticker--offset .hero__ticker-list {
-  animation-delay: calc(var(--hero-ticker-duration) * -0.453);
-}
-
-/* La distance d'un cycle, exprimée sans aucun pixel en dur.
-
-   La liste contient 6 vignettes séparées par 5 écarts. Un demi-cycle vaut
-   3 vignettes + 3 écarts, c'est-à-dire (hauteur totale + un écart) / 2.
-   Vérification sur le ruban 1 : (1330,83 + 10) / 2 = 670,415px — la valeur
-   calculée plus haut. La formule tient donc quelles que soient les images. */
-@keyframes hero-ticker-scroll {
+/* Le ruban avance vers la droite, comme dans le modèle. À 0 %, la piste est
+   décalée de sa moitié ; à 100 %, elle est revenue à zéro, et la copie
+   suivante a pris la place de la première : la boucle est sans fin. */
+@keyframes hero-marquee-scroll {
   from {
-    transform: translateY(0);
+    transform: translateX(-50%);
   }
+
   to {
-    transform: translateY(calc((-100% - var(--hero-ticker-item-gap)) / 2));
+    transform: translateX(0);
   }
 }
-
-/* Une vignette de ruban. Rayon 10px — ni 8 ni 16 : la variante étroite a son
-   propre rayon. Et surtout : AUCUN liseré dégradé. Le cadre est l'image
-   elle-même, rognée. */
-.hero__ticker-item {
-  position: relative;
-  width: 100%;
-}
-
-.hero__ticker-frame {
-  position: relative;
-  width: 100%;
-  border-radius: 10px;
-  overflow: clip;
-  z-index: 2;
-}
-
-.hero__ticker-layer {
-  position: absolute;
-  inset: 0;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.hero__ticker-frame .hero__image {
-  border-radius: 10px;
-}
-
-/* Rapports d'aspect des six vignettes, mesurés un par un. */
-.hero__ticker-frame--t1 { aspect-ratio: 0.675781 / 1; }
-.hero__ticker-frame--t2 { aspect-ratio: 1 / 1; }
-.hero__ticker-frame--t3 { aspect-ratio: 0.673077 / 1; }
-.hero__ticker-frame--t4 { aspect-ratio: 0.765487 / 1; }
-.hero__ticker-frame--t5 { aspect-ratio: 0.662557 / 1; }
-.hero__ticker-frame--t6 { aspect-ratio: 1 / 1; }
 
 /* --------------------------------------------------------------------------
-   #56, #57 — la colonne centrale
-   -------------------------------------------------------------------------- */
+   LE TEXTE — pastille, titre, description, bouton
 
-.hero__center {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex: 1 1 auto;
-  min-width: 0;
-}
+   Même ordre et même gabarit que le modèle fourni : une pastille en haut, un
+   titre gras serré sur deux lignes, une description, un bouton arrondi. Les
+   polices et les couleurs restent celles de la charte.
+
+   Le sceau de confiance sous le bouton a été retiré.
+
+   Les quatre blocs apparaissent l'un après l'autre : fondu + léger
+   glissement vers le haut, décalés de 0,1 s. `both` garde l'état de départ
+   pendant le délai.
+   -------------------------------------------------------------------------- */
 
 .hero__stack {
   display: flex;
   position: relative;
+  z-index: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 32px;
   width: 100%;
+  max-width: 1100px;
+  text-align: center;
 }
 
-/* #58 — titres et chapô, resserrés à 28px l'un de l'autre, contre 32px pour
-   le reste de la colonne. L'écart de 28px est identique dans les deux
-   variantes : il ne bouge pas au point de rupture. */
-.hero__text {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 28px;
-  width: 100%;
+.hero__headings,
+.hero__description,
+.hero__cta {
+  animation: hero-fade-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* #59 — le bloc des titres. `white-space: pre-wrap` est mesuré : les sauts de
-   ligne écrits dans le contenu sont conservés.
-
-   ---------------------------------------------------------------------------
-   LE CORPS DES DEUX LIGNES EST FLUIDE, ET C'EST UNE DÉCISION DE MISE EN PAGE
-
-   Le relevé donne 72px puis 64px, mesurés à 1324px de large. Mais ces deux
-   corps ne tiennent pas l'accroche RÉELLE : « Vos concurrents font du
-   contenu. » et « Vous, vous allez faire la différence » font 32 et 35
-   caractères, alors que la colonne centrale n'en accorde que 650px à cette
-   largeur de capture (voir l'en-tête du fichier : 22 % pour chaque groupe
-   photo, le reste pour la colonne). Chaque ligne se coupait donc en deux, et
-   le titre occupait quatre lignes au lieu de deux.
-
-   La demande est une disposition sur DEUX lignes — une par `h1`. Elle impose
-   un corps qui suive la largeur de la colonne, pas une valeur fixe : la
-   colonne vaut 56 % de la boîte de contenu de la racine, donc elle rétrécit
-   avec la fenêtre, et un corps fixe qui tient à 1440px se coupe à 1200px.
-
-   D'où `clamp()` sur une pente en `vw`, avec un seul jeton pour les deux
-   lignes : le rapport 72/64 du relevé (0,875) est conservé, seule l'échelle
-   bouge.
-
-   LA PENTE N'EST PAS ESTIMÉE, ELLE EST CALCULÉE.
-
-   Les deux lignes ont été mesurées dans Satoshi 700 avec l'approche de -2px.
-   La largeur d'une ligne suit `per_em × corps − 2 × n`, où n est son nombre de
-   caractères :
-
-       « Vos concurrents font du contenu. »     per_em 15,4833   n = 32
-       « Vous, vous allez faire la différence » per_em 15,6606   n = 36
-
-   La colonne, elle, vaut `(100vw − 48) × 0,56 − 64`. On renverse la formule
-   pour obtenir le corps maximal qui tient sur une ligne ; la colonne étant
-   affine en `vw`, ce maximum l'est aussi :
-
-       corps_max (1ʳᵉ ligne) = 3,617vw − 1,74px
-
-   soit 27,6px à 810px de fenêtre, 41,7px à 1200px, 46,2px à 1324px — la
-   largeur de capture du relevé, où les 72px mesurés dépassaient donc de 57 %.
-
-   La pente retenue, 3,4vw − 1,7px, se tient ~6 % sous cette limite. La marge
-   couvre la barre de défilement, les arrondis, et une fonte de repli plus
-   large que Satoshi le temps du chargement.
-
-   Les deux bornes du `clamp` : 24px en bas — la pente donne 25,9px à 810px,
-   donc elle gouverne tout le palier moyen sans que la borne reprenne jamais la
-   main ; 48px en haut, atteint vers 1460px de fenêtre, pour que le titre ne
-   reparte pas vers les 60px que la demande écarte. Aucune des deux n'est
-   mesurée. Voir MISSING.md.
-   --------------------------------------------------------------------------- */
-
+/* Le titre, comme au relevé : deux lignes, chacune son `h1`, en Satoshi 700 à
+   l'approche serrée. La première porte le corps de référence ; la seconde est
+   un cran plus petit (rapport 64/72 = 0,875), c'est ce qui la rend plus
+   longue sans qu'elle déborde. `text-wrap: balance` équilibre les coupures
+   quand une ligne se replie sur mobile. */
 .hero__headings {
-  /* Corps de la PREMIÈRE ligne. La seconde en dérive. */
-  --hero-title-size: clamp(24px, calc(3.4vw - 1.7px), 48px);
-
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  white-space: pre-wrap;
+  --hero-title-size: clamp(30px, 4.6vw, 64px);
+  max-width: 100%;
+  animation-delay: 0.1s;
 }
 
-/* Première ligne. */
-.hero__title {
-  font-family: var(--font-display);
-  font-size: var(--hero-title-size); /* mesuré : 72px, fixe */
-  /* Le bloc d'accroche est HORS du passage en graisse 300 : il garde les 700
-     mesurés. C'est le premier écran, il doit peser plus que ce qui suit. */
-  font-weight: 700;
-  line-height: 1.1; /* le rapport de 110 % du relevé, exprimé sans pixels */
-  letter-spacing: var(--tracking-title); /* -2px */
-  text-align: center;
-  white-space: pre-wrap;
-  color: var(--color-text-primary);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Seconde ligne. Un corps plus petit que la première : c'est une décision du
-   relevé, pas un repli responsive — d'où le facteur 0,875, qui est exactement
-   le rapport 64/72 des deux corps mesurés.
-
-   C'est aussi la ligne la plus longue des deux, donc la plus contrainte ; le
-   fait qu'elle soit la plus petite est ce qui permet aux deux de tenir sur le
-   même jeton.
-
-   La largeur relevée (650px) est celle que le parent accorde, pas une
-   décision : d'où `width: 100%`. */
+.hero__title,
 .hero__title--secondary {
+  margin: 0;
   font-family: var(--font-display);
-  font-size: calc(var(--hero-title-size) * 0.875); /* mesuré : 64px, fixe */
-  /* Le bloc d'accroche est HORS du passage en graisse 300 : il garde les 700
-     mesurés. C'est le premier écran, il doit peser plus que ce qui suit. */
   font-weight: 700;
-  line-height: 1.1; /* même rapport de 110 % */
-  letter-spacing: var(--tracking-title); /* -2px */
-  text-align: center;
-  white-space: pre-wrap;
+  line-height: 1.1;
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
   color: var(--color-text-primary);
-  width: 100%;
-  box-sizing: border-box;
 }
 
-/* Les deux mots accentués. Seule décoration du titre, et même Châtaigne que
-   les boutons : le projet n'a qu'une couleur d'accent. */
-/* L'emphase du bloc d'accroche NE PREND PAS l'italique des emphases de
-   titre (`.t-em-heading`) : le bloc d'accroche reste à l'écart du traitement
-   appliqué au reste de la page. Elle se distingue par la couleur seule,
-   comme au relevé. */
+.hero__title {
+  font-size: var(--hero-title-size);
+}
+
+.hero__title--secondary {
+  font-size: calc(var(--hero-title-size) * 0.875);
+}
+
+/* Seule décoration du titre : l'accent de la charte, sans italique. */
 .hero__emphasis {
   color: var(--color-accent);
 }
 
-/* #62 — le chapô. 550px est une vraie décision : c'est une `max-width`, pas
-   une largeur distribuée. Elle est présente dans les DEUX variantes. */
-.hero__lede {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  max-width: 550px;
-  white-space: pre-wrap;
+.hero__description {
+  max-width: 576px;
+  margin-top: 24px;
+  font-family: var(--font-text);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--color-text-secondary);
+  animation-delay: 0.3s;
 }
 
-/* #64 — le conteneur de l'appel à l'action. Aucun style propre au-delà de sa
-   position ; sa taille est celle du lien qu'il contient. Elle est identique
-   dans les deux variantes : 262,57 × 56. Le bouton ne rétrécit pas. */
 .hero__cta {
-  position: relative;
+  margin-top: 32px;
+  animation-delay: 0.4s;
 }
 
-/* #66 — le bloc de libellé à l'intérieur du lien. `white-space: pre` est
-   mesuré : le libellé ne se coupe jamais. */
-.hero__cta-label {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: flex-start;
-  white-space: pre;
+/* Le bouton grossit un peu au survol et rentre au clic. */
+.hero__cta .btn-primary {
+  transition: transform 0.2s ease;
 }
 
-/* --------------------------------------------------------------------------
-   #68, #69, #70 — le sceau de confiance
-
-   Le relevé donne un emplacement de 300 × 60 (rapport 5/1) contenant une
-   image de 1024 × 205, et il est IDENTIQUE dans les deux variantes : le
-   sceau ne rétrécit pas sur mobile. Le fichier fourni fait très exactement
-   1024 × 205 : c'est bien celui-là.
-
-   ---------------------------------------------------------------------------
-   IL EST BLANC, ET LA PAGE EST CLAIRE.
-
-   Le fichier est un aplat blanc sur fond transparent — dessiné pour le site
-   d'origine, qui est noir. Posé tel quel sur Dentelle, il serait invisible.
-
-   Il n'est donc pas AFFICHÉ, il est utilisé comme MASQUE : seule sa couche
-   alpha est lue, et la couleur vient d'un aplat peint derrière. Le dessin
-   reste au pixel près celui du fichier — aucune perte, aucun filtre, aucune
-   approximation — et sa couleur devient un jeton de la charte.
-
-   Si tu préfères une vraie version sombre du fichier, elle remplacera ce
-   masque sans rien changer d'autre. Voir MISSING.md.
-   ---------------------------------------------------------------------------
-   -------------------------------------------------------------------------- */
-
-.hero__webmark {
-  /* Le nom est le mien. Châtaigne : 8,3:1 sur Dentelle, lisible jusque dans
-     le petit texte du sceau. */
-  --webmark-color: var(--color-accent);
-
-  position: relative;
-  width: 300px;
-  max-width: 100%;
-  aspect-ratio: 5 / 1;
-
-  background-color: var(--webmark-color);
-
-  mask-image: url("/brand/webmark.avif");
-  mask-size: contain;
-  mask-position: center;
-  mask-repeat: no-repeat;
-
-  -webkit-mask-image: url("/brand/webmark.avif");
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
-  -webkit-mask-repeat: no-repeat;
+.hero__cta .btn-primary:hover {
+  transform: scale(1.05);
 }
 
-/* Variante pour une surface sombre — le bloc dégradé de la bande 12, par
-   exemple. Prête, inemployée pour l'instant. */
-.hero__webmark--on-dark {
-  --webmark-color: var(--color-accent-contrast);
+.hero__cta .btn-primary:active {
+  transform: scale(0.95);
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero__headings,
+  .hero__description,
+  .hero__cta {
+    animation: none;
+  }
 }
 
 /* ==========================================================================
    VARIANTE ÉTROITE — sous 810px
-
-   Le seuil vient de la feuille de style du site : `(max-width: 809px)`.
-   Tout ce qui suit est mesuré sur la capture à 390px.
    ========================================================================== */
 
 @media (max-width: 809px) {
   .hero {
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-
-    /* Deux écarts changent, dans des directions opposées : la racine passe
-       de 32 à 61px, mais le padding haut tombe de 100 à 50px. */
-    --hero-gap: 61px;
-    --hero-padding-top: 50px;
+    --hero-marquee-height: clamp(300px, 46svh, 420px);
+    padding-top: 64px;
   }
 
-  /* Le collage disparaît, les rubans le remplacent. Ce n'est pas un
-     réagencement : ce sont deux structures différentes, et le relevé étroit
-     ne contient aucun des huit cadres du collage. */
-  .hero__cluster {
-    display: none;
-  }
-
-  .hero__tickers {
-    display: flex;
-  }
-
-  /* LE BLOC D'ACCROCHE N'EST PLUS BORNÉ À UN ÉCRAN À L'ÉTROIT.
-
-     Il l'a été : hauteur ferme d'un écran, et les rubans absorbaient ce qui
-     restait après le texte. Le calcul était juste, le résultat non — sur un
-     téléphone, « ce qui reste » vaut 150 à 210px, et les vignettes s'y
-     réduisaient à des bandeaux.
-
-     Les rubans passent donc en PREMIER : ils reçoivent une hauteur ferme,
-     grande, et c'est le bloc d'accroche qui s'ajuste autour (`height: auto`,
-     le plancher d'un écran restant assuré par le `min-height` de la règle de
-     base). Le premier écran déborde alors un peu, et c'est voulu : ce
-     débordement est ce qui dit qu'il y a une suite. */
-  .hero {
-    height: auto;
-  }
-
-  .hero__center {
-    width: 100%;
-    flex: 0 0 auto;
-  }
-
-  /* `flex: 0 0 auto` : le bloc ne se laisse plus ni étirer ni comprimer par
-     la place disponible, il impose sa hauteur.
-
-     `min(58svh, 460px)` — la part de l'écran, plafonnée. Les 528px mesurés
-     restent la borne haute du gabarit large ; ici, au-delà de 460, les
-     vignettes prendraient plus de place que tout le texte réuni. */
-  .hero__tickers {
-    flex: 0 0 auto;
-    height: min(58svh, 460px);
-    min-height: 240px;
-    max-height: none;
-  }
-
-  /* Les deux lignes de titre.
-
-     ÉCART ASSUMÉ. Le relevé donne 41px pour 45,1px d'interligne (110 %).
-
-     Il faut une PENTE À PART ici, et non le prolongement de celle du palier
-     large : sous 810px la colonne centrale ne vaut plus 56 % de la fenêtre
-     mais sa quasi-totalité (100vw − 48px de padding). Les mêmes largeurs de
-     glyphes, appliquées à cette colonne-là, donnent un tout autre coefficient :
-
-         corps_max (1ʳᵉ ligne) = 6,46vw + 1,03px
-
-     soit 26,2px à 390px, la largeur du relevé étroit. Deux régimes de mise en
-     page, deux pentes — 6vw + 1px ici, contre 3,4vw − 1,7px au large, avec la
-     même marge de sécurité de ~6 %.
-
-     Le titre est donc sensiblement plus petit que les 41px relevés : c'est le
-     prix de la disposition sur deux lignes, qui est la demande. Le relevé
-     étroit n'affiche qu'UNE ligne de titre, il ne se posait pas la question.
-
-     Le plafond de 32px reprend la main vers 510px de large et couvre le haut
-     du palier, où la colonne est déjà large (53px permis à 809px). Les deux
-     bornes sont des choix. Voir MISSING.md. */
-  .hero__headings {
-    --hero-title-size: clamp(20px, calc(6vw + 1px), 32px);
-  }
-
-  /* Le chapô descend de 18px à 16px. Les deux gardent 160 % d'interligne :
-     28,8px puis 25,6px. */
-  .hero__lede .t-intro {
+  .hero__description {
     font-size: 16px;
     line-height: 25.6px;
   }

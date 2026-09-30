@@ -91,32 +91,10 @@
   background-color: var(--color-surface-header);
   z-index: var(--z-header); /* 50 — non mesuré, voir theme.css */
 
-  /* L'escamotage au défilement. AUCUNE `transform` n'est écrite dans l'état
-     visible, et ce n'est pas un oubli : même identité, un `translateY(0)`
-     ferait de la barre le BLOC CONTENEUR de tous ses descendants en
-     `position: fixed` — dont le panneau plein écran du menu étroit, qui se
-     retrouverait enfermé dans les 96px de la barre au lieu de couvrir l'écran.
-
-     Une transition depuis `none` vers une `transform` s'interpole correctement,
-     donc rien n'est perdu. */
-  transition: transform 320ms var(--ease-link);
-}
-
-/* Escamotée : elle sort par le haut, sur toute sa hauteur. NON MESURÉ.
-   Voir SiteHeader.tsx pour les deux seuils qui décident du moment. */
-.band-header--hidden {
-  transform: translateY(-100%);
-}
-
-/* GARDE-FOU — une barre qui porte un panneau ouvert ne s'escamote jamais.
-
-   Le cas est difficile à atteindre (le panneau bloque le défilement du corps
-   dès son ouverture, donc plus aucun événement `scroll` ne part), mais s'il
-   l'était, la barre emporterait le panneau avec elle : `position: fixed` se
-   cale sur l'ancêtre transformé, pas sur la fenêtre. `:has()` le dit en une
-   règle, sans remonter l'état d'ouverture du menu jusqu'ici. */
-.band-header:has(.header__panel--open) {
-  transform: none;
+  /* La barre est FIXE en permanence : aucune transition ni `transform`. Elle
+     s'escamotait au défilement ; c'est retiré. (Ne JAMAIS lui poser de
+     `transform` : elle deviendrait le bloc conteneur du panneau plein écran du
+     menu étroit, qui se retrouverait enfermé dans ses 96px.) */
 }
 
 /* ÉCART ASSUMÉ : la hauteur mesurée est 64px. Elle est portée à 96px pour

@@ -66,3 +66,36 @@
   font-style: italic;
   font-display: swap;
 }
+
+
+/* ==========================================================================
+   CORMORANT GARAMOND — la fonte des titres, en mélange avec Satoshi
+
+   Un serif de titrage à fort contraste, chaud et éditorial. Il ne remplace
+   pas Satoshi : il prend les TITRES DE SECTION et les MOTS ACCENTUÉS, Satoshi
+   garde le texte, les libellés et les grandes accroches. Le mélange vient de
+   là — un serif qui pose le ton, un sans-serif qui porte la lecture.
+
+   Auto-hébergée dans `public/fonts/` (comme Satoshi), variable de 300 à 700 :
+   les deux fichiers (romain + italique) font 77 Ko. Sous-ensemble latin :
+   il couvre le français entier, « œ » compris.
+
+   Licence : SIL Open Font License 1.1 — usage commercial autorisé.
+   Source : Google Fonts, famille « Cormorant Garamond ».
+   ========================================================================== */
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-Variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-Variable-Italic.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: italic;
+  font-display: swap;
+}

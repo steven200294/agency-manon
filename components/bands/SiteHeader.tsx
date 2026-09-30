@@ -1,9 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ButtonPrimary } from "@/components/primitives/Buttons";
 import Logo from "@/components/primitives/Logo";
 import MobileMenu from "@/components/primitives/MobileMenu";
-import { NAV, WHATSAPP_LABEL } from "@/content/site";
+import { NAV, WHATSAPP_LABEL, WHATSAPP_URL } from "@/content/site";
 
 /* ==========================================================================
    BANDE 1 sur 13 — l'en-tête
@@ -47,82 +46,26 @@ import { NAV, WHATSAPP_LABEL } from "@/content/site";
    avec lui l'écart de 10px que `.btn-nav` posait entre l'icône et le libellé —
    sans icône, il n'y a plus rien à écarter. Voir MISSING.md. */
 function WhatsAppCta() {
+  /* Le bouton est celui de tous les appels à l'action du site (`btn-primary`,
+     comme « Découvrir nos services » ou « Réserver mon appel ») : même
+     capsule, même Châtaigne, même corps de libellé. Il n'a plus de gabarit
+     propre — l'ancien `btn-nav` (12/14, 14px) le faisait paraître d'une autre
+     famille. */
   return (
-    /* #25 — même variante de lien que sur la page longue : mêmes paddings,
-       même rayon 42px, mêmes ombres internes. */
-    <a className="btn-nav" href="#">
-      {/* #27 */}
-      <div className="header__cta-label">
-        {/* #28 */}
-        <p className="header__cta-text">{WHATSAPP_LABEL}</p>
-      </div>
-    </a>
+    <ButtonPrimary href={WHATSAPP_URL} labelClassName="t-label">
+      {WHATSAPP_LABEL}
+    </ButtonPrimary>
   );
 }
 
-/* La barre s'escamote quand on descend, revient quand on remonte.
-
-   NON MESURÉ — demande explicite. Le relevé donne une barre fixe qui ne bouge
-   jamais.
-
-   Deux seuils, et ils ne font pas la même chose :
-
-   — `REVEAL_AT` (96px, la hauteur de la barre) empêche l'escamotage tant qu'on
-     est encore en haut de page. Sans lui, le moindre geste vers le bas dès le
-     premier pixel ferait sauter la barre alors qu'elle n'a rien à céder ;
-   — `DEADBAND` (6px) est la course morte. Un défilement n'est jamais une
-     valeur propre : un trackpad, un rebond de fin de page ou une barre
-     d'adresse mobile qui se rétracte produisent des allers-retours de deux ou
-     trois pixels. Sans course morte, la barre clignote.
-
-   La position de référence n'est PAS remise à jour sous le seuil : c'est
-   volontaire. Un défilement lent de 2px vingt fois de suite doit finir par
-   compter, sinon la barre ne réagit jamais aux gestes doux.
-
-   Un seul `requestAnimationFrame` en vol à la fois : l'événement `scroll` peut
-   partir cent fois par seconde, l'écran ne se repeint que soixante. */
-const REVEAL_AT = 96;
-const DEADBAND = 6;
-
-function useHideOnScrollDown() {
-  const [hidden, setHidden] = useState(false);
-
-  useEffect(() => {
-    let last = window.scrollY;
-    let frame = 0;
-
-    const onScroll = () => {
-      if (frame) return;
-
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-
-        const y = window.scrollY;
-        const delta = y - last;
-        if (Math.abs(delta) < DEADBAND) return;
-
-        last = y;
-        setHidden(delta > 0 && y > REVEAL_AT);
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  return hidden;
-}
+/* La barre est FIXE : elle reste en haut de l'écran en permanence, elle ne
+   s'escamote pas quand on descend. Elle l'a fait un temps (masquée en
+   descendant, réaffichée en remontant) ; c'est retiré sur demande — voir
+   `.band-header` dans header.css, `position: fixed`. */
 
 export default function SiteHeader() {
-  const hidden = useHideOnScrollDown();
-
   return (
-    <header
-      className={`band-header ${hidden ? "band-header--hidden" : ""}`.trim()}
-    >
+    <header className="band-header">
       {/* #1 */}
       <div className="header">
         {/* #2 — le bloc de marque, qui prend toute la place restante. */}
@@ -130,9 +73,9 @@ export default function SiteHeader() {
           {/* #3 — 150px de large donnent 82px de haut avec le rapport 313/171
               du fichier fourni. C'est ce qui a demandé de porter la bande de
               64px à 96px (voir header.css). */}
-          <a className="header__logo" href="#" aria-label="Accueil">
+          <Link className="header__logo" href="/" aria-label="Accueil">
             <Logo width={150} priority />
-          </a>
+          </Link>
         </div>
 
         {/* #6 */}

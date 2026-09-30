@@ -23,7 +23,7 @@ import { FINAL_CTA } from "@/content/site";
 
 export default function CtaBand() {
   return (
-    <section className="band-cta">
+    <section className="band-cta" id="contact">
       {/* Le bloc ne porte AUCUN padding vertical mesuré : seuls ses 80px
           latéraux le sont. Sa hauteur est donc donnée par son contenu et par
           l'écart de 10px. */}

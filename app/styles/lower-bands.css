@@ -1113,3 +1113,970 @@
     aspect-ratio: 3 / 2 !important;
   }
 }
+
+/* Portrait de la fondatrice dans le manifeste : photo réelle, dans le
+   rapport 4 / 5 de l'emplacement qu'elle remplace. Le cadrage garde le visage en haut. */
+.manifesto-band__portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 58% 15%;
+  border-radius: var(--radius-frame);
+}
+
+
+/* ==========================================================================
+   BANDE 2 — le constat : trois photos verticales, puis le pivot
+
+   Trois panneaux hauts (rapport 3 / 5). Celui du milieu est descendu : le
+   décalage casse l'alignement d'une simple rangée de cartes et donne le
+   rythme d'une planche. Chaque phrase est posée en bas de sa photo sous un
+   dégradé sombre qui garantit le contraste. Le pivot occupe toute la largeur
+   en dessous, en accent.
+   ========================================================================== */
+
+.band-constat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 72px 40px 80px;
+  box-sizing: border-box;
+}
+
+.band-constat__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  width: 100%;
+  max-width: 1120px;
+}
+
+.band-constat__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.band-constat__title {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.4vw, 60px);
+  font-weight: var(--weight-title);
+  line-height: 1.05;
+  letter-spacing: -2px;
+  text-wrap: balance;
+  color: var(--color-text-primary);
+}
+
+.band-constat__tall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 56px;
+  list-style: none;
+}
+
+.band-constat__panel {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 3 / 5;
+  padding: 24px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-frame);
+  box-sizing: border-box;
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(20, 20, 20, 0.18);
+}
+
+/* Le panneau du milieu descend : c'est ce qui casse la rangée. */
+.band-constat__panel:nth-child(2) {
+  transform: translateY(56px);
+}
+
+.band-constat__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.band-constat__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    rgba(20, 12, 8, 0.9) 0%,
+    rgba(20, 12, 8, 0.45) 40%,
+    rgba(20, 12, 8, 0) 70%
+  );
+}
+
+.band-constat__panel:hover .band-constat__photo {
+  transform: scale(1.06);
+}
+
+.band-constat__panel p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.3vw, 32px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.9px;
+  color: #fff;
+}
+
+.band-constat__pivot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Le pivot garde le corps d'origine (32px au plus, en accent) : c'est une
+   phrase de la bande, pas un second titre. */
+.band-constat__pivot-line {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.3vw, 32px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -1px;
+  text-wrap: balance;
+  color: var(--color-accent);
+}
+
+.band-constat__closing {
+  margin: 0;
+  max-width: 52ch;
+  font-family: var(--font-text);
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-text-secondary);
+}
+
+.band-constat__closing em {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 809px) {
+  .band-constat {
+    padding: 56px 24px 64px;
+  }
+
+  .band-constat__inner {
+    gap: 40px;
+  }
+
+  /* Sur mobile, les panneaux s'empilent, plus bas de taille, sans décalage. */
+  .band-constat__tall {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding-bottom: 0;
+  }
+
+  .band-constat__panel {
+    aspect-ratio: 4 / 3;
+  }
+
+  .band-constat__panel:nth-child(2) {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   LES EXPERTISES — l'accordéon de photos
+
+   Cinq bandes verticales dans une boîte de hauteur fixe. La bande ouverte
+   prend 5 parts, les autres 1 : la transition porte sur `flex-grow`, ce qui
+   fait glisser les largeurs sans saut. Sous 800px l'accordéon se retourne :
+   les bandes s'empilent, et c'est la hauteur qui s'ouvre.
+   ========================================================================== */
+
+.fan {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  height: clamp(460px, 62svh, 620px);
+  margin: 0;
+  padding: 8px 0 0;
+  list-style: none;
+}
+
+.fan__item {
+  flex: 1 1 0;
+  min-width: 0;
+  transition: flex-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fan__item[data-open="true"] {
+  flex-grow: 5;
+}
+
+.fan__panel {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 0;
+  border-radius: var(--radius-frame);
+  background: #2a1c14;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(20, 20, 20, 0.16);
+}
+
+.fan__panel:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.fan__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fan__item[data-open="true"] .fan__photo {
+  transform: scale(1.04);
+}
+
+/* Le dégradé garantit le contraste du texte, quelle que soit la photo.
+   Plus dense sur les bandes fermées : leur titre vertical doit se lire. */
+.fan__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    rgba(20, 12, 8, 0.9) 0%,
+    rgba(20, 12, 8, 0.4) 50%,
+    rgba(20, 12, 8, 0.12) 100%
+  );
+  transition: background 0.5s ease;
+}
+
+.fan__item:not([data-open="true"]) .fan__panel::before {
+  background: rgba(20, 12, 8, 0.5);
+}
+
+.fan__tag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 4px 12px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 9999px;
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.fan__item[data-open="true"] .fan__tag {
+  opacity: 1;
+  transition-delay: 0.35s;
+}
+
+/* Fermée : le titre se lit de bas en haut, ancré en bas de la bande. */
+.fan__rail {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  writing-mode: vertical-rl;
+  transform: translateX(-50%) rotate(180deg);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  color: #fff;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.fan__item[data-open="true"] .fan__rail {
+  opacity: 0;
+}
+
+/* Ouverte : le texte remonte en fondu, après que la bande a fini de
+   s'ouvrir (délai), pour ne pas se replier en cours de route. La largeur
+   fixe empêche le texte de se reformater pendant l'animation. */
+.fan__text {
+  position: absolute;
+  right: 28px;
+  bottom: 28px;
+  left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 520px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+
+.fan__item[data-open="true"] .fan__text {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s ease 0.3s,
+    transform 0.5s ease 0.3s;
+}
+
+.fan__title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.6vw, 36px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #fff;
+}
+
+.fan__body {
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+@media (max-width: 800px) {
+  /* Retournement : une colonne de bandes horizontales, la hauteur s'ouvre. */
+  .fan {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+  }
+
+  .fan__item {
+    flex: none;
+    height: 84px;
+    transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .fan__item[data-open="true"] {
+    height: 420px;
+  }
+
+  .fan__rail {
+    top: 50%;
+    bottom: auto;
+    left: 20px;
+    writing-mode: horizontal-tb;
+    transform: translateY(-50%);
+    font-size: 18px;
+  }
+
+  .fan__text {
+    right: 20px;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .fan__title {
+    font-size: 26px;
+  }
+
+  .fan__body {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+
+/* ==========================================================================
+   LA MÉTHODE — fond Nuit, chiffres géants
+
+   Bande sombre pleine largeur, la troisième surface Nuit de la page avec les
+   cas clients et le manifeste. Quatre colonnes : photo en bandeau, numéro
+   géant en Terre d'Ombre, titre, texte. Le contenu reste dans les 1240px de
+   la grille du site ; seul le fond va d'un bord à l'autre.
+
+   Sur fond Nuit, la charte n'autorise plus les mêmes encres : le texte
+   secondaire du thème est un noir transparent, invisible ici. Mêmes valeurs
+   que le manifeste, pour que les surfaces sombres se ressemblent.
+   ========================================================================== */
+
+.method-band {
+  max-width: none;
+  padding-bottom: 96px;
+  padding-left: max(40px, calc(50vw - 620px));
+  padding-right: max(40px, calc(50vw - 620px));
+  background-color: var(--color-nuit);
+  color: var(--color-dentelle);
+}
+
+/* Vraie spécificité, pas `:where()` : le `.t-h2` de type.css passerait devant
+   et le titre resterait en Nuit sur Nuit. `-webkit-text-fill-color` est repris
+   avec la couleur : quand il vaut autre chose que `currentColor`, il l'emporte
+   toujours sur `color`. */
+.method-band .t-h2 {
+  color: var(--color-dentelle);
+  -webkit-text-fill-color: var(--color-dentelle);
+}
+
+.method-band .band-head {
+  border-bottom-color: rgba(247, 237, 222, 0.14);
+}
+
+.method-band .band-head__lede {
+  color: rgba(247, 237, 222, 0.78);
+}
+
+.method-band .ledger__close {
+  color: var(--color-terre-ombre);
+}
+
+.method {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 28px;
+  width: 100%;
+  margin: 0;
+  padding: 16px 0 0;
+  list-style: none;
+}
+
+.method__step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.method__photo {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: var(--radius-frame);
+  /* Légèrement éteinte : c'est le chiffre qui doit dominer, pas la photo. */
+  filter: saturate(0.85) brightness(0.9);
+}
+
+/* Le chiffre géant. Terre d'Ombre, la couleur chaude que la charte réserve
+   au grand corps sur fond Nuit. */
+.method__number {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(72px, 9vw, 140px);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -4px;
+  color: var(--color-terre-ombre);
+}
+
+.method__title {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.2vw, 30px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.9px;
+  color: var(--color-dentelle);
+}
+
+.method__body {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 15px;
+  line-height: 23px;
+  color: rgba(247, 237, 222, 0.72);
+}
+
+@media (max-width: 1100px) {
+  .method {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 56px 28px;
+  }
+}
+
+@media (max-width: 600px) {
+  .method-band {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .method {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+  }
+
+  .method__number {
+    font-size: 88px;
+  }
+}
+
+
+/* ==========================================================================
+   L'ÉMISSION — un poste de télévision et une citation
+
+   Deux colonnes sur fond clair : le poste à gauche, le texte à droite. Le
+   poste est dessiné en CSS — coque Nuit, écran à mire de barres de couleur
+   aux teintes de la charte, lignes de balayage, façade avec un voyant et deux
+   boutons, deux pieds. Il ne porte aucune information.
+   ========================================================================== */
+
+.tv-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 96px 40px;
+  box-sizing: border-box;
+}
+
+.tv-band__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 72px;
+  width: 100%;
+  max-width: 1120px;
+}
+
+/* ---- Le poste ----------------------------------------------------------- */
+
+.tvset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  transform: rotate(-2deg);
+}
+
+.tvset__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 22px 22px 16px;
+  background: linear-gradient(160deg, #2b211b, var(--color-nuit) 60%);
+  border-radius: 34px;
+  box-sizing: border-box;
+  box-shadow:
+    0 30px 60px rgba(20, 20, 20, 0.28),
+    inset 0 2px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tvset__screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 22px / 26px;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.55),
+    0 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* L'écran allumé : un fond Nuit chaud avec un halo au centre, pour que le
+   logo blanc y ressorte. */
+.tvset__screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(168, 118, 85, 0.5),
+      rgba(60, 38, 28, 0.9) 60%,
+      #141414 100%
+    );
+  animation: tvset-flicker 5s steps(1) infinite;
+}
+
+.tvset__logo {
+  width: 78%;
+  height: auto;
+  filter: drop-shadow(0 0 14px rgba(247, 237, 222, 0.25));
+}
+
+/* Lignes de balayage + vignettage : c'est ce qui fait « écran ». */
+.tvset__scan {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.18) 0 2px,
+      transparent 2px 4px
+    ),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45));
+}
+
+@keyframes tvset-flicker {
+  0%,
+  92%,
+  96% {
+    opacity: 1;
+  }
+
+  94%,
+  98% {
+    opacity: 0.86;
+  }
+}
+
+.tvset__panel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  height: 22px;
+}
+
+.tvset__led {
+  width: 9px;
+  height: 9px;
+  margin-right: auto;
+  background-color: #d9553b;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #d9553b;
+}
+
+.tvset__knob {
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 35% 30%, #6a5748, #201812);
+  border-radius: 50%;
+}
+
+.tvset__feet {
+  display: flex;
+  justify-content: space-between;
+  width: 72%;
+}
+
+.tvset__feet span {
+  width: 34px;
+  height: 14px;
+  background-color: var(--color-nuit);
+  border-radius: 0 0 10px 10px;
+}
+
+/* ---- Le texte ----------------------------------------------------------- */
+
+.tv-band__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.tv-band__title {
+  margin: 0;
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 72px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -2.6px;
+  color: var(--color-text-primary);
+}
+
+.tv-band__title span {
+  color: var(--color-accent);
+}
+
+.tv-band__lead {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 26px;
+  color: var(--color-text-secondary);
+}
+
+/* La citation : un grand guillemet ouvrant qui déborde à gauche, puis la
+   phrase en corps d'affichage. */
+.tv-band__quote {
+  position: relative;
+  margin: 8px 0 0;
+  padding: 0 0 0 4px;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+  text-wrap: balance;
+  color: var(--color-text-primary);
+}
+
+.tv-band__mark {
+  display: block;
+  margin-bottom: -28px;
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.35;
+}
+
+@media (max-width: 900px) {
+  .tv-band {
+    padding: 64px 24px;
+  }
+
+  .tv-band__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+  }
+
+  .tvset {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tvset__screen {
+    animation: none;
+  }
+}
+
+
+/* ==========================================================================
+   LE MUR DE PHOTOS — appel final
+
+   Colonnes de hauteurs inégales (`columns`), pleine largeur, dans une boîte
+   de hauteur bornée : la boîte coupe le mur et un masque fond le haut et le
+   bas dans le fond de page. Le voile sombre porte le texte ; il est centré
+   et ne bloque pas les clics.
+   ========================================================================== */
+
+.wall {
+  position: relative;
+  width: 100%;
+  height: clamp(900px, 120svh, 1200px);
+  overflow: hidden;
+  /* Le fond passe du clair de la page au Nuit du pied de page : les photos,
+     estompées en haut par le masque de la grille, se fondent dans le clair ;
+     les interstices entre photos suivent le même passage. */
+  background: linear-gradient(
+    to bottom,
+    var(--color-canvas) 0,
+    var(--color-canvas) 6%,
+    #3a2c22 26%,
+    var(--color-nuit) 48%,
+    var(--color-nuit) 100%
+  );
+  isolation: isolate;
+}
+
+.wall__grid {
+  /* Le haut du mur s'efface : les photos apparaissent progressivement au lieu
+     de commencer sur une arête. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 26%);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+/* Cinq colonnes de largeur inégale, chacune décalée en hauteur : les photos
+   ne tombent jamais en face les unes des autres. */
+.wall__col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wall__col[data-col="0"] { flex: 1 1 0; margin-top: 30px; }
+.wall__col[data-col="1"] { flex: 1.35 1 0; margin-top: -70px; }
+.wall__col[data-col="2"] { flex: 0.9 1 0; margin-top: 70px; }
+.wall__col[data-col="3"] { flex: 1.25 1 0; margin-top: -110px; }
+.wall__col[data-col="4"] { flex: 1 1 0; margin-top: 10px; }
+
+.wall__cell {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  /* Le rapport et l'inclinaison viennent de la photo (style en ligne). */
+}
+
+.wall__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: #2b211b;
+  box-shadow: 0 10px 28px rgba(20, 20, 20, 0.25);
+}
+
+.wall__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Le voile : presque plus rien. Les photos restent claires et vives ; seul un
+   très léger halo sombre, doux et étroit, passe derrière le texte, et c'est
+   l'ombre portée des lettres (voir `.wall__text`) qui garantit la lecture.
+   En bas, le mur s'éteint dans le Nuit du pied de page, sur le dernier
+   sixième seulement.
+   `pointer-events: none` : on clique les photos à travers lui. */
+.wall__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  pointer-events: none;
+  /* Seul le bas s'éteint, dans le Nuit du pied de page, sur le dernier
+     sixième. Aucun voile sombre sur le mur. */
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 80%,
+    rgba(20, 20, 20, 0.7) 93%,
+    var(--color-nuit) 100%
+  );
+}
+
+.wall__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 780px);
+  padding: 28px 64px;
+  text-align: center;
+  color: var(--color-text-primary);
+  /* Une vitre dépolie claire, posée sur les photos : elles restent vives tout
+     autour, et le texte sombre s'y lit sans voile noir. */
+  background: rgba(247, 237, 222, 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  backdrop-filter: blur(22px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(20, 20, 20, 0.26);
+}
+
+/* Le bouton seul reprend les clics. */
+.wall__text a {
+  pointer-events: auto;
+}
+
+.wall__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.2vw, 56px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -2px;
+  color: var(--color-text-primary);
+}
+
+.wall__title span {
+  color: var(--color-accent);
+}
+
+.wall__subtitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: var(--color-text-primary);
+}
+
+.wall__body {
+  margin: 0;
+  max-width: 66ch;
+  font-family: var(--font-text);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.wall__reassurance {
+  margin: 0 0 4px;
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 809px) {
+  .wall {
+    height: clamp(820px, 110svh, 1000px);
+  }
+
+  .wall__grid {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .wall__col {
+    gap: 8px;
+  }
+
+  /* À l'étroit, trois colonnes seulement : les deux dernières disparaissent. */
+  .wall__col[data-col="3"],
+  .wall__col[data-col="4"] {
+    display: none;
+  }
+
+  .wall__text {
+    padding: 22px 20px;
+    border-radius: 20px;
+  }
+
+  .wall__veil {
+    padding: 24px;
+  }
+
+  .wall__title {
+    letter-spacing: -1.4px;
+  }
+}

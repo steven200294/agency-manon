@@ -1,5 +1,6 @@
 import { ButtonNav } from "@/components/primitives/Buttons";
-import { EXPERTISES, EXPERTISES_INTRO } from "@/content/site";
+import { EXPERTISES_INTRO } from "@/content/site";
+import ExpertisesAccordion from "./ExpertisesAccordion";
 
 /* ==========================================================================
    BANDE 11 sur 13 — `div.framer-1skweis`  ·  SECTION 7, les expertises
@@ -29,26 +30,12 @@ export default function ExpertisesBand() {
         <p className="band-head__lede">{EXPERTISES_INTRO.lede}</p>
       </div>
 
-      {/* Le carrousel est abandonné. Il rognait ses cartes des deux côtés sans
-          affordance : la première et la dernière étaient coupées en plein
-          milieu, ce qui se lisait comme un débordement, pas comme une piste
-          qu'on fait défiler.
-
-          Les numéros aussi : « 01 → 05 » sur cinq métiers qui ne se suivent
-          pas dans un ordre. La méthode, elle, garde les siens — ce sont
-          quatre étapes. Voir `.ledger` dans lower-bands.css. */}
-      <ul className="ledger ledger--offers">
-        {EXPERTISES.map((item) => (
-          <li key={item.number} className="ledger__row">
-            <h3 className="ledger__title">{item.title}</h3>
-            <p className="ledger__body">{item.body}</p>
-            {item.tag ? <span className="ledger__note">{item.tag}</span> : null}
-          </li>
-        ))}
-      </ul>
+      {/* Un accordéon de photos : cinq bandes verticales, celle qu'on survole
+          s'ouvre et révèle son texte. Voir ExpertisesAccordion. */}
+      <ExpertisesAccordion />
 
       <div className="band-foot">
-        <ButtonNav>{EXPERTISES_INTRO.ctaLabel}</ButtonNav>
+        <ButtonNav href="/expertises">{EXPERTISES_INTRO.ctaLabel}</ButtonNav>
       </div>
     </section>
   );
